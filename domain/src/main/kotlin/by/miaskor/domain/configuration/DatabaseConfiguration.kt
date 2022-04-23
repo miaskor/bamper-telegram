@@ -1,8 +1,10 @@
-package by.miaskor.bampertelegram.configuration
+package by.miaskor.domain.configuration
 
-import by.miaskor.bampertelegram.configuration.settings.DataSourceSettings
+import by.miaskor.domain.configuration.settings.DataSourceSettings
 import com.zaxxer.hikari.HikariDataSource
 import org.jooq.DSLContext
+import org.jooq.conf.RenderQuotedNames
+import org.jooq.conf.Settings
 import org.jooq.impl.DataSourceConnectionProvider
 import org.jooq.impl.DefaultConfiguration
 import org.jooq.impl.DefaultDSLContext
@@ -39,10 +41,13 @@ open class DatabaseConfiguration(
 
   @Bean
   open fun jooqConfiguration(): DefaultConfiguration {
+    val settings = Settings().withRenderQuotedNames(RenderQuotedNames.EXPLICIT_DEFAULT_UNQUOTED)
+
     return DefaultConfiguration().apply {
       set(connectionProvider())
       set(DefaultExecuteListenerProvider(DefaultExecuteListener()))
       setDataSource(dataSource())
+      setSettings(settings)
     }
   }
 

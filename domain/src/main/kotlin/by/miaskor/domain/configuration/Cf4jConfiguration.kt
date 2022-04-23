@@ -1,4 +1,4 @@
-package by.miaskor.bampertelegram.configuration
+package by.miaskor.domain.configuration
 
 import org.cfg4j.provider.ConfigurationProvider
 import org.cfg4j.provider.ConfigurationProviderBuilder
