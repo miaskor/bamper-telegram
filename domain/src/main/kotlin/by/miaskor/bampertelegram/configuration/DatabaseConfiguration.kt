@@ -2,9 +2,7 @@ package by.miaskor.bampertelegram.configuration
 
 import by.miaskor.bampertelegram.configuration.settings.DataSourceSettings
 import com.zaxxer.hikari.HikariDataSource
-import org.hibernate.dialect.MySQL5Dialect
 import org.jooq.DSLContext
-import org.jooq.SQLDialect
 import org.jooq.impl.DataSourceConnectionProvider
 import org.jooq.impl.DefaultConfiguration
 import org.jooq.impl.DefaultDSLContext
@@ -18,13 +16,13 @@ import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy
 import javax.sql.DataSource
 
 @Configuration
-class DatabaseConfiguration(
+open class DatabaseConfiguration(
   private val dataSourceSettings: DataSourceSettings
 ) {
 
   @Bean
   @Primary
-  fun dataSource(): DataSource {
+  open fun dataSource(): DataSource {
     return DataSourceBuilder.create()
       .driverClassName(dataSourceSettings.driverClassName())
       .username(dataSourceSettings.username())
@@ -35,12 +33,12 @@ class DatabaseConfiguration(
   }
 
   @Bean
-  fun connectionProvider(): DataSourceConnectionProvider {
+  open fun connectionProvider(): DataSourceConnectionProvider {
     return DataSourceConnectionProvider(TransactionAwareDataSourceProxy(dataSource()))
   }
 
   @Bean
-  fun jooqConfiguration(): DefaultConfiguration {
+  open fun jooqConfiguration(): DefaultConfiguration {
     return DefaultConfiguration().apply {
       set(connectionProvider())
       set(DefaultExecuteListenerProvider(DefaultExecuteListener()))
@@ -49,7 +47,7 @@ class DatabaseConfiguration(
   }
 
   @Bean
-  fun dslContext(): DSLContext {
+  open fun dslContext(): DSLContext {
     return DefaultDSLContext(jooqConfiguration())
   }
 }
