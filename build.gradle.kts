@@ -1,11 +1,14 @@
+import org.gradle.api.JavaVersion.VERSION_11
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
   id("org.springframework.boot") version "2.6.6"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
+  id("nu.studer.jooq") version "6.0.1"
   kotlin("jvm") version "1.6.10"
   kotlin("plugin.spring") version "1.6.10"
   kotlin("plugin.jpa") version "1.6.10"
+  distribution
 }
 
 repositories {
@@ -18,10 +21,15 @@ subprojects {
     plugin("org.springframework.boot")
     plugin("io.spring.dependency-management")
   }
+  project(":domain") {
+    apply {
+      plugin("nu.studer.jooq")
+    }
+  }
 
   group = "by.miaskor"
   version = "0.0.1-SNAPSHOT"
-
+  java.sourceCompatibility = VERSION_11
   repositories {
     mavenCentral()
   }
