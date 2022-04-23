@@ -1,4 +1,4 @@
-package by.miaskor.bampertelegram.configuration.settings
+package by.miaskor.domain.configuration.settings
 
 interface DataSourceSettings {
 

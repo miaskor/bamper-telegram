@@ -31,12 +31,13 @@ jooq {
           database.apply {
             name = "org.jooq.meta.mysql.MySQLDatabase"
             inputSchema = "bamper_db"
+            includes = "brand|car|advertisement"
           }
           generate.apply {
             isDeprecated = false
             isRecords = true
             isImmutablePojos = true
-            isFluentSetters = true
+            isFluentSetters = false
           }
           target.apply {
             packageName = "by.miaskor.domain"
