@@ -6,12 +6,12 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-class SettingsConfiguration(
+open class SettingsConfiguration(
   private val configurationProvider: ConfigurationProvider
 ) {
 
   @Bean
-  fun dataSourceSettings(): DataSourceSettings {
+  open fun dataSourceSettings(): DataSourceSettings {
     return configurationProvider.bind("bamper.datasource", DataSourceSettings::class.java)
   }
 }

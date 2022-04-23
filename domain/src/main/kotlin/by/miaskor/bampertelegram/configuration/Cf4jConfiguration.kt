@@ -8,15 +8,15 @@ import org.springframework.context.annotation.Configuration
 import kotlin.io.path.Path
 
 @Configuration
-class Cf4jConfiguration {
+open class Cf4jConfiguration {
 
   @Bean
-  fun classPathConfigurationSource(): FilesConfigurationSource {
+  open fun classPathConfigurationSource(): FilesConfigurationSource {
     return FilesConfigurationSource { listOf(Path(PROPERTY_PATH)) }
   }
 
   @Bean
-  fun configurationProvider(): ConfigurationProvider {
+  open fun configurationProvider(): ConfigurationProvider {
     return ConfigurationProviderBuilder()
       .withConfigurationSource(classPathConfigurationSource())
       .build()
