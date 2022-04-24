@@ -31,7 +31,8 @@ jooq {
           database.apply {
             name = "org.jooq.meta.mysql.MySQLDatabase"
             inputSchema = "bamper_db"
-            includes = "brand|car|advertisement"
+            includes = "brand|car|advertisement|bamper_client|car_part|spare_part|store_house|telegram_client" +
+                "telegram_client_store_house|worker_store_house|worker_telegram"
           }
           generate.apply {
             isDeprecated = false
@@ -47,6 +48,26 @@ jooq {
         }
       }
     }
+  }
+}
+
+dependencies {
+  liquibaseRuntime("org.liquibase:liquibase-core:4.5.0")
+  liquibaseRuntime("org.liquibase:liquibase-groovy-dsl:3.0.0")
+  liquibaseRuntime("info.picocli:picocli:4.6.1")
+  liquibaseRuntime("mysql:mysql-connector-java:8.0.18")
+  liquibaseRuntime("org.yaml:snakeyaml:1.29")
+}
+
+liquibase {
+  activities.register("main") {
+    this.arguments = mapOf(
+      "logLevel" to "info",
+      "changeLogFile" to "src/main/resources/db/changelog/db.changelog-master.yaml",
+      "url" to "jdbc:mysql://localhost:3306/bamper_db",
+      "username" to "miaskor",
+      "password" to "Goblin2001"
+    )
   }
 }
 

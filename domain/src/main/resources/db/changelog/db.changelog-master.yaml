@@ -1,58 +1,9 @@
 databaseChangeLog:
-  - logicalFilePath: db/changelog/db.changelog_1.0.yaml
+  - include:
+      file: src/main/resources/db/changelog/db.changelog-1.0.sql
+  - logicalFilePath: db/changelog/db.changelog-master.yaml
   - changeSet:
-      id: 1
-      author: miaskor
-      changes:
-        - createTable:
-            tableName: brand
-            columns:
-              - column:
-                  name: id
-                  type: BIGINT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: brand_name
-                  type: varchar(50)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: model
-                  type: varchar(50)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: year_manufacture_from
-                  type: varchar(4)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: year_manufacture_to
-                  type: varchar(4)
-                  constraints:
-                    nullable: false
-
-  - changeSet:
-      id: 2
-      author: miaskor
-      changes:
-        - createIndex:
-            clustered: true
-            columns:
-              - column:
-                  name: brand_name
-              - column:
-                  name: model
-            indexName: idx_model_brand_name
-            schemaName: bamper_db
-            tableName: brand
-            unique: true
-
-  - changeSet:
-      id: 3
+      id: master-1
       author: miaskor
       changes:
         - loadData:
@@ -75,142 +26,29 @@ databaseChangeLog:
                   name: year_manufacture_to
                   type: varchar(4)
             encoding: UTF-8
-            file: cars.csv
+            file: src/main/resources/db/cars.csv
             schemaName: bamper_db
             tableName: brand
             separator: ','
             usePreparedStatements: true
   - changeSet:
-      id: 5
+      id: master-2
       author: miaskor
       changes:
-        - createTable:
-            tableName: car
+        - loadData:
+            catalogName: bamper_db
             columns:
               - column:
-                  name: id
-                  type: BIGINT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: body
-                  type: varchar(20)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: transmission
-                  type: varchar(20)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: engine_capacity
-                  type: float(4)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: fuel_type
-                  type: varchar(10)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: engine_type
-                  type: varchar(15)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: brand_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-  - changeSet:
-      id: 6
-      author: miaskor
-      changes:
-        - addForeignKeyConstraint:
-            baseColumnNames: brand_id
-            baseTableCatalogName: bamper_db
-            baseTableName: car
-            baseTableSchemaName: bamper_db
-            constraintName: fk_car_brand_id
-            onDelete: CASCADE
-            onUpdate: RESTRICT
-            referencedColumnNames: id
-            referencedTableCatalogName: bamper_db
-            referencedTableName: brand
-            referencedTableSchemaName: bamper_db
-            validate: true
-
-  - changeSet:
-      id: 7
-      author: miaskor
-      changes:
-        - createTable:
-            tableName: advertisement
-            columns:
-              - column:
-                  name: id
-                  type: BIGINT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: article
+                  header: name_ru
+                  name: name_ru
                   type: varchar(100)
-                  constraints:
-                    nullable: false
               - column:
-                  name: photo
-                  type: blob
-              - column:
-                  name: description
-                  type: varchar(500)
-              - column:
-                  name: price
-                  type: double
-                  constraints:
-                    nullable: false
-              - column:
-                  name: quality
-                  type: tinyint(1)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: currency
-                  type: varchar(3)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: name
-                  type: varchar(30)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: number
-                  type: bigint
-              - column:
-                  name: car_id
-                  type: bigint
-                  constraints:
-                    nullable: false
-
-  - changeSet:
-      id: 8
-      author: miaskor
-      changes:
-        - addForeignKeyConstraint:
-            baseColumnNames: car_id
-            baseTableCatalogName: bamper_db
-            baseTableName: advertisement
-            baseTableSchemaName: bamper_db
-            constraintName: fk_advertisement_car_id
-            onDelete: CASCADE
-            onUpdate: RESTRICT
-            referencedColumnNames: id
-            referencedTableCatalogName: bamper_db
-            referencedTableName: car
-            referencedTableSchemaName: bamper_db
-            validate: true
-
+                  header: name_en
+                  name: name_en
+                  type: varchar(100)
+            encoding: UTF-8
+            file: src/main/resources/db/all-details.csv
+            schemaName: bamper_db
+            tableName: car_part
+            separator: ','
+            usePreparedStatements: true

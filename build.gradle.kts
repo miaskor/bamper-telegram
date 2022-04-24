@@ -5,6 +5,7 @@ plugins {
   id("org.springframework.boot") version "2.6.6"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
   id("nu.studer.jooq") version "6.0.1"
+  id("org.liquibase.gradle") version "2.1.1"
   kotlin("jvm") version "1.6.10"
   kotlin("plugin.spring") version "1.6.10"
   kotlin("plugin.jpa") version "1.6.10"
@@ -24,6 +25,7 @@ subprojects {
   project(":domain") {
     apply {
       plugin("nu.studer.jooq")
+      plugin("org.liquibase.gradle")
     }
   }
 
