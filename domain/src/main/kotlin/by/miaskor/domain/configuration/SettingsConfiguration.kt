@@ -1,6 +1,6 @@
-package by.miaskor.bampertelegram.configuration
+package by.miaskor.domain.configuration
 
-import by.miaskor.bampertelegram.configuration.settings.DataSourceSettings
+import by.miaskor.domain.configuration.settings.DataSourceSettings
 import org.cfg4j.provider.ConfigurationProvider
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

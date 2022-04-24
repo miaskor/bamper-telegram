@@ -1,6 +1,6 @@
-package by.miaskor.bampertelegram.configuration
+package by.miaskor.domain.configuration
 
-import by.miaskor.bampertelegram.configuration.settings.DataSourceSettings
+import by.miaskor.domain.configuration.settings.DataSourceSettings
 import com.zaxxer.hikari.HikariDataSource
 import org.jooq.DSLContext
 import org.jooq.impl.DataSourceConnectionProvider

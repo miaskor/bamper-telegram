@@ -1,11 +1,11 @@
-package by.miaskor.bampertelegram
+package by.miaskor.domain
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-open class BamperTelegramApplication
+open class DomainApplication
 
 fun main(args: Array<String>) {
-  runApplication<BamperTelegramApplication>(*args)
+  runApplication<DomainApplication>(*args)
 }
