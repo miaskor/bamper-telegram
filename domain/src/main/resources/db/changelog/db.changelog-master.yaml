@@ -1,6 +1,6 @@
 databaseChangeLog:
-  - include:
-      file: src/main/resources/db/changelog/db.changelog-1.0.sql
+  - includeAll:
+      path: db/changelog/
   - logicalFilePath: db/changelog/db.changelog-master.yaml
   - changeSet:
       id: master-1
