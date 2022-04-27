@@ -1,6 +1,7 @@
 import org.gradle.api.JavaVersion.VERSION_11
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+
 plugins {
   id("org.springframework.boot") version "2.6.6"
   id("io.spring.dependency-management") version "1.0.11.RELEASE"
@@ -10,6 +11,7 @@ plugins {
   kotlin("plugin.spring") version "1.6.10"
   kotlin("plugin.jpa") version "1.6.10"
   distribution
+  `kotlin-dsl`
 }
 
 repositories {
@@ -17,10 +19,12 @@ repositories {
 }
 
 subprojects {
+
   apply {
     plugin("kotlin")
     plugin("org.springframework.boot")
     plugin("io.spring.dependency-management")
+    from("${rootDir}/gradle/versions.gradle")
   }
   project(":domain") {
     apply {
