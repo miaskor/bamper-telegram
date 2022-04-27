@@ -13,8 +13,8 @@ object AdvertisementMapper : EntityMapper<Advertisement, AdvertisementRecord> {
       price = from.price
       quality = from.quality
       currency = from.currency
-      name = from.name
-      number = from.number
+      partNumber = from.partNumber
+      carPartId = from.carPartId
       carId = from.carId
     }
   }

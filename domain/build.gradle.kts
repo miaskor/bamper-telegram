@@ -6,13 +6,10 @@ dependencies {
   implementation("org.jooq:jooq-meta:3.15.1")
   implementation("org.jooq:jooq-codegen:3.15.1")
   jooqGenerator("mysql:mysql-connector-java:8.0.18")
-
   runtimeOnly("mysql:mysql-connector-java:8.0.18")
   testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.1")
   testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.1")
 }
-
-
 
 jooq {
   version.set("3.15.1")  // default (can be omitted)
