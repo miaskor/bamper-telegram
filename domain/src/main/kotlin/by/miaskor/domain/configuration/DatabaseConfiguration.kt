@@ -47,7 +47,6 @@ open class DatabaseConfiguration(
       set(connectionProvider())
       set(DefaultExecuteListenerProvider(DefaultExecuteListener()))
       setDataSource(dataSource())
-
       setSettings(settings)
     }
   }

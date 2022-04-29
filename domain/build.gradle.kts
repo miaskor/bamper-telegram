@@ -56,6 +56,7 @@ dependencies {
   liquibaseRuntime("info.picocli:picocli:4.6.1")
   liquibaseRuntime("mysql:mysql-connector-java:8.0.18")
   liquibaseRuntime("org.yaml:snakeyaml:1.29")
+  liquibaseRuntime(sourceSets.main.get().output)
 }
 
 
@@ -64,7 +65,7 @@ liquibase {
   activities.register("main") {
     this.arguments = mapOf(
       "logLevel" to "info",
-      "changeLogFile" to "db.changelog-master.yaml",
+      "changeLogFile" to "db/changelog/db.changelog-master.yaml",
       "url" to "jdbc:mysql://localhost:3306/bamper_db",
       "username" to "miaskor",
       "password" to "Goblin2001"
