@@ -1,6 +1,6 @@
 databaseChangeLog:
   - include:
-      file: src/main/resources/db/changelog/db.changelog-1.0.sql
+      file: db/changelog/db.changelog-1.0.sql
   - logicalFilePath: db/changelog/db.changelog-master.yaml
   - changeSet:
       id: master-1
@@ -26,7 +26,7 @@ databaseChangeLog:
                   name: year_manufacture_to
                   type: varchar(4)
             encoding: UTF-8
-            file: src/main/resources/db/cars.csv
+            file: db/cars.csv
             schemaName: bamper_db
             tableName: brand
             separator: ','
@@ -47,7 +47,7 @@ databaseChangeLog:
                   name: name_en
                   type: varchar(100)
             encoding: UTF-8
-            file: src/main/resources/db/all-details.csv
+            file: db/all-details.csv
             schemaName: bamper_db
             tableName: car_part
             separator: ','
