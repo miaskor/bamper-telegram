@@ -7,11 +7,11 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 open class SettingsConfiguration(
-  private val configurationProvider: ConfigurationProvider
+  private val confProvider: ConfigurationProvider
 ) {
 
   @Bean
   open fun dataSourceSettings(): DataSourceSettings {
-    return configurationProvider.bind("bamper.datasource", DataSourceSettings::class.java)
+    return confProvider.bind("bamper.datasource", DataSourceSettings::class.java)
   }
 }

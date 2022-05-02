@@ -6,6 +6,8 @@ import by.miaskor.domain.repository.CarRepository
 import by.miaskor.domain.repository.JooqAdvertisementRepository
 import by.miaskor.domain.repository.JooqBrandRepository
 import by.miaskor.domain.repository.JooqCarRepository
+import by.miaskor.domain.repository.JooqTelegramClientRepository
+import by.miaskor.domain.repository.TelegramClientRepository
 import org.jooq.DSLContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -28,5 +30,10 @@ open class RepositoryConfiguration(
   @Bean
   open fun carRepository(): CarRepository {
     return JooqCarRepository(dslContext)
+  }
+
+  @Bean
+  open fun telegramClientRepository(): TelegramClientRepository {
+    return JooqTelegramClientRepository(dslContext)
   }
 }
