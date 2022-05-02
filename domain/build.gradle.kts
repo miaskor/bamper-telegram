@@ -30,7 +30,7 @@ jooq {
           database.apply {
             name = "org.jooq.meta.mysql.MySQLDatabase"
             inputSchema = "bamper_db"
-            includes = "brand|car|advertisement|bamper_client|car_part|spare_part|store_house|telegram_client" +
+            includes = "brand|car|advertisement|bamper_client|car_part|spare_part|store_house|telegram_client|" +
                 "telegram_client_store_house|worker_store_house|worker_telegram"
           }
           generate.apply {
