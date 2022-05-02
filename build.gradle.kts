@@ -22,7 +22,7 @@ subprojects {
     plugin("org.springframework.boot")
     plugin("io.spring.dependency-management")
   }
-  project(":domain") {
+  project(":domain:domain") {
     apply {
       plugin("nu.studer.jooq")
       plugin("org.liquibase.gradle")

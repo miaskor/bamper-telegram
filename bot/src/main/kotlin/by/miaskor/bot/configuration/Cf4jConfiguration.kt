@@ -1,4 +1,4 @@
-package by.miaskor.domain.configuration
+package by.miaskor.bot.configuration
 
 import org.cfg4j.provider.ConfigurationProvider
 import org.cfg4j.provider.ConfigurationProviderBuilder
@@ -12,7 +12,7 @@ open class Cf4jConfiguration {
 
   @Bean
   open fun classPathConfigurationSource(): FilesConfigurationSource {
-    return FilesConfigurationSource { listOf(Path(PROPERTY_PATH)) }
+    return FilesConfigurationSource { listOf(Path(PROPERTY_CONNECTOR_PATH), Path(PROPERTY_BOT_PATH)) }
   }
 
   @Bean
@@ -23,6 +23,9 @@ open class Cf4jConfiguration {
   }
 
   private companion object {
-    private const val PROPERTY_PATH = "/home/mikhailskorohododv/Pictures/application.properties"
+    private const val PROPERTY_BOT_PATH =
+      "/home/mikhailskorohododv/Documents/bamper-telegram-properties/bot.properties"
+    private const val PROPERTY_CONNECTOR_PATH =
+      "/home/mikhailskorohododv/Documents/bamper-telegram-properties/connector.properties"
   }
 }

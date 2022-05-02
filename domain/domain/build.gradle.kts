@@ -6,6 +6,7 @@ dependencies {
   implementation("io.projectreactor:reactor-core:3.4.17")
   implementation("org.jooq:jooq-meta:3.15.1")
   implementation("org.jooq:jooq-codegen:3.15.1")
+  implementation(project(":domain:domain-api"))
   jooqGenerator("mysql:mysql-connector-java:8.0.18")
 
   runtimeOnly("mysql:mysql-connector-java:8.0.18")

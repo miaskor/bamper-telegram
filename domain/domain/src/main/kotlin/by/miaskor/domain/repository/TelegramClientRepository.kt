@@ -1,6 +1,10 @@
 package by.miaskor.domain.repository
 
+import by.miaskor.domain.mapper.CarMapper
+import by.miaskor.domain.mapper.TelegramClientMapper
 import by.miaskor.domain.tables.pojos.TelegramClient
+import by.miaskor.domain.tables.references.CAR
+import by.miaskor.domain.tables.references.TELEGRAM_CLIENT
 import org.jooq.DSLContext
 import reactor.core.publisher.Mono
 
@@ -11,7 +15,13 @@ class JooqTelegramClientRepository(
   private val dslContext: DSLContext
 ): TelegramClientRepository {
   override fun save(entity: TelegramClient): Mono<Unit> {
-    TODO("Not yet implemented")
+    return Mono.just(entity)
+      .flatMap(TelegramClientMapper::map)
+      .map { telegramClientRecord ->
+        dslContext.insertInto(TELEGRAM_CLIENT)
+          .set(telegramClientRecord)
+          .executeAsync()
+      }
   }
 
   override fun findById(id: Long): Mono<TelegramClient> {
