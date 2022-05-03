@@ -1,56 +1,82 @@
 package by.miaskor.bot.service.handler
 
-import by.miaskor.bot.domain.StateBot
+import by.miaskor.bot.domain.BotState
+import by.miaskor.bot.domain.Language.Companion.getDomainByFullLanguage
+import by.miaskor.bot.service.BotStateChanger.changeBotState
+import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.TelegramClientCache
 import by.miaskor.domain.api.connector.TelegramClientConnector
 import by.miaskor.domain.api.domain.TelegramClientRequest
 import com.pengrad.telegrambot.TelegramBot
+import com.pengrad.telegrambot.model.Message
 import com.pengrad.telegrambot.model.Update
-import com.pengrad.telegrambot.model.request.Keyboard
-import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup
 import com.pengrad.telegrambot.request.SendMessage
 import reactor.core.publisher.Mono
 
 class ChooseLanguageHandler(
   private val telegramBot: TelegramBot,
-  private val telegramClientCache: TelegramClientCache,
   private val telegramClientConnector: TelegramClientConnector,
-) : StateHandler {
-  override val state: StateBot = StateBot.CHOOSE_LANGUAGE
+  private val telegramClientCache: TelegramClientCache,
+  private val keyboardBuilder: KeyboardBuilder
+) : BotStateHandler {
+  override val state: BotState = BotState.CHOOSE_LANGUAGE
 
   override fun handle(update: Update): Mono<Unit> {
-    return Mono.fromSupplier { buildKeyboard() }
+    return Mono.just(update.message())
+      .filter(::isMessageAppropriate)
+      .switchIfEmpty(
+        Mono.fromSupplier {
+          telegramBot.execute(
+            SendMessage(
+              update.message().chat().id(),
+              "Выберите язык русский или английский. Choose the language english or russian"
+            )
+          )
+        }.then(Mono.empty())
+      )
+      .flatMap(::handle)
+  }
+
+  private fun handle(message: Message): Mono<Unit> {
+    return Mono.just(message)
+      .flatMap(::createTelegramClient)
+      .then(Mono.defer { sendMessage(message) })
+  }
+
+  private fun sendMessage(message: Message): Mono<Unit> {
+    return Mono.just(message)
+      .flatMap { keyboardBuilder.build(message.chat().id()) }
       .map {
-        val chatId = update.message().chat().id()
         telegramBot.execute(
-          SendMessage(chatId, "Choose your language")
+          SendMessage(message.chat().id(), "It is main menu of bot")
             .replyMarkup(it)
         )
-      }.map {
-        val message = update.message()
+      }
+      .changeBotState { message.chat().id() }
+  }
+
+  private fun createTelegramClient(message: Message): Mono<Unit> {
+    return Mono.just(message)
+      .map {
         TelegramClientRequest(
-          chatId = message.chat().id().toString(),
-          chatLanguage = mapLanguage(message.text()),
-          username = message.chat().username(),
+          chatId = it.chat().id().toString(),
+          chatLanguage = getDomainByFullLanguage(it.text()).domain,
+          username = it.chat().username(),
         )
       }
-      .flatMap {
-        telegramClientConnector.create(it) }
-      .then(Mono.empty<Unit>())
-      .doOnSuccess { telegramClientCache.populate(update.message().chat().id(), state.next()) }
+      .flatMap(telegramClientConnector::create)
+      .then(
+        telegramClientCache.getTelegramClient(message.chat().id())
+          .map {
+            telegramClientCache.populate(
+              message.chat().id(),
+              it.copy(chatLanguage = getDomainByFullLanguage(message.text()).domain)
+            )
+          }
+      )
   }
 
-  private fun mapLanguage(lang: String): String {
-    return when (lang) {
-      "English" -> "EN"
-      else -> "RU"
-    }
-  }
-
-  private fun buildKeyboard(): Keyboard {
-    return ReplyKeyboardMarkup(arrayOf("English", "Русский"))
-      .oneTimeKeyboard(true)
-      .resizeKeyboard(true)
-      .selective(true)
+  private fun isMessageAppropriate(message: Message): Boolean {
+    return message.text() == "English" || message.text() == "Русский"
   }
 }

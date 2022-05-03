@@ -1,9 +1,10 @@
 package by.miaskor.bot.configuration
 
 import by.miaskor.bot.configuration.settings.BotSettings
+import by.miaskor.bot.service.handler.BotStateHandlerRegistry
 import by.miaskor.bot.service.handler.ChooseLanguageHandler
+import by.miaskor.bot.service.handler.GreetingsHandler
 import by.miaskor.bot.service.handler.MainMenuHandler
-import by.miaskor.bot.service.handler.StateHandlerRegistry
 import by.miaskor.bot.telegram.Bot
 import com.pengrad.telegrambot.TelegramBot
 import okhttp3.OkHttpClient
@@ -35,27 +36,37 @@ open class BotConfiguration(
   }
 
   @Bean
-  open fun stateHandlerRegistry(): StateHandlerRegistry {
-    return StateHandlerRegistry(
+  open fun stateHandlerRegistry(): BotStateHandlerRegistry {
+    return BotStateHandlerRegistry(
       chooseLanguageHandler(),
-      mainMenuHandler()
+      mainMenuHandler(),
+      greetingsHandler()
     )
   }
-
 
   @Bean
   open fun chooseLanguageHandler(): ChooseLanguageHandler {
     return ChooseLanguageHandler(
       telegramBot(),
+      connectorConfiguration.telegramClientConnector(),
       serviceConfiguration.telegramClientCache(),
-      connectorConfiguration.telegramClientConnector()
+      serviceConfiguration.keyboardBuilder()
     )
   }
 
   @Bean
   open fun mainMenuHandler(): MainMenuHandler {
     return MainMenuHandler(
-      telegramBot()
+      telegramBot(),
+      serviceConfiguration.keyboardBuilder()
+    )
+  }
+
+  @Bean
+  open fun greetingsHandler(): GreetingsHandler {
+    return GreetingsHandler(
+      telegramBot(),
+      serviceConfiguration.keyboardBuilder()
     )
   }
 }

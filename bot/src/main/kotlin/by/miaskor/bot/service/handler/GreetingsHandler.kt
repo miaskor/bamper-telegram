@@ -1,34 +1,32 @@
 package by.miaskor.bot.service.handler
 
 import by.miaskor.bot.domain.BotState
+import by.miaskor.bot.domain.BotState.GREETINGS
+import by.miaskor.bot.service.BotStateChanger.changeBotState
 import by.miaskor.bot.service.KeyboardBuilder
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
-import com.pengrad.telegrambot.model.request.ReplyKeyboardRemove
 import com.pengrad.telegrambot.request.SendMessage
 import reactor.core.publisher.Mono
 
-class MainMenuHandler(
+class GreetingsHandler(
   private val telegramBot: TelegramBot,
   private val keyboardBuilder: KeyboardBuilder
 ) : BotStateHandler {
-  override val state: BotState = BotState.MAIN_MENU
+  override val state: BotState = GREETINGS
 
   override fun handle(update: Update): Mono<Unit> {
-    return Mono.fromSupplier { update }
+    return Mono.just(update)
       .flatMap { keyboardBuilder.build(it.message().chat().id()) }
       .map {
-
-        val replyKeyboardRemove = ReplyKeyboardRemove()
-        val chatId = update.message().chat().id()
         telegramBot.execute(
-          SendMessage(chatId, "123")
-            .replyMarkup(replyKeyboardRemove)
-        )
-        telegramBot.execute(
-          SendMessage(chatId, "123")
+          SendMessage(
+            update.message().chat().id(),
+            """Приветствую в боте bamper. Выбери язык.
+              | Greetings for you in bamper bot. Choose language""".trimMargin()
+          )
             .replyMarkup(it)
         )
-      }.then(Mono.empty())
+      }.changeBotState { update.message().chat().id() }
   }
 }

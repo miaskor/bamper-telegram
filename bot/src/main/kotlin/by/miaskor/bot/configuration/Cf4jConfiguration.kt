@@ -12,7 +12,13 @@ open class Cf4jConfiguration {
 
   @Bean
   open fun classPathConfigurationSource(): FilesConfigurationSource {
-    return FilesConfigurationSource { listOf(Path(PROPERTY_CONNECTOR_PATH), Path(PROPERTY_BOT_PATH)) }
+    return FilesConfigurationSource {
+      listOf(
+        Path(PROPERTY_CONNECTOR_PATH),
+        Path(PROPERTY_BOT_PATH),
+        Path(PROPERTY_KEYBOARD_PATH)
+      )
+    }
   }
 
   @Bean
@@ -23,9 +29,9 @@ open class Cf4jConfiguration {
   }
 
   private companion object {
-    private const val PROPERTY_BOT_PATH =
-      "/home/mikhailskorohododv/Documents/bamper-telegram-properties/bot.properties"
-    private const val PROPERTY_CONNECTOR_PATH =
-      "/home/mikhailskorohododv/Documents/bamper-telegram-properties/connector.properties"
+    private const val COMMON_PATH = "/home/mikhailskorohododv/Documents/pet-projects/bamper-telegram-properties"
+    private const val PROPERTY_BOT_PATH = "$COMMON_PATH/bot.properties"
+    private const val PROPERTY_KEYBOARD_PATH = "$COMMON_PATH/keyboard.yaml"
+    private const val PROPERTY_CONNECTOR_PATH = "$COMMON_PATH/connector.properties"
   }
 }
