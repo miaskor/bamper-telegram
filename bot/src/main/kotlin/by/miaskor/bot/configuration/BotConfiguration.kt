@@ -1,6 +1,5 @@
 package by.miaskor.bot.configuration
 
-import by.miaskor.bot.configuration.settings.BotSettings
 import by.miaskor.bot.service.handler.BotStateHandlerRegistry
 import by.miaskor.bot.service.handler.ChooseLanguageHandler
 import by.miaskor.bot.service.handler.GreetingsHandler
@@ -13,7 +12,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 open class BotConfiguration(
-  private val botSettings: BotSettings,
+  private val settingsConfiguration: SettingsConfiguration,
   private val serviceConfiguration: ServiceConfiguration,
   private val connectorConfiguration: ConnectorConfiguration,
 ) {
@@ -21,7 +20,7 @@ open class BotConfiguration(
   @Bean
   open fun telegramBot(): TelegramBot {
     return TelegramBot
-      .Builder(botSettings.token())
+      .Builder(settingsConfiguration.botSettings().token())
       .okHttpClient(OkHttpClient())
       .build()
   }
@@ -50,6 +49,7 @@ open class BotConfiguration(
       telegramBot(),
       connectorConfiguration.telegramClientConnector(),
       serviceConfiguration.telegramClientCache(),
+      settingsConfiguration.stateSettings(),
       serviceConfiguration.keyboardBuilder()
     )
   }
@@ -66,7 +66,8 @@ open class BotConfiguration(
   open fun greetingsHandler(): GreetingsHandler {
     return GreetingsHandler(
       telegramBot(),
-      serviceConfiguration.keyboardBuilder()
+      serviceConfiguration.keyboardBuilder(),
+      settingsConfiguration.stateSettings()
     )
   }
 }

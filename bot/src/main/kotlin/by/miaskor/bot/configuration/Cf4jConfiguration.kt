@@ -16,7 +16,9 @@ open class Cf4jConfiguration {
       listOf(
         Path(PROPERTY_CONNECTOR_PATH),
         Path(PROPERTY_BOT_PATH),
-        Path(PROPERTY_KEYBOARD_PATH)
+        Path(PROPERTY_KEYBOARD_PATH),
+        Path(PROPERTY_CACHE_PATH),
+        Path(PROPERTY_STATE_PATH)
       )
     }
   }
@@ -30,8 +32,10 @@ open class Cf4jConfiguration {
 
   private companion object {
     private const val COMMON_PATH = "/home/mikhailskorohododv/Documents/pet-projects/bamper-telegram-properties"
-    private const val PROPERTY_BOT_PATH = "$COMMON_PATH/bot.properties"
+    private const val PROPERTY_BOT_PATH = "$COMMON_PATH/bot.yaml"
     private const val PROPERTY_KEYBOARD_PATH = "$COMMON_PATH/keyboard.yaml"
     private const val PROPERTY_CONNECTOR_PATH = "$COMMON_PATH/connector.properties"
+    private const val PROPERTY_CACHE_PATH = "$COMMON_PATH/cache.yaml"
+    private const val PROPERTY_STATE_PATH = "$COMMON_PATH/state.yaml"
   }
 }

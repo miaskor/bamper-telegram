@@ -16,7 +16,10 @@ open class ServiceConfiguration(
 
   @Bean
   open fun telegramClientCache(): TelegramClientCache {
-    return TelegramClientCache(connectorConfiguration.telegramClientConnector())
+    return TelegramClientCache(
+      connectorConfiguration.telegramClientConnector(),
+      settingsConfiguration.cacheSettings()
+    )
   }
 
   @Bean

@@ -1,14 +1,19 @@
 package by.miaskor.bot.service.handler
 
+import by.miaskor.bot.configuration.settings.StateSettings
 import by.miaskor.bot.domain.BotState
-import by.miaskor.bot.domain.Language.Companion.getDomainByFullLanguage
+import by.miaskor.bot.domain.BotState.CHOOSE_LANGUAGE
+import by.miaskor.bot.domain.Language.Companion.getByFullLanguage
+import by.miaskor.bot.domain.Language.Companion.isLanguageExists
 import by.miaskor.bot.service.BotStateChanger.changeBotState
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.TelegramClientCache
+import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.text
+import by.miaskor.bot.service.username
 import by.miaskor.domain.api.connector.TelegramClientConnector
 import by.miaskor.domain.api.domain.TelegramClientRequest
 import com.pengrad.telegrambot.TelegramBot
-import com.pengrad.telegrambot.model.Message
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.SendMessage
 import reactor.core.publisher.Mono
@@ -17,66 +22,56 @@ class ChooseLanguageHandler(
   private val telegramBot: TelegramBot,
   private val telegramClientConnector: TelegramClientConnector,
   private val telegramClientCache: TelegramClientCache,
+  private val stateSettings: StateSettings,
   private val keyboardBuilder: KeyboardBuilder
 ) : BotStateHandler {
-  override val state: BotState = BotState.CHOOSE_LANGUAGE
+  override val state: BotState = CHOOSE_LANGUAGE
 
   override fun handle(update: Update): Mono<Unit> {
-    return Mono.just(update.message())
-      .filter(::isMessageAppropriate)
+    return Mono.just(update.text())
+      .filter(::isLanguageExists)
       .switchIfEmpty(
         Mono.fromSupplier {
           telegramBot.execute(
-            SendMessage(
-              update.message().chat().id(),
-              "Выберите язык русский или английский. Choose the language english or russian"
-            )
+            SendMessage(update.chatId(), stateSettings.chooseLanguageFailMessage())
           )
         }.then(Mono.empty())
       )
-      .flatMap(::handle)
+      .flatMap { processMessage(update) }
   }
 
-  private fun handle(message: Message): Mono<Unit> {
-    return Mono.just(message)
+  private fun processMessage(update: Update): Mono<Unit> {
+    return Mono.just(update)
       .flatMap(::createTelegramClient)
-      .then(Mono.defer { sendMessage(message) })
+      .then(Mono.defer { sendMessage(update) })
   }
 
-  private fun sendMessage(message: Message): Mono<Unit> {
-    return Mono.just(message)
-      .flatMap { keyboardBuilder.build(message.chat().id()) }
+  private fun sendMessage(update: Update): Mono<Unit> {
+    return Mono.just(update.chatId())
+      .flatMap(keyboardBuilder::build)
       .map {
         telegramBot.execute(
-          SendMessage(message.chat().id(), "It is main menu of bot")
+          SendMessage(update.chatId(), stateSettings.mainMenuMessage())
             .replyMarkup(it)
         )
       }
-      .changeBotState { message.chat().id() }
+      .changeBotState { update.chatId() }
   }
 
-  private fun createTelegramClient(message: Message): Mono<Unit> {
-    return Mono.just(message)
+  private fun createTelegramClient(update: Update): Mono<Unit> {
+    return Mono.just(update.text())
+      .flatMap { getByFullLanguage(it) }
+      .map { language ->
+        telegramClientCache.updateChatLanguage(update.chatId(), language.domain)
+        language
+      }
       .map {
         TelegramClientRequest(
-          chatId = it.chat().id().toString(),
-          chatLanguage = getDomainByFullLanguage(it.text()).domain,
-          username = it.chat().username(),
+          chatId = update.chatId().toString(),
+          chatLanguage = it.domain,
+          username = update.username(),
         )
       }
       .flatMap(telegramClientConnector::create)
-      .then(
-        telegramClientCache.getTelegramClient(message.chat().id())
-          .map {
-            telegramClientCache.populate(
-              message.chat().id(),
-              it.copy(chatLanguage = getDomainByFullLanguage(message.text()).domain)
-            )
-          }
-      )
-  }
-
-  private fun isMessageAppropriate(message: Message): Boolean {
-    return message.text() == "English" || message.text() == "Русский"
   }
 }
