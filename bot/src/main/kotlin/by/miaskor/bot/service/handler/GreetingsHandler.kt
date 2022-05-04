@@ -19,13 +19,13 @@ class GreetingsHandler(
   override val state: BotState = GREETINGS
 
   override fun handle(update: Update): Mono<Unit> {
-    return Mono.just(update.chatId())
+    return Mono.just(update.chatId)
       .flatMap(keyboardBuilder::build)
       .map { keyboard ->
         telegramBot.execute(
-          SendMessage(update.chatId(), stateSettings.greetingsMessage().trimIndent())
+          SendMessage(update.chatId, stateSettings.greetingsMessage().trimIndent())
             .replyMarkup(keyboard)
         )
-      }.changeBotState { update.chatId() }
+      }.changeBotState(update::chatId)
   }
 }

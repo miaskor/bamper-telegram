@@ -15,11 +15,11 @@ class MainMenuHandler(
   override val state: BotState = BotState.MAIN_MENU
 
   override fun handle(update: Update): Mono<Unit> {
-    return Mono.just(update.chatId())
+    return Mono.just(update.chatId)
       .flatMap(keyboardBuilder::build)
       .map {
         telegramBot.execute(
-          SendMessage(update.chatId(), "123")
+          SendMessage(update.chatId, "123")
             .replyMarkup(it)
         )
       }.then(Mono.empty())

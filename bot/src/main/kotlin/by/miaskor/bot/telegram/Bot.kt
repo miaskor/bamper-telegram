@@ -28,7 +28,7 @@ class Bot(
   }
 
   private fun processChatId(update: Update): Mono<Unit> {
-    return Mono.just(update.chatId())
+    return Mono.just(update.chatId)
       .flatMap(telegramClientCache::getTelegramClient)
       .map { it.botState }
       .flatMap(botStateHandlerRegistry::lookup)

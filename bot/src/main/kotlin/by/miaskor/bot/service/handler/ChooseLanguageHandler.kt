@@ -28,12 +28,12 @@ class ChooseLanguageHandler(
   override val state: BotState = CHOOSE_LANGUAGE
 
   override fun handle(update: Update): Mono<Unit> {
-    return Mono.just(update.text())
+    return Mono.just(update.text)
       .filter(::isLanguageExists)
       .switchIfEmpty(
         Mono.fromSupplier {
           telegramBot.execute(
-            SendMessage(update.chatId(), stateSettings.chooseLanguageFailMessage())
+            SendMessage(update.chatId, stateSettings.chooseLanguageFailMessage())
           )
         }.then(Mono.empty())
       )
@@ -47,29 +47,29 @@ class ChooseLanguageHandler(
   }
 
   private fun sendMessage(update: Update): Mono<Unit> {
-    return Mono.just(update.chatId())
+    return Mono.just(update.chatId)
       .flatMap(keyboardBuilder::build)
       .map {
         telegramBot.execute(
-          SendMessage(update.chatId(), stateSettings.mainMenuMessage())
+          SendMessage(update.chatId, stateSettings.mainMenuMessage())
             .replyMarkup(it)
         )
       }
-      .changeBotState { update.chatId() }
+      .changeBotState(update::chatId)
   }
 
   private fun createTelegramClient(update: Update): Mono<Unit> {
-    return Mono.just(update.text())
+    return Mono.just(update.text)
       .flatMap { getByFullLanguage(it) }
       .map { language ->
-        telegramClientCache.updateChatLanguage(update.chatId(), language.domain)
+        telegramClientCache.updateChatLanguage(update.chatId, language.domain)
         language
       }
       .map {
         TelegramClientRequest(
-          chatId = update.chatId().toString(),
+          chatId = update.chatId.toString(),
           chatLanguage = it.domain,
-          username = update.username(),
+          username = update.username,
         )
       }
       .flatMap(telegramClientConnector::create)
