@@ -1,6 +1,7 @@
 package by.miaskor.bot.service
 
-import by.miaskor.bot.domain.BotState
+import by.miaskor.bot.domain.BotState.CHOOSE_LANGUAGE
+import by.miaskor.bot.domain.BotState.MAIN_MENU
 import by.miaskor.bot.domain.Language
 import by.miaskor.bot.domain.TelegramClient
 import com.pengrad.telegrambot.model.request.Keyboard
@@ -19,20 +20,13 @@ class KeyboardBuilder(
   }
 
   private fun build(telegramClient: TelegramClient): Mono<Keyboard> {
-
     return Mono.just(telegramClient.chatLanguage)
       .flatMap { Language.getByDomain(it) }
       .map(keyboardSettingsRegistry::lookup)
       .map {
         when (telegramClient.botState.next()) {
-          BotState.CHOOSE_LANGUAGE -> buildKeyboard(arrayOf(it.chooseLanguageMenuFirstRow()))
-          BotState.MAIN_MENU -> buildKeyboard(
-            arrayOf(
-              it.mainMenuFirstRow(),
-              it.mainMenuSecondRow(),
-              it.mainMenuThirdRow()
-            )
-          )
+          CHOOSE_LANGUAGE -> buildKeyboard(it.chooseLanguageMenu())
+          MAIN_MENU -> buildKeyboard(it.mainMenu())
           else -> buildKeyboard(arrayOf(arrayOf("Something went wrong")))
         }
       }
