@@ -1,9 +1,12 @@
 package by.miaskor.bot.domain
 
-enum class BotState {
+import by.miaskor.bot.domain.Command.CHANGE_LANGUAGE
+import by.miaskor.bot.domain.Command.EMPLOYEES
+
+enum class BotState(vararg val commands: Command) {
   GREETINGS,
   CHOOSE_LANGUAGE,
-  MAIN_MENU,
+  MAIN_MENU(CHANGE_LANGUAGE, EMPLOYEES),
   EMPLOYEES_MENU,
   STORE_HOUSES_MENU,
   STORE_HOUSE_MENU,
@@ -12,6 +15,11 @@ enum class BotState {
 
   companion object {
     private val mapOrdinals = values().drop(2).associateBy { it.ordinal }
+  }
+
+  fun getCommand(command: String): Command {
+    return this.commands
+      .first { it.isCommand(command) }
   }
 
   fun previous(): BotState {

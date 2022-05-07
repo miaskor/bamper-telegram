@@ -1,12 +1,12 @@
 package by.miaskor.bot.configuration
 
 import by.miaskor.bot.service.CommandResolver
-import by.miaskor.bot.service.handler.BotStateHandlerRegistry
-import by.miaskor.bot.service.handler.ChangeLanguageCommandHandler
-import by.miaskor.bot.service.handler.ChooseLanguageHandler
-import by.miaskor.bot.service.handler.CommandHandlerRegistry
-import by.miaskor.bot.service.handler.GreetingsHandler
-import by.miaskor.bot.service.handler.MainMenuHandler
+import by.miaskor.bot.service.handler.command.ChangeLanguageCommandHandler
+import by.miaskor.bot.service.handler.command.CommandHandlerRegistry
+import by.miaskor.bot.service.handler.state.BotStateHandlerRegistry
+import by.miaskor.bot.service.handler.state.ChooseLanguageHandler
+import by.miaskor.bot.service.handler.state.GreetingsHandler
+import by.miaskor.bot.service.handler.state.MainMenuHandler
 import by.miaskor.bot.telegram.Bot
 import com.pengrad.telegrambot.TelegramBot
 import okhttp3.OkHttpClient
@@ -52,7 +52,7 @@ open class BotConfiguration(
       telegramBot(),
       connectorConfiguration.telegramClientConnector(),
       serviceConfiguration.telegramClientCache(),
-      settingsConfiguration.stateSettings(),
+      settingsConfiguration.stateSettingsEN(),
       serviceConfiguration.keyboardBuilder()
     )
   }
@@ -67,7 +67,7 @@ open class BotConfiguration(
     return GreetingsHandler(
       telegramBot(),
       serviceConfiguration.keyboardBuilder(),
-      settingsConfiguration.stateSettings()
+      settingsConfiguration.stateSettingsEN()
     )
   }
 
@@ -82,9 +82,7 @@ open class BotConfiguration(
   open fun changeLanguageCommandHandler(): ChangeLanguageCommandHandler {
     return ChangeLanguageCommandHandler(
       telegramBot(),
-      serviceConfiguration.keyboardBuilder(),
-      serviceConfiguration.commandSettingsRegistry(),
-      serviceConfiguration.telegramClientCache()
+      serviceConfiguration.keyboardBuilder()
     )
   }
 

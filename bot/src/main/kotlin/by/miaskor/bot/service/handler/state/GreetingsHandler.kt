@@ -1,4 +1,4 @@
-package by.miaskor.bot.service.handler
+package by.miaskor.bot.service.handler.state
 
 import by.miaskor.bot.configuration.settings.StateSettings
 import by.miaskor.bot.domain.BotState

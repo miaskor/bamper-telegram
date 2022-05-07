@@ -2,13 +2,11 @@ package by.miaskor.bot.configuration
 
 import by.miaskor.bot.domain.Language.ENGLISH
 import by.miaskor.bot.domain.Language.RUSSIAN
-import by.miaskor.bot.service.CommandResolver
 import by.miaskor.bot.service.CommandSettingsRegistry
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.KeyboardSettingsRegistry
+import by.miaskor.bot.service.StateSettingsRegistry
 import by.miaskor.bot.service.TelegramClientCache
-import by.miaskor.bot.service.handler.ChangeLanguageCommandHandler
-import by.miaskor.bot.service.handler.CommandHandlerRegistry
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
@@ -28,7 +26,7 @@ open class ServiceConfiguration(
 
   @Bean
   open fun keyboardBuilder(): KeyboardBuilder {
-    return KeyboardBuilder(keyboardSettingsRegistry(), telegramClientCache())
+    return KeyboardBuilder(telegramClientCache())
   }
 
   @Bean
@@ -47,6 +45,16 @@ open class ServiceConfiguration(
       mapOf(
         ENGLISH to settingsConfiguration.commandSettingsEN(),
         RUSSIAN to settingsConfiguration.commandSettingsRU()
+      )
+    )
+  }
+
+  @Bean
+  open fun stateSettingsRegistry(): StateSettingsRegistry {
+    return StateSettingsRegistry(
+      mapOf(
+        ENGLISH to settingsConfiguration.stateSettingsEN(),
+        RUSSIAN to settingsConfiguration.stateSettingsRU()
       )
     )
   }

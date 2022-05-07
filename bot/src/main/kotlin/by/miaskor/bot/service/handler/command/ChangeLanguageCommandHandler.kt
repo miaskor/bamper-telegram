@@ -1,12 +1,11 @@
-package by.miaskor.bot.service.handler
+package by.miaskor.bot.service.handler.command
 
+import by.miaskor.bot.configuration.settings.CommandSettings
 import by.miaskor.bot.domain.BotState.CHOOSE_LANGUAGE
 import by.miaskor.bot.domain.Command.CHANGE_LANGUAGE
-import by.miaskor.bot.domain.Language
 import by.miaskor.bot.service.BotStateChanger.changeBotState
-import by.miaskor.bot.service.CommandSettingsRegistry
 import by.miaskor.bot.service.KeyboardBuilder
-import by.miaskor.bot.service.TelegramClientCache
+import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.chatId
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
@@ -16,9 +15,7 @@ import reactor.core.publisher.Mono
 
 class ChangeLanguageCommandHandler(
   private val telegramBot: TelegramBot,
-  private val keyboardBuilder: KeyboardBuilder,
-  private val commandSettingsRegistry: CommandSettingsRegistry,
-  private val telegramClientCache: TelegramClientCache
+  private val keyboardBuilder: KeyboardBuilder
 ) : CommandHandler {
   override val command = CHANGE_LANGUAGE
 
@@ -31,10 +28,7 @@ class ChangeLanguageCommandHandler(
 
   private fun handle(keyboard: Keyboard, chatId: Long): Mono<Unit> {
     return Mono.just(chatId)
-      .flatMap(telegramClientCache::getTelegramClient)
-      .map { it.chatLanguage }
-      .flatMap { Language.getByDomain(it) }
-      .map { commandSettingsRegistry.lookup(it) }
+      .resolveLanguage(CommandSettings::class)
       .map {
         telegramBot.execute(
           SendMessage(chatId, it.changeLanguageMessage())

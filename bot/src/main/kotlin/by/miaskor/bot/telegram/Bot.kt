@@ -2,7 +2,7 @@ package by.miaskor.bot.telegram
 
 import by.miaskor.bot.service.TelegramClientCache
 import by.miaskor.bot.service.chatId
-import by.miaskor.bot.service.handler.BotStateHandlerRegistry
+import by.miaskor.bot.service.handler.state.BotStateHandlerRegistry
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.UpdatesListener.CONFIRMED_UPDATES_ALL
 import com.pengrad.telegrambot.model.Update

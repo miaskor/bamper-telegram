@@ -31,8 +31,14 @@ open class SettingsConfiguration(
   }
 
   @Bean
-  open fun stateSettings(): StateSettings {
-    return confProvider.bind("state", StateSettings::class.java)
+  open fun stateSettingsEN(): StateSettings {
+    return confProvider.bind("state.en", StateSettings::class.java)
+  }
+
+
+  @Bean
+  open fun stateSettingsRU(): StateSettings {
+    return confProvider.bind("state.ru", StateSettings::class.java)
   }
 
   @Bean

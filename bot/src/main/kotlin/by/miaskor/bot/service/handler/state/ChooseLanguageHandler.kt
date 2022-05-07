@@ -1,4 +1,4 @@
-package by.miaskor.bot.service.handler
+package by.miaskor.bot.service.handler.state
 
 import by.miaskor.bot.configuration.settings.StateSettings
 import by.miaskor.bot.domain.BotState
@@ -8,6 +8,7 @@ import by.miaskor.bot.domain.Language.Companion.getByFullLanguage
 import by.miaskor.bot.domain.Language.Companion.isLanguageExists
 import by.miaskor.bot.service.BotStateChanger.changeBotState
 import by.miaskor.bot.service.KeyboardBuilder
+import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.TelegramClientCache
 import by.miaskor.bot.service.chatId
 import by.miaskor.bot.service.text
@@ -16,6 +17,7 @@ import by.miaskor.domain.api.connector.TelegramClientConnector
 import by.miaskor.domain.api.domain.TelegramClientRequest
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
+import com.pengrad.telegrambot.model.request.Keyboard
 import com.pengrad.telegrambot.request.SendMessage
 import reactor.core.publisher.Mono
 
@@ -51,10 +53,16 @@ class ChooseLanguageHandler(
     return Mono.just(update.chatId)
       .changeBotState(update::chatId, MAIN_MENU)
       .flatMap(keyboardBuilder::build)
+      .flatMap { sendMessage(it, update.chatId) }
+  }
+
+  private fun sendMessage(keyboard: Keyboard, chatId: Long): Mono<Unit> {
+    return Mono.just(chatId)
+      .resolveLanguage(StateSettings::class)
       .map {
         telegramBot.execute(
-          SendMessage(update.chatId, stateSettings.mainMenuMessage())
-            .replyMarkup(it)
+          SendMessage(chatId, it.mainMenuMessage())
+            .replyMarkup(keyboard)
         )
       }
   }
