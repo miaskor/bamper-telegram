@@ -21,7 +21,7 @@ object BotStateChanger {
         .doOnNext {
           telegramClientCache.populate(
             it.t2,
-            it.t1.copy(botState = botState)
+            it.t1.copy(currentBotState = botState, previousBotState = it.t1.currentBotState)
           )
         }.then(Mono.just(t))
     }

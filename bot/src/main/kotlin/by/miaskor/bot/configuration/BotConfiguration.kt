@@ -1,10 +1,14 @@
 package by.miaskor.bot.configuration
 
 import by.miaskor.bot.service.CommandResolver
+import by.miaskor.bot.service.handler.command.BackCommandHandler
 import by.miaskor.bot.service.handler.command.ChangeLanguageCommandHandler
 import by.miaskor.bot.service.handler.command.CommandHandlerRegistry
+import by.miaskor.bot.service.handler.command.EmployeesCommandHandler
+import by.miaskor.bot.service.handler.command.UndefinedCommandHandler
 import by.miaskor.bot.service.handler.state.BotStateHandlerRegistry
 import by.miaskor.bot.service.handler.state.ChooseLanguageHandler
+import by.miaskor.bot.service.handler.state.EmployeesMenuHandler
 import by.miaskor.bot.service.handler.state.GreetingsHandler
 import by.miaskor.bot.service.handler.state.MainMenuHandler
 import by.miaskor.bot.telegram.Bot
@@ -42,7 +46,8 @@ open class BotConfiguration(
     return BotStateHandlerRegistry(
       chooseLanguageHandler(),
       mainMenuHandler(),
-      greetingsHandler()
+      greetingsHandler(),
+      employeesMenuHandler()
     )
   }
 
@@ -63,6 +68,13 @@ open class BotConfiguration(
   }
 
   @Bean
+  open fun employeesMenuHandler(): EmployeesMenuHandler {
+    return EmployeesMenuHandler(
+      commandResolver()
+    )
+  }
+
+  @Bean
   open fun greetingsHandler(): GreetingsHandler {
     return GreetingsHandler(
       telegramBot(),
@@ -74,13 +86,41 @@ open class BotConfiguration(
   @Bean
   open fun commandHandlerRegistry(): CommandHandlerRegistry {
     return CommandHandlerRegistry(
-      changeLanguageCommandHandler()
+      changeLanguageCommandHandler(),
+      employeesCommandHandler(),
+      backCommandHandler(),
+      undefinedCommandHandler()
     )
   }
 
   @Bean
   open fun changeLanguageCommandHandler(): ChangeLanguageCommandHandler {
     return ChangeLanguageCommandHandler(
+      telegramBot(),
+      serviceConfiguration.keyboardBuilder()
+    )
+  }
+
+  @Bean
+  open fun undefinedCommandHandler(): UndefinedCommandHandler {
+    return UndefinedCommandHandler(
+      telegramBot(),
+      serviceConfiguration.keyboardBuilder()
+    )
+  }
+
+  @Bean
+  open fun employeesCommandHandler(): EmployeesCommandHandler {
+    return EmployeesCommandHandler(
+      telegramBot(),
+      serviceConfiguration.keyboardBuilder()
+    )
+  }
+
+  @Bean
+  open fun backCommandHandler(): BackCommandHandler {
+    return BackCommandHandler(
+      serviceConfiguration.telegramClientCache(),
       telegramBot(),
       serviceConfiguration.keyboardBuilder()
     )

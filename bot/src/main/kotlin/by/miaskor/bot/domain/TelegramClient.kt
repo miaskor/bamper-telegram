@@ -4,5 +4,6 @@ data class TelegramClient(
   val chatId: Long,
   val chatLanguage: String = "",
   val bamperClientId: Long? = null,
-  val botState: BotState
+  val currentBotState: BotState,
+  val previousBotState: BotState = currentBotState
 )

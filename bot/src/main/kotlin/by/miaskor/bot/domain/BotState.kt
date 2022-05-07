@@ -1,13 +1,15 @@
 package by.miaskor.bot.domain
 
+import by.miaskor.bot.domain.Command.BACK
 import by.miaskor.bot.domain.Command.CHANGE_LANGUAGE
 import by.miaskor.bot.domain.Command.EMPLOYEES
+import reactor.core.publisher.Mono
 
-enum class BotState(vararg val commands: Command) {
+enum class BotState(private vararg val commands: Command) {
   GREETINGS,
   CHOOSE_LANGUAGE,
   MAIN_MENU(CHANGE_LANGUAGE, EMPLOYEES),
-  EMPLOYEES_MENU,
+  EMPLOYEES_MENU(BACK),
   STORE_HOUSES_MENU,
   STORE_HOUSE_MENU,
   FINDING_PARTS_MENU,
@@ -17,9 +19,11 @@ enum class BotState(vararg val commands: Command) {
     private val mapOrdinals = values().drop(2).associateBy { it.ordinal }
   }
 
-  fun getCommand(command: String): Command {
-    return this.commands
-      .first { it.isCommand(command) }
+  fun getCommand(command: String): Mono<Command> {
+    return Mono.fromSupplier {
+      this.commands
+        .firstOrNull { it.isCommand(command) }
+    }
   }
 
   fun previous(): BotState {

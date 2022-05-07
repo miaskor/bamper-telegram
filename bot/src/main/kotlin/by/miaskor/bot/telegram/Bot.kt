@@ -30,7 +30,7 @@ class Bot(
   private fun processChatId(update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
       .flatMap(telegramClientCache::getTelegramClient)
-      .map { it.botState }
+      .map { it.currentBotState }
       .flatMap(botStateHandlerRegistry::lookup)
       .flatMap { it.handle(update) }
   }
