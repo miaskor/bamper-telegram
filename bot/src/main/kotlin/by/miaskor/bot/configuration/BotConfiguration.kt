@@ -1,7 +1,10 @@
 package by.miaskor.bot.configuration
 
+import by.miaskor.bot.service.CommandResolver
 import by.miaskor.bot.service.handler.BotStateHandlerRegistry
+import by.miaskor.bot.service.handler.ChangeLanguageCommandHandler
 import by.miaskor.bot.service.handler.ChooseLanguageHandler
+import by.miaskor.bot.service.handler.CommandHandlerRegistry
 import by.miaskor.bot.service.handler.GreetingsHandler
 import by.miaskor.bot.service.handler.MainMenuHandler
 import by.miaskor.bot.telegram.Bot
@@ -56,10 +59,7 @@ open class BotConfiguration(
 
   @Bean
   open fun mainMenuHandler(): MainMenuHandler {
-    return MainMenuHandler(
-      telegramBot(),
-      serviceConfiguration.keyboardBuilder()
-    )
+    return MainMenuHandler(commandResolver())
   }
 
   @Bean
@@ -69,5 +69,27 @@ open class BotConfiguration(
       serviceConfiguration.keyboardBuilder(),
       settingsConfiguration.stateSettings()
     )
+  }
+
+  @Bean
+  open fun commandHandlerRegistry(): CommandHandlerRegistry {
+    return CommandHandlerRegistry(
+      changeLanguageCommandHandler()
+    )
+  }
+
+  @Bean
+  open fun changeLanguageCommandHandler(): ChangeLanguageCommandHandler {
+    return ChangeLanguageCommandHandler(
+      telegramBot(),
+      serviceConfiguration.keyboardBuilder(),
+      serviceConfiguration.commandSettingsRegistry(),
+      serviceConfiguration.telegramClientCache()
+    )
+  }
+
+  @Bean
+  open fun commandResolver(): CommandResolver {
+    return CommandResolver(commandHandlerRegistry())
   }
 }

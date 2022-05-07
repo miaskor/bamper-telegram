@@ -43,7 +43,7 @@ class ChooseLanguageHandler(
 
   private fun processMessage(update: Update): Mono<Unit> {
     return Mono.just(update)
-      .flatMap(::createTelegramClient)
+      .flatMap(::upsertTelegramClient)
       .then(Mono.defer { sendMessage(update) })
   }
 
@@ -59,7 +59,7 @@ class ChooseLanguageHandler(
       }
   }
 
-  private fun createTelegramClient(update: Update): Mono<Unit> {
+  private fun upsertTelegramClient(update: Update): Mono<Unit> {
     return Mono.just(update.text)
       .flatMap { getByFullLanguage(it) }
       .map { language ->
@@ -73,6 +73,6 @@ class ChooseLanguageHandler(
           username = update.username,
         )
       }
-      .flatMap(telegramClientConnector::create)
+      .flatMap(telegramClientConnector::upsert)
   }
 }

@@ -2,6 +2,7 @@ package by.miaskor.bot.configuration
 
 import by.miaskor.bot.configuration.settings.BotSettings
 import by.miaskor.bot.configuration.settings.CacheSettings
+import by.miaskor.bot.configuration.settings.CommandSettings
 import by.miaskor.bot.configuration.settings.ConnectorSettings
 import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.configuration.settings.StateSettings
@@ -42,5 +43,15 @@ open class SettingsConfiguration(
   @Bean
   open fun keyboardSettingsEN(): KeyboardSettings {
     return confProvider.bind("keyboard.en", KeyboardSettings::class.java)
+  }
+
+  @Bean
+  open fun commandSettingsRU(): CommandSettings {
+    return confProvider.bind("command.ru", CommandSettings::class.java)
+  }
+
+  @Bean
+  open fun commandSettingsEN(): CommandSettings {
+    return confProvider.bind("command.en", CommandSettings::class.java)
   }
 }

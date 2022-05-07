@@ -3,6 +3,7 @@ package by.miaskor.domain.configuration
 import by.miaskor.domain.configuration.settings.DataSourceSettings
 import com.zaxxer.hikari.HikariDataSource
 import org.jooq.DSLContext
+import org.jooq.SQLDialect
 import org.jooq.conf.RenderQuotedNames
 import org.jooq.conf.Settings
 import org.jooq.impl.DataSourceConnectionProvider
@@ -46,6 +47,7 @@ open class DatabaseConfiguration(
     return DefaultConfiguration().apply {
       set(connectionProvider())
       set(DefaultExecuteListenerProvider(DefaultExecuteListener()))
+      set(SQLDialect.MYSQL)
       setDataSource(dataSource())
       setSettings(settings)
     }

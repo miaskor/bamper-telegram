@@ -18,6 +18,8 @@ class JooqTelegramClientRepository(
       .map { telegramClientRecord ->
         dslContext.insertInto(TELEGRAM_CLIENT)
           .set(telegramClientRecord)
+          .onDuplicateKeyUpdate()
+          .set(TELEGRAM_CLIENT.CHAT_LANGUAGE, telegramClientRecord.chatLanguage)
           .execute()
       }
   }

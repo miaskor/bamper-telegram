@@ -10,7 +10,7 @@ class TelegramClientService(
   private val telegramClientRepository: TelegramClientRepository
 ) {
 
-  fun create(telegramClientRequest: TelegramClientRequest): Mono<Unit> {
+  fun upsert(telegramClientRequest: TelegramClientRequest): Mono<Unit> {
     return telegramClientRepository.save(
       TelegramClient(
         chatId = telegramClientRequest.chatId,

@@ -18,6 +18,7 @@ open class Cf4jConfiguration {
         Path(PROPERTY_BOT_PATH),
         Path(PROPERTY_KEYBOARD_PATH),
         Path(PROPERTY_CACHE_PATH),
+        Path(PROPERTY_COMMAND_PATH),
         Path(PROPERTY_STATE_PATH)
       )
     }
@@ -37,5 +38,6 @@ open class Cf4jConfiguration {
     private const val PROPERTY_CONNECTOR_PATH = "$COMMON_PATH/connector.properties"
     private const val PROPERTY_CACHE_PATH = "$COMMON_PATH/cache.yaml"
     private const val PROPERTY_STATE_PATH = "$COMMON_PATH/state.yaml"
+    private const val PROPERTY_COMMAND_PATH = "$COMMON_PATH/command.yaml"
   }
 }

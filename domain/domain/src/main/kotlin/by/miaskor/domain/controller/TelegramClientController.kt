@@ -19,8 +19,8 @@ class TelegramClientController(
 ) {
 
   @PostMapping
-  fun create(@RequestBody telegramClientRequest: TelegramClientRequest): Mono<ResponseEntity<Unit>> {
-    return telegramClientService.create(telegramClientRequest)
+  fun upsert(@RequestBody telegramClientRequest: TelegramClientRequest): Mono<ResponseEntity<Unit>> {
+    return telegramClientService.upsert(telegramClientRequest)
       .map { ResponseEntity.ok().build() }
   }
 
