@@ -2,6 +2,7 @@ package by.miaskor.bot.service.handler
 
 import by.miaskor.bot.configuration.settings.StateSettings
 import by.miaskor.bot.domain.BotState
+import by.miaskor.bot.domain.BotState.CHOOSE_LANGUAGE
 import by.miaskor.bot.domain.BotState.GREETINGS
 import by.miaskor.bot.service.BotStateChanger.changeBotState
 import by.miaskor.bot.service.KeyboardBuilder
@@ -20,12 +21,13 @@ class GreetingsHandler(
 
   override fun handle(update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
+      .changeBotState(update::chatId, CHOOSE_LANGUAGE)
       .flatMap(keyboardBuilder::build)
       .map { keyboard ->
         telegramBot.execute(
           SendMessage(update.chatId, stateSettings.greetingsMessage().trimIndent())
             .replyMarkup(keyboard)
         )
-      }.changeBotState(update::chatId)
+      }
   }
 }

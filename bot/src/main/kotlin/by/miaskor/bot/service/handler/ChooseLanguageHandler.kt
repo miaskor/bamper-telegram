@@ -3,6 +3,7 @@ package by.miaskor.bot.service.handler
 import by.miaskor.bot.configuration.settings.StateSettings
 import by.miaskor.bot.domain.BotState
 import by.miaskor.bot.domain.BotState.CHOOSE_LANGUAGE
+import by.miaskor.bot.domain.BotState.MAIN_MENU
 import by.miaskor.bot.domain.Language.Companion.getByFullLanguage
 import by.miaskor.bot.domain.Language.Companion.isLanguageExists
 import by.miaskor.bot.service.BotStateChanger.changeBotState
@@ -48,6 +49,7 @@ class ChooseLanguageHandler(
 
   private fun sendMessage(update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
+      .changeBotState(update::chatId, MAIN_MENU)
       .flatMap(keyboardBuilder::build)
       .map {
         telegramBot.execute(
@@ -55,7 +57,6 @@ class ChooseLanguageHandler(
             .replyMarkup(it)
         )
       }
-      .changeBotState(update::chatId)
   }
 
   private fun createTelegramClient(update: Update): Mono<Unit> {

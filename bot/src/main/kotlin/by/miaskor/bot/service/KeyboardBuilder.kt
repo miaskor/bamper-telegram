@@ -24,7 +24,7 @@ class KeyboardBuilder(
       .flatMap { Language.getByDomain(it) }
       .map(keyboardSettingsRegistry::lookup)
       .map {
-        when (telegramClient.botState.next()) {
+        when (telegramClient.botState) {
           CHOOSE_LANGUAGE -> buildKeyboard(it.chooseLanguageMenu())
           MAIN_MENU -> buildKeyboard(it.mainMenu())
           else -> buildKeyboard(arrayOf(arrayOf("Something went wrong")))

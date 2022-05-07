@@ -1,5 +1,6 @@
 package by.miaskor.bot.service
 
+import by.miaskor.bot.domain.BotState
 import org.apache.logging.log4j.LogManager
 import reactor.core.publisher.Mono
 
@@ -8,8 +9,8 @@ object BotStateChanger {
   lateinit var telegramClientCache: TelegramClientCache
   private val log = LogManager.getLogger()
 
-  fun <T> Mono<T>.changeBotState(chatId: () -> Long): Mono<Unit> {
-    return this.flatMap {
+  fun <T : Any> Mono<T>.changeBotState(chatId: () -> Long, botState: BotState): Mono<T> {
+    return this.flatMap { t ->
       Mono.fromSupplier(chatId)
         .map { chatId.invoke() }
         .flatMap {
@@ -20,9 +21,9 @@ object BotStateChanger {
         .doOnNext {
           telegramClientCache.populate(
             it.t2,
-            it.t1.copy(botState = it.t1.botState.next())
+            it.t1.copy(botState = botState)
           )
-        }.then(Mono.empty())
+        }.then(Mono.just(t))
     }
   }
 }
