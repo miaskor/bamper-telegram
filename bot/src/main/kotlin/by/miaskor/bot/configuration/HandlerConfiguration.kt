@@ -1,10 +1,6 @@
 package by.miaskor.bot.configuration
 
-import by.miaskor.bot.service.handler.ChooseLanguageHandler
-import by.miaskor.bot.service.handler.MainMenuHandler
-import by.miaskor.bot.service.handler.StateHandlerRegistry
 import com.pengrad.telegrambot.TelegramBot
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration

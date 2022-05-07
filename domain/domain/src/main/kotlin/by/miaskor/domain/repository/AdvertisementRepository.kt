@@ -1,6 +1,5 @@
 package by.miaskor.domain.repository
 
-import by.miaskor.domain.mapper.AdvertisementMapper
 import by.miaskor.domain.tables.pojos.Advertisement
 import by.miaskor.domain.tables.references.ADVERTISEMENT
 import org.jooq.DSLContext
@@ -13,7 +12,7 @@ class JooqAdvertisementRepository(
 ) : AdvertisementRepository {
   override fun save(entity: Advertisement): Mono<Unit> {
     return Mono.just(entity)
-      .flatMap(AdvertisementMapper::map)
+      .map { dslContext.newRecord(ADVERTISEMENT, it) }
       .map { advertisementRecord ->
         dslContext.insertInto(ADVERTISEMENT)
           .set(advertisementRecord)
@@ -25,7 +24,7 @@ class JooqAdvertisementRepository(
     return Mono.fromSupplier {
       dslContext.selectFrom(ADVERTISEMENT)
         .where(ADVERTISEMENT.ID.eq(id))
-        .fetchOneInto(Advertisement::class.java) ?: Advertisement()
+        .fetchOneInto(Advertisement::class.java)
     }
   }
 
@@ -40,7 +39,7 @@ class JooqAdvertisementRepository(
   override fun update(entity: Advertisement): Mono<Unit> {
     return Mono.just(entity)
       .filter { it.id != null }
-      .flatMap(AdvertisementMapper::map)
+      .map { dslContext.newRecord(ADVERTISEMENT, it) }
       .map { advertisementRecord ->
         dslContext.update(ADVERTISEMENT)
           .set(advertisementRecord)

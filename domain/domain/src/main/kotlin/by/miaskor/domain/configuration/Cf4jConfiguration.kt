@@ -24,6 +24,6 @@ open class Cf4jConfiguration {
 
   private companion object {
     private const val PROPERTY_PATH =
-      "/home/mikhailskorohododv/Documents/bamper-telegram-properties/domain.properties"
+      "/home/mikhailskorohododv/Documents/pet-projects/bamper-telegram-properties/domain.properties"
   }
 }

@@ -1,34 +1,27 @@
 package by.miaskor.bot.service.handler
 
-import by.miaskor.bot.domain.StateBot
+import by.miaskor.bot.domain.BotState
+import by.miaskor.bot.service.KeyboardBuilder
+import by.miaskor.bot.service.chatId
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
-import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup
 import com.pengrad.telegrambot.request.SendMessage
 import reactor.core.publisher.Mono
 
 class MainMenuHandler(
-  private val telegramBot: TelegramBot
-) : StateHandler {
-  override val state: StateBot = StateBot.MAIN_MENU
+  private val telegramBot: TelegramBot,
+  private val keyboardBuilder: KeyboardBuilder
+) : BotStateHandler {
+  override val state: BotState = BotState.MAIN_MENU
 
   override fun handle(update: Update): Mono<Unit> {
-    return Mono.fromSupplier { update }
+    return Mono.just(update.chatId)
+      .flatMap(keyboardBuilder::build)
       .map {
-        val replyKeyboardMarkup = ReplyKeyboardMarkup(
-          arrayOf("Работники", "Создать склад"),
-          arrayOf("Работники", "Создать склад"),
-          arrayOf("Работники", "Создать склад")
-        )
-          .oneTimeKeyboard(true)
-          .resizeKeyboard(true)
-          .selective(true)
-        val chatId = it.message().chat().id()
         telegramBot.execute(
-          SendMessage(chatId, "")
-            .replyMarkup(replyKeyboardMarkup)
+          SendMessage(update.chatId, "123")
+            .replyMarkup(it)
         )
-
       }.then(Mono.empty())
   }
 }

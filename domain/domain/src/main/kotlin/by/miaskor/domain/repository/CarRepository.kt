@@ -1,6 +1,5 @@
 package by.miaskor.domain.repository
 
-import by.miaskor.domain.mapper.CarMapper
 import by.miaskor.domain.tables.pojos.Car
 import by.miaskor.domain.tables.references.CAR
 import org.jooq.DSLContext
@@ -13,7 +12,7 @@ class JooqCarRepository(
 ) : CarRepository {
   override fun save(entity: Car): Mono<Unit> {
     return Mono.just(entity)
-      .flatMap(CarMapper::map)
+      .map { dslContext.newRecord(CAR, it) }
       .map { carRecord ->
         dslContext.insertInto(CAR)
           .set(carRecord)
@@ -25,7 +24,7 @@ class JooqCarRepository(
     return Mono.fromSupplier {
       dslContext.selectFrom(CAR)
         .where(CAR.ID.eq(id))
-        .fetchOneInto(Car::class.java) ?: Car()
+        .fetchOneInto(Car::class.java)
     }
   }
 
@@ -39,7 +38,7 @@ class JooqCarRepository(
 
   override fun update(entity: Car): Mono<Unit> {
     return Mono.just(entity)
-      .flatMap(CarMapper::map)
+      .map { dslContext.newRecord(CAR, it) }
       .map { carRecord ->
         dslContext.update(CAR)
           .set(carRecord)

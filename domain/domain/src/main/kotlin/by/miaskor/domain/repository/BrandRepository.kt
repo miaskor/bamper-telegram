@@ -1,6 +1,5 @@
 package by.miaskor.domain.repository
 
-import by.miaskor.domain.mapper.BrandMapper
 import by.miaskor.domain.tables.pojos.Brand
 import by.miaskor.domain.tables.references.BRAND
 import org.jooq.DSLContext
@@ -13,7 +12,7 @@ class JooqBrandRepository(
 ) : BrandRepository {
   override fun save(entity: Brand): Mono<Unit> {
     return Mono.just(entity)
-      .flatMap(BrandMapper::map)
+      .map { dslContext.newRecord(BRAND, it) }
       .map { brandRecord ->
         dslContext.insertInto(BRAND)
           .set(brandRecord)
@@ -25,7 +24,7 @@ class JooqBrandRepository(
     return Mono.fromSupplier {
       dslContext.selectFrom(BRAND)
         .where(BRAND.ID.eq(id))
-        .fetchOneInto(Brand::class.java) ?: Brand()
+        .fetchOneInto(Brand::class.java)
     }
   }
 
@@ -40,7 +39,7 @@ class JooqBrandRepository(
   override fun update(entity: Brand): Mono<Unit> {
     return Mono.just(entity)
       .filter { it.id != null }
-      .flatMap(BrandMapper::map)
+      .map { dslContext.newRecord(BRAND, it) }
       .map { brandRecord ->
         dslContext.update(BRAND)
           .set(brandRecord)
