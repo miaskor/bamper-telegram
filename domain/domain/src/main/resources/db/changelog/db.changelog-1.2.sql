@@ -26,4 +26,8 @@ alter table worker_telegram
 alter table telegram_client
     rename column nick_name to user_name, lock = shared;
 
+-- changeset miaskor:118
+create unique index employee_chat_id_employer_chat_id
+    on worker_telegram( worker_telegram_chat_id, employer_telegram_chat_id);
+
 

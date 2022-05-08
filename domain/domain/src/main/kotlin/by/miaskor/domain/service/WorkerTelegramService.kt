@@ -13,6 +13,10 @@ class WorkerTelegramService(
     return workerTelegramRepository.findByWorkerChatIdAndEmployerChatId(workerChatId, employerChatId)
   }
 
+  fun getAllWorkerChatIdByEmployerChatId(employerChatId: Long): Mono<List<Long>> {
+    return workerTelegramRepository.findAllWorkerChatIdByEmployerChatId(employerChatId)
+  }
+
   fun save(workerTelegramRequest: WorkerTelegramRequest): Mono<Unit> {
     return Mono.just(workerTelegramRequest)
       .map {

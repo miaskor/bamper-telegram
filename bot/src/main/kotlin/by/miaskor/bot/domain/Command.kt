@@ -5,7 +5,7 @@ enum class Command(private vararg val commands: String) {
   BACK("Назад", "Back"),
   EMPLOYEES("Работники", "Employees"),
   ADD_EMPLOYEE("Добавить работника", "Add employee"),
-  LIST_EMPLOYEE("Список работников", "List of employee"),
+  LIST_EMPLOYEE("Список работников", "List of employees"),
   UNDEFINED;
 
   fun isCommand(command: String): Boolean {

@@ -1,6 +1,7 @@
 package by.miaskor.bot.service
 
 import by.miaskor.bot.domain.BotState
+import by.miaskor.bot.domain.BotState.Companion.isNotFinalState
 import org.apache.logging.log4j.LogManager
 import reactor.core.publisher.Mono
 
@@ -18,7 +19,7 @@ object BotStateChanger {
           telegramClientCache.populate(
             it.chatId,
             it.copy(currentBotState = botState).apply {
-              if (!isBackCommand) {
+              if (isNotFinalState(it.currentBotState) && !isBackCommand) {
                 this.previousBotStates.add(it.currentBotState)
               }
             }

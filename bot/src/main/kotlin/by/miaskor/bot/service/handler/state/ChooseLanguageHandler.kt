@@ -30,6 +30,7 @@ class ChooseLanguageHandler(
 ) : BotStateHandler {
   override val state: BotState = CHOOSE_LANGUAGE
 
+  //TODO(maybe in CommandResolver create method that will be executed when handler couldn't manage message
   override fun handle(update: Update): Mono<Unit> {
     return Mono.just(update.text)
       .filter(::isLanguageExists)

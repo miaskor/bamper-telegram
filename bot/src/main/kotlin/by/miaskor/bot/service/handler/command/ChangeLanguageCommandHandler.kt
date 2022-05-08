@@ -20,9 +20,9 @@ class ChangeLanguageCommandHandler(
   override val command = CHANGE_LANGUAGE
 
   override fun handle(update: Update): Mono<Unit> {
-    return Mono.just(update)
+    return Mono.just(update.chatId)
       .changeBotState(update::chatId, CHOOSE_LANGUAGE)
-      .flatMap { keyboardBuilder.build(it.chatId) }
+      .flatMap (keyboardBuilder::build)
       .flatMap { handle(it, update.chatId) }
   }
 

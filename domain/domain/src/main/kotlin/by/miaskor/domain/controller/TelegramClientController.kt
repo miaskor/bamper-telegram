@@ -43,4 +43,10 @@ class TelegramClientController(
     return telegramClientService.isTelegramClientWorker(employeeExistsRequest)
       .map { ResponseEntity.ok(it) }
   }
+
+  @GetMapping("/employees/{employerChatId}")
+  fun getAllEmployees(@PathVariable employerChatId: Long): Mono<ResponseEntity<List<TelegramClientResponse>>> {
+    return telegramClientService.getAllEmployees(employerChatId)
+      .map { ResponseEntity.ok(it) }
+  }
 }

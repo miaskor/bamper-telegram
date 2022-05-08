@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono
 
 enum class BotState(private vararg val commands: Command) {
   GREETINGS,
-  CHOOSE_LANGUAGE,
+  CHOOSE_LANGUAGE(BACK),
   ADDING_EMPLOYEE(BACK),
   MAIN_MENU(CHANGE_LANGUAGE, EMPLOYEES),
   EMPLOYEES_MENU(LIST_EMPLOYEE, ADD_EMPLOYEE, BACK),
@@ -19,7 +19,7 @@ enum class BotState(private vararg val commands: Command) {
   BAMPER_MENU;
 
   companion object {
-    private val finalStates = listOf(ADDING_EMPLOYEE, MAIN_MENU)
+    private val finalStates = listOf(ADDING_EMPLOYEE, MAIN_MENU, CHOOSE_LANGUAGE)
 
     fun isNotFinalState(botState: BotState): Boolean {
       return !finalStates.contains(botState)

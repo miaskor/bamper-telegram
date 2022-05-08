@@ -8,4 +8,5 @@ interface StateSettings {
   fun addingEmployeeMessage(): String
   fun addingEmployeeFailMessage(): String
   fun addingEmployeeSuccessMessage(): String
+  fun undefinedCommandMessage(): String
 }

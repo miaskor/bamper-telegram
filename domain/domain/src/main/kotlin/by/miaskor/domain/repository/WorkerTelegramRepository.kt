@@ -7,6 +7,7 @@ import reactor.core.publisher.Mono
 
 interface WorkerTelegramRepository : CrudRepository<WorkerTelegram> {
   fun findByWorkerChatIdAndEmployerChatId(workerChatId: Long, employerChatId: Long): Mono<WorkerTelegram>
+  fun findAllWorkerChatIdByEmployerChatId(employerChatId: Long): Mono<List<Long>>
 }
 
 class JooqWorkerTelegramRepository(
@@ -21,12 +22,21 @@ class JooqWorkerTelegramRepository(
     }
   }
 
+  override fun findAllWorkerChatIdByEmployerChatId(employerChatId: Long): Mono<List<Long>> {
+    return Mono.fromSupplier {
+      dslContext.selectFrom(WORKER_TELEGRAM)
+        .where(WORKER_TELEGRAM.EMPLOYER_TELEGRAM_CHAT_ID.eq(employerChatId))
+        .fetch { it.workerTelegramChatId }
+    }
+  }
+
   override fun save(entity: WorkerTelegram): Mono<Unit> {
     return Mono.just(entity)
       .map { dslContext.newRecord(WORKER_TELEGRAM, it) }
       .map { workerTelegramRecord ->
         dslContext.insertInto(WORKER_TELEGRAM)
           .set(workerTelegramRecord)
+          .onDuplicateKeyIgnore()
           .execute()
       }
   }

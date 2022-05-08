@@ -26,6 +26,13 @@ class TelegramClientConnector(
       .bodyToMono()
   }
 
+  fun getAllEmployeesByEmployerChatId(employerChatId: Long): Mono<List<TelegramClientResponse>> {
+    return webClient.get()
+      .uri("/telegram-client/employees/$employerChatId")
+      .retrieve()
+      .bodyToMono()
+  }
+
   fun getByUsername(username: String): Mono<TelegramClientResponse> {
     return webClient.get()
       .uri("/telegram-client/username/$username")

@@ -7,6 +7,7 @@ import reactor.core.publisher.Mono
 
 interface TelegramClientRepository : CrudRepository<TelegramClient> {
   fun findByChatId(chatId: Long): Mono<TelegramClient>
+  fun findByChatIds(chatIds: List<Long>): Mono<List<TelegramClient>>
   fun findByUsername(username: String): Mono<TelegramClient>
 }
 
@@ -31,6 +32,16 @@ class JooqTelegramClientRepository(
         .where(TELEGRAM_CLIENT.CHAT_ID.eq(chatId))
         .fetchOneInto(TelegramClient::class.java)
     }
+  }
+
+  override fun findByChatIds(chatIds: List<Long>): Mono<List<TelegramClient>> {
+    return Mono.just(chatIds)
+      .map {
+        dslContext.selectFrom(TELEGRAM_CLIENT)
+          .where(TELEGRAM_CLIENT.CHAT_ID.`in`(it))
+          .fetch()
+          .into((TelegramClient::class.java))
+      }
   }
 
   override fun findByUsername(username: String): Mono<TelegramClient> {

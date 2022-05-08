@@ -1,5 +1,6 @@
 package by.miaskor.bot.telegram
 
+import by.miaskor.bot.service.CommandResolver.processCommand
 import by.miaskor.bot.service.TelegramClientCache
 import by.miaskor.bot.service.chatId
 import by.miaskor.bot.service.handler.state.BotStateHandlerRegistry
@@ -31,8 +32,7 @@ class Bot(
     return Mono.just(update.chatId)
       .flatMap(telegramClientCache::getTelegramClient)
       .map { it.currentBotState }
-      .flatMap(botStateHandlerRegistry::lookup)
-      .flatMap { it.handle(update) }
+      .processCommand(update)
   }
 
   companion object {

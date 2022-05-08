@@ -22,13 +22,27 @@ class TelegramClientService(
     )
   }
 
+  fun getAllEmployees(employerChatId: Long): Mono<List<TelegramClientResponse>> {
+    return workerTelegramService.getAllWorkerChatIdByEmployerChatId(employerChatId)
+      .flatMap(telegramClientRepository::findByChatIds)
+      .flatMapIterable { it }
+      .map {
+        TelegramClientResponse(
+          chatId = it.chatId ?: -1,
+          chatLanguage = it.chatLanguage ?: "",
+          username = it.userName ?: "",
+          bamperClientId = it.bamperClientId
+        )
+      }.collectList()
+  }
+
   fun getByChatId(chatId: Long): Mono<TelegramClientResponse> {
     return telegramClientRepository.findByChatId(chatId)
       .map {
         TelegramClientResponse(
-          it.chatId ?: -1,
-          it.chatLanguage ?: "",
-          it.bamperClientId
+          chatId = it.chatId ?: -1,
+          chatLanguage = it.chatLanguage ?: "",
+          bamperClientId = it.bamperClientId
         )
       }
   }
@@ -37,9 +51,9 @@ class TelegramClientService(
     return telegramClientRepository.findByUsername(username)
       .map {
         TelegramClientResponse(
-          it.chatId ?: -1,
-          it.chatLanguage ?: "",
-          it.bamperClientId
+          chatId = it.chatId ?: -1,
+          chatLanguage = it.chatLanguage ?: "",
+          bamperClientId = it.bamperClientId
         )
       }
   }
