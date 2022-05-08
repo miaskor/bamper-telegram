@@ -3,14 +3,17 @@ package by.miaskor.bot.domain
 import by.miaskor.bot.domain.Command.ADD_EMPLOYEE
 import by.miaskor.bot.domain.Command.BACK
 import by.miaskor.bot.domain.Command.CHANGE_LANGUAGE
+import by.miaskor.bot.domain.Command.EMPLOYEE
 import by.miaskor.bot.domain.Command.EMPLOYEES
+import by.miaskor.bot.domain.Command.LANGUAGE
 import by.miaskor.bot.domain.Command.LIST_EMPLOYEE
 import reactor.core.publisher.Mono
 
 enum class BotState(private vararg val commands: Command) {
   GREETINGS,
-  CHOOSE_LANGUAGE(BACK),
-  ADDING_EMPLOYEE(BACK),
+  CHOOSING_LANGUAGE(LANGUAGE),
+  CHANGING_LANGUAGE(LANGUAGE, BACK),
+  ADDING_EMPLOYEE(BACK, EMPLOYEE),
   MAIN_MENU(CHANGE_LANGUAGE, EMPLOYEES),
   EMPLOYEES_MENU(LIST_EMPLOYEE, ADD_EMPLOYEE, BACK),
   STORE_HOUSES_MENU,
@@ -19,7 +22,7 @@ enum class BotState(private vararg val commands: Command) {
   BAMPER_MENU;
 
   companion object {
-    private val finalStates = listOf(ADDING_EMPLOYEE, MAIN_MENU, CHOOSE_LANGUAGE)
+    private val finalStates = listOf(ADDING_EMPLOYEE, MAIN_MENU, CHOOSING_LANGUAGE, CHANGING_LANGUAGE)
 
     fun isNotFinalState(botState: BotState): Boolean {
       return !finalStates.contains(botState)

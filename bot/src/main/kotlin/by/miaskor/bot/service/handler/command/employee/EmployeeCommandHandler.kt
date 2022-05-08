@@ -1,11 +1,11 @@
-package by.miaskor.bot.service.handler.state
+package by.miaskor.bot.service.handler.command.employee
 
 import by.miaskor.bot.configuration.settings.StateSettings
-import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE
-import by.miaskor.bot.service.CommandResolver
+import by.miaskor.bot.domain.Command.EMPLOYEE
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.bot.service.text
 import by.miaskor.domain.api.connector.TelegramClientConnector
 import by.miaskor.domain.api.connector.WorkerTelegramConnector
@@ -16,17 +16,16 @@ import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.SendMessage
 import reactor.core.publisher.Mono
 
-class AddingEmployeeHandler(
+class EmployeeCommandHandler(
   private val telegramBot: TelegramBot,
   private val telegramClientConnector: TelegramClientConnector,
   private val workerTelegramConnector: WorkerTelegramConnector,
   private val keyboardBuilder: KeyboardBuilder
-) : BotStateHandler {
-  override val state = ADDING_EMPLOYEE
+) : CommandHandler {
+  override val command = EMPLOYEE
 
   override fun handle(update: Update): Mono<Unit> {
-    return Mono.just(update.text)
-      .filter { it.isNotBlank() }
+    return Mono.fromSupplier { update.text.replace("@", "") }
       .flatMap { telegramClientConnector.getByUsername(it) }
       .switchIfEmpty(sendFailMessage(update))
       .flatMap { createEmployee(it, update) }

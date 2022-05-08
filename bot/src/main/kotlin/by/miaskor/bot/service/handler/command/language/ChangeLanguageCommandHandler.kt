@@ -1,12 +1,13 @@
-package by.miaskor.bot.service.handler.command
+package by.miaskor.bot.service.handler.command.language
 
 import by.miaskor.bot.configuration.settings.CommandSettings
-import by.miaskor.bot.domain.BotState.CHOOSE_LANGUAGE
+import by.miaskor.bot.domain.BotState.CHANGING_LANGUAGE
 import by.miaskor.bot.domain.Command.CHANGE_LANGUAGE
 import by.miaskor.bot.service.BotStateChanger.changeBotState
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.handler.command.CommandHandler
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.model.request.Keyboard
@@ -21,8 +22,8 @@ class ChangeLanguageCommandHandler(
 
   override fun handle(update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
-      .changeBotState(update::chatId, CHOOSE_LANGUAGE)
-      .flatMap (keyboardBuilder::build)
+      .changeBotState(update::chatId, CHANGING_LANGUAGE)
+      .flatMap(keyboardBuilder::build)
       .flatMap { handle(it, update.chatId) }
   }
 
@@ -34,6 +35,6 @@ class ChangeLanguageCommandHandler(
           SendMessage(chatId, it.changeLanguageMessage())
             .replyMarkup(keyboard)
         )
-      }.then(Mono.empty())
+      }
   }
 }

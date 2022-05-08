@@ -1,7 +1,8 @@
 package by.miaskor.bot.configuration.settings
 
 interface KeyboardSettings {
-  fun chooseLanguageMenu(): Array<Array<String>>
+  fun choosingLanguageMenu(): Array<Array<String>>
+  fun changingLanguageMenu(): Array<Array<String>>
   fun mainMenu(): Array<Array<String>>
   fun employeeMenu(): Array<Array<String>>
   fun addingEmployee(): Array<Array<String>>
