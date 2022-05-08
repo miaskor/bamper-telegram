@@ -1,7 +1,6 @@
 package by.miaskor.bot.service
 
 import by.miaskor.bot.configuration.settings.CacheSettings
-import by.miaskor.bot.domain.BotState
 import by.miaskor.bot.domain.BotState.GREETINGS
 import by.miaskor.bot.domain.BotState.MAIN_MENU
 import by.miaskor.bot.domain.TelegramClient
@@ -31,18 +30,13 @@ class TelegramClientCache(
       .ifPresent { cache.put(chatId, it.copy(chatLanguage = chatLanguage)) }
   }
 
-  fun updateBotState(chatId: Long, botState: BotState) {
-    Optional.ofNullable(cache.getIfPresent(chatId))
-      .ifPresent { cache.put(chatId, it.copy(botState = botState)) }
-  }
-
   fun getTelegramClient(chatId: Long): Mono<TelegramClient> {
     return Mono.justOrEmpty(cache.getIfPresent(chatId))
       .switchIfEmpty(Mono.defer { isClientExists(chatId) })
       .defaultIfEmpty(
         TelegramClient(
           chatId = chatId,
-          botState = GREETINGS
+          currentBotState = GREETINGS
         )
       ).doOnNext { populate(chatId, it) }
   }
@@ -54,7 +48,7 @@ class TelegramClientCache(
           chatId = it.chatId,
           chatLanguage = it.chatLanguage,
           bamperClientId = it.bamperClientId,
-          botState = MAIN_MENU
+          currentBotState = MAIN_MENU
         )
       }.doOnNext { populate(chatId, it) }
   }

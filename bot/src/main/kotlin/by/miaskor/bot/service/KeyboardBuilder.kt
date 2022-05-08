@@ -1,15 +1,18 @@
 package by.miaskor.bot.service
 
-import by.miaskor.bot.domain.BotState.CHOOSE_LANGUAGE
+import by.miaskor.bot.configuration.settings.KeyboardSettings
+import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE
+import by.miaskor.bot.domain.BotState.CHANGING_LANGUAGE
+import by.miaskor.bot.domain.BotState.CHOOSING_LANGUAGE
+import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.MAIN_MENU
-import by.miaskor.bot.domain.Language
 import by.miaskor.bot.domain.TelegramClient
+import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import com.pengrad.telegrambot.model.request.Keyboard
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup
 import reactor.core.publisher.Mono
 
 class KeyboardBuilder(
-  private val keyboardSettingsRegistry: KeyboardSettingsRegistry,
   private val telegramClientCache: TelegramClientCache
 ) {
 
@@ -20,13 +23,15 @@ class KeyboardBuilder(
   }
 
   private fun build(telegramClient: TelegramClient): Mono<Keyboard> {
-    return Mono.just(telegramClient.chatLanguage)
-      .flatMap { Language.getByDomain(it) }
-      .map(keyboardSettingsRegistry::lookup)
+    return Mono.just(telegramClient.chatId)
+      .resolveLanguage(KeyboardSettings::class)
       .map {
-        when (telegramClient.botState) {
-          CHOOSE_LANGUAGE -> buildKeyboard(it.chooseLanguageMenu())
+        when (telegramClient.currentBotState) {
+          CHOOSING_LANGUAGE -> buildKeyboard(it.choosingLanguageMenu())
           MAIN_MENU -> buildKeyboard(it.mainMenu())
+          CHANGING_LANGUAGE -> buildKeyboard(it.changingLanguageMenu())
+          EMPLOYEES_MENU -> buildKeyboard(it.employeeMenu())
+          ADDING_EMPLOYEE -> buildKeyboard(it.addingEmployee())
           else -> buildKeyboard(arrayOf(arrayOf("Something went wrong")))
         }
       }

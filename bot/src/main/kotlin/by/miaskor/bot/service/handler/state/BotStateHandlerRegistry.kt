@@ -1,4 +1,4 @@
-package by.miaskor.bot.service.handler
+package by.miaskor.bot.service.handler.state
 
 import by.miaskor.bot.domain.BotState
 import reactor.core.publisher.Mono
