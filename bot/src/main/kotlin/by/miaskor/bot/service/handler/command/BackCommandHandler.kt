@@ -10,6 +10,7 @@ import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.TelegramClientCache
 import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.pollLast
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.request.SendMessage
@@ -30,13 +31,19 @@ class BackCommandHandler(
 
   private fun handle(telegramClient: TelegramClient, update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
-      .changeBotState(update::chatId, telegramClient.previousBotState)
+      .changeBotState(update::chatId, telegramClient.previousBotStates.pollLast(), true)
       .resolveLanguage(StateSettings::class)
+      .flatMap { handle(it, update) }
+  }
+
+  private fun handle(stateSettings: StateSettings, update: Update): Mono<Unit> {
+    return Mono.just(update.chatId)
+      .flatMap(telegramClientCache::getTelegramClient)
       .zipWith(keyboardBuilder.build(update.chatId))
       .map {
-        val sendMessage = when (telegramClient.currentBotState) {
-          MAIN_MENU -> it.t1.mainMenuMessage()
-          EMPLOYEES_MENU -> it.t1.employeesMenuMessage()
+        val sendMessage = when (it.t1.currentBotState) {
+          MAIN_MENU -> stateSettings.mainMenuMessage()
+          EMPLOYEES_MENU -> stateSettings.employeesMenuMessage()
           else -> "Something bad happened"
         }
         telegramBot.execute(

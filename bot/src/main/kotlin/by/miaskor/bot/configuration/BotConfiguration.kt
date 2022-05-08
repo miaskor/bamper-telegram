@@ -1,16 +1,19 @@
 package by.miaskor.bot.configuration
 
+import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
+import by.miaskor.bot.domain.BotState.MAIN_MENU
 import by.miaskor.bot.service.CommandResolver
+import by.miaskor.bot.service.handler.command.AddEmployeeCommandHandler
 import by.miaskor.bot.service.handler.command.BackCommandHandler
 import by.miaskor.bot.service.handler.command.ChangeLanguageCommandHandler
 import by.miaskor.bot.service.handler.command.CommandHandlerRegistry
 import by.miaskor.bot.service.handler.command.EmployeesCommandHandler
 import by.miaskor.bot.service.handler.command.UndefinedCommandHandler
+import by.miaskor.bot.service.handler.state.AddingEmployeeHandler
 import by.miaskor.bot.service.handler.state.BotStateHandlerRegistry
 import by.miaskor.bot.service.handler.state.ChooseLanguageHandler
-import by.miaskor.bot.service.handler.state.EmployeesMenuHandler
 import by.miaskor.bot.service.handler.state.GreetingsHandler
-import by.miaskor.bot.service.handler.state.MainMenuHandler
+import by.miaskor.bot.service.handler.state.MenuHandler
 import by.miaskor.bot.telegram.Bot
 import com.pengrad.telegrambot.TelegramBot
 import okhttp3.OkHttpClient
@@ -47,7 +50,8 @@ open class BotConfiguration(
       chooseLanguageHandler(),
       mainMenuHandler(),
       greetingsHandler(),
-      employeesMenuHandler()
+      employeesMenuHandler(),
+      addingEmployeeHandler()
     )
   }
 
@@ -63,13 +67,28 @@ open class BotConfiguration(
   }
 
   @Bean
-  open fun mainMenuHandler(): MainMenuHandler {
-    return MainMenuHandler(commandResolver())
+  open fun addingEmployeeHandler(): AddingEmployeeHandler {
+    return AddingEmployeeHandler(
+      telegramBot(),
+      connectorConfiguration.telegramClientConnector(),
+      connectorConfiguration.workerTelegramConnector(),
+      serviceConfiguration.keyboardBuilder(),
+      commandResolver()
+    )
   }
 
   @Bean
-  open fun employeesMenuHandler(): EmployeesMenuHandler {
-    return EmployeesMenuHandler(
+  open fun mainMenuHandler(): MenuHandler {
+    return MenuHandler(
+      MAIN_MENU,
+      commandResolver()
+    )
+  }
+
+  @Bean
+  open fun employeesMenuHandler(): MenuHandler {
+    return MenuHandler(
+      EMPLOYEES_MENU,
       commandResolver()
     )
   }
@@ -89,7 +108,8 @@ open class BotConfiguration(
       changeLanguageCommandHandler(),
       employeesCommandHandler(),
       backCommandHandler(),
-      undefinedCommandHandler()
+      undefinedCommandHandler(),
+      addEmployeeCommandHandler()
     )
   }
 
@@ -121,6 +141,14 @@ open class BotConfiguration(
   open fun backCommandHandler(): BackCommandHandler {
     return BackCommandHandler(
       serviceConfiguration.telegramClientCache(),
+      telegramBot(),
+      serviceConfiguration.keyboardBuilder()
+    )
+  }
+
+  @Bean
+  open fun addEmployeeCommandHandler(): AddEmployeeCommandHandler {
+    return AddEmployeeCommandHandler(
       telegramBot(),
       serviceConfiguration.keyboardBuilder()
     )

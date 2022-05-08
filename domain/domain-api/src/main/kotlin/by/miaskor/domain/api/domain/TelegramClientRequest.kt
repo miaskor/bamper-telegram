@@ -1,7 +1,7 @@
 package by.miaskor.domain.api.domain
 
 data class TelegramClientRequest(
-  val chatId: String,
+  val chatId: Long,
   val chatLanguage: String,
   val username: String,
   val bamperClientId: Long? = null

@@ -1,5 +1,6 @@
 package by.miaskor.domain.controller
 
+import by.miaskor.domain.api.domain.EmployeeExistsRequest
 import by.miaskor.domain.api.domain.TelegramClientRequest
 import by.miaskor.domain.api.domain.TelegramClientResponse
 import by.miaskor.domain.service.TelegramClientService
@@ -24,9 +25,22 @@ class TelegramClientController(
       .map { ResponseEntity.ok().build() }
   }
 
-  @GetMapping("/{chatId}")
+  @GetMapping("/chatId/{chatId}")
   fun getByChatId(@PathVariable chatId: Long): Mono<ResponseEntity<TelegramClientResponse>> {
     return telegramClientService.getByChatId(chatId)
+      .map { ResponseEntity.ok(it) }
+  }
+
+  @GetMapping("/username/{username}")
+  fun getByUsername(@PathVariable username: String): Mono<ResponseEntity<TelegramClientResponse>> {
+    return telegramClientService.getByUsername(username)
+      .map { ResponseEntity.ok(it) }
+  }
+
+  @PostMapping("/isWorker")
+  fun isTelegramClientWorker(@RequestBody employeeExistsRequest: EmployeeExistsRequest):
+      Mono<ResponseEntity<Boolean>> {
+    return telegramClientService.isTelegramClientWorker(employeeExistsRequest)
       .map { ResponseEntity.ok(it) }
   }
 }

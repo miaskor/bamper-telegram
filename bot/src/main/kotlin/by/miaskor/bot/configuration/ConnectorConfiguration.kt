@@ -2,6 +2,7 @@ package by.miaskor.bot.configuration
 
 import by.miaskor.bot.configuration.settings.ConnectorSettings
 import by.miaskor.domain.api.connector.TelegramClientConnector
+import by.miaskor.domain.api.connector.WorkerTelegramConnector
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
@@ -27,5 +28,10 @@ open class ConnectorConfiguration(
   @Bean
   open fun telegramClientConnector(): TelegramClientConnector {
     return TelegramClientConnector(webClient())
+  }
+
+  @Bean
+  open fun workerTelegramConnector(): WorkerTelegramConnector {
+    return WorkerTelegramConnector(webClient())
   }
 }

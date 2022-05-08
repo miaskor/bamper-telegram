@@ -1,6 +1,7 @@
 package by.miaskor.bot.service
 
 import by.miaskor.bot.configuration.settings.KeyboardSettings
+import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE
 import by.miaskor.bot.domain.BotState.CHOOSE_LANGUAGE
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.MAIN_MENU
@@ -28,6 +29,7 @@ class KeyboardBuilder(
           CHOOSE_LANGUAGE -> buildKeyboard(it.chooseLanguageMenu())
           MAIN_MENU -> buildKeyboard(it.mainMenu())
           EMPLOYEES_MENU -> buildKeyboard(it.employeeMenu())
+          ADDING_EMPLOYEE -> buildKeyboard(it.addingEmployee())
           else -> buildKeyboard(arrayOf(arrayOf("Something went wrong")))
         }
       }

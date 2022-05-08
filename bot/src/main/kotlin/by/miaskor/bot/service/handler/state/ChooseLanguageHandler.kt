@@ -76,7 +76,7 @@ class ChooseLanguageHandler(
       }
       .map {
         TelegramClientRequest(
-          chatId = update.chatId.toString(),
+          chatId = update.chatId,
           chatLanguage = it.domain,
           username = update.username,
         )
