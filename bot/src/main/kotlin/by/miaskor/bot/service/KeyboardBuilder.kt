@@ -6,6 +6,7 @@ import by.miaskor.bot.domain.BotState.CHANGING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CHOOSING_LANGUAGE
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.MAIN_MENU
+import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
 import by.miaskor.bot.domain.TelegramClient
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import com.pengrad.telegrambot.model.request.Keyboard
@@ -32,12 +33,13 @@ class KeyboardBuilder(
           CHANGING_LANGUAGE -> buildKeyboard(it.changingLanguageMenu())
           EMPLOYEES_MENU -> buildKeyboard(it.employeeMenu())
           ADDING_EMPLOYEE -> buildKeyboard(it.addingEmployee())
+          REMOVING_EMPLOYEE -> buildKeyboard(it.removingEmployee())
           else -> buildKeyboard(arrayOf(arrayOf("Something went wrong")))
         }
       }
   }
 
   private fun buildKeyboard(keyboardButtons: Array<Array<String>>): Keyboard {
-    return ReplyKeyboardMarkup(keyboardButtons, true, true, true)
+    return ReplyKeyboardMarkup(keyboardButtons, true, false, true)
   }
 }

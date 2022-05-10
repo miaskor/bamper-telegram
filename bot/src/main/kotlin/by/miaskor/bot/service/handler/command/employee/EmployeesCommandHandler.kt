@@ -7,6 +7,7 @@ import by.miaskor.bot.service.BotStateChanger.changeBotState
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.sendMessageWithKeyboard
 import by.miaskor.bot.service.handler.command.CommandHandler
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
@@ -30,11 +31,6 @@ class EmployeesCommandHandler(
   private fun handle(keyboard: Keyboard, chatId: Long): Mono<Unit> {
     return Mono.just(chatId)
       .resolveLanguage(StateSettings::class)
-      .map {
-        telegramBot.execute(
-          SendMessage(chatId, it.employeesMenuMessage())
-            .replyMarkup(keyboard)
-        )
-      }
+      .map { telegramBot.sendMessageWithKeyboard(chatId, it.employeesMenuMessage(), keyboard) }
   }
 }

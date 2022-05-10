@@ -22,7 +22,7 @@ class TelegramClientController(
   @PostMapping
   fun upsert(@RequestBody telegramClientRequest: TelegramClientRequest): Mono<ResponseEntity<Unit>> {
     return telegramClientService.upsert(telegramClientRequest)
-      .map { ResponseEntity.ok().build() }
+      .then(Mono.just(ResponseEntity.ok().build()))
   }
 
   @GetMapping("/chatId/{chatId}")

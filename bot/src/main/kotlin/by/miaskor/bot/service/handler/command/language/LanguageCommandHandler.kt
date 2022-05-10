@@ -9,6 +9,7 @@ import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.TelegramClientCache
 import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.sendMessageWithKeyboard
 import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.bot.service.text
 import by.miaskor.bot.service.username
@@ -45,10 +46,7 @@ class LanguageCommandHandler(
     return Mono.just(chatId)
       .resolveLanguage(StateSettings::class)
       .map {
-        telegramBot.execute(
-          SendMessage(chatId, it.mainMenuMessage())
-            .replyMarkup(keyboard)
-        )
+        telegramBot.sendMessageWithKeyboard(chatId, it.mainMenuMessage(), keyboard)
       }
   }
 

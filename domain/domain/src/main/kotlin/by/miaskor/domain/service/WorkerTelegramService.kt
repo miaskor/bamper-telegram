@@ -1,6 +1,6 @@
 package by.miaskor.domain.service
 
-import by.miaskor.domain.api.domain.WorkerTelegramRequest
+import by.miaskor.domain.api.domain.WorkerTelegramDto
 import by.miaskor.domain.repository.WorkerTelegramRepository
 import by.miaskor.domain.tables.pojos.WorkerTelegram
 import reactor.core.publisher.Mono
@@ -9,20 +9,30 @@ class WorkerTelegramService(
   private val workerTelegramRepository: WorkerTelegramRepository
 ) {
 
-  fun getByWorkerChatIdAndEmployerChatId(workerChatId: Long, employerChatId: Long): Mono<WorkerTelegram> {
-    return workerTelegramRepository.findByWorkerChatIdAndEmployerChatId(workerChatId, employerChatId)
+  fun get(workerTelegramDto: WorkerTelegramDto): Mono<WorkerTelegramDto> {
+    return workerTelegramRepository.find(workerTelegramDto.employeeChatId, workerTelegramDto.employerChatId)
+      .map {
+        WorkerTelegramDto(
+          employeeChatId = it.workerTelegramChatId ?: -1,
+          employerChatId = it.employerTelegramChatId ?: -1
+        )
+      }
+  }
+
+  fun remove(workerTelegramDto: WorkerTelegramDto): Mono<Unit> {
+    return workerTelegramRepository.remove(workerTelegramDto)
   }
 
   fun getAllWorkerChatIdByEmployerChatId(employerChatId: Long): Mono<List<Long>> {
     return workerTelegramRepository.findAllWorkerChatIdByEmployerChatId(employerChatId)
   }
 
-  fun save(workerTelegramRequest: WorkerTelegramRequest): Mono<Unit> {
-    return Mono.just(workerTelegramRequest)
+  fun save(workerTelegramDto: WorkerTelegramDto): Mono<Unit> {
+    return Mono.just(workerTelegramDto)
       .map {
         WorkerTelegram(
-          workerTelegramChatId = workerTelegramRequest.employeeChatId,
-          employerTelegramChatId = workerTelegramRequest.employerChatId
+          workerTelegramChatId = workerTelegramDto.employeeChatId,
+          employerTelegramChatId = workerTelegramDto.employerChatId
         )
       }.flatMap(workerTelegramRepository::save)
   }

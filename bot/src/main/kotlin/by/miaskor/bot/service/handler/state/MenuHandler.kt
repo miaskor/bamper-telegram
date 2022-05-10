@@ -5,9 +5,9 @@ import by.miaskor.bot.domain.BotState
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.sendMessageWithKeyboard
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
-import com.pengrad.telegrambot.request.SendMessage
 import reactor.core.publisher.Mono
 
 class MenuHandler(
@@ -25,11 +25,7 @@ class MenuHandler(
           BotState.EMPLOYEES_MENU -> it.t1.employeesMenuMessage()
           else -> "Something bad happened in menuHandler"
         }
-
-        telegramBot.execute(
-          SendMessage(update.chatId, message)
-            .replyMarkup(it.t2)
-        )
+        telegramBot.sendMessageWithKeyboard(update.chatId, message, it.t2)
       }
   }
 }
