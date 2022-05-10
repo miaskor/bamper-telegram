@@ -1,19 +1,21 @@
 package by.miaskor.domain.repository
 
+import by.miaskor.domain.api.domain.WorkerTelegramDto
 import by.miaskor.domain.tables.pojos.WorkerTelegram
 import by.miaskor.domain.tables.references.WORKER_TELEGRAM
 import org.jooq.DSLContext
 import reactor.core.publisher.Mono
 
 interface WorkerTelegramRepository : CrudRepository<WorkerTelegram> {
-  fun findByWorkerChatIdAndEmployerChatId(workerChatId: Long, employerChatId: Long): Mono<WorkerTelegram>
+  fun find(workerChatId: Long, employerChatId: Long): Mono<WorkerTelegram>
   fun findAllWorkerChatIdByEmployerChatId(employerChatId: Long): Mono<List<Long>>
+  fun remove(workerTelegramDto: WorkerTelegramDto): Mono<Unit>
 }
 
 class JooqWorkerTelegramRepository(
   private val dslContext: DSLContext
 ) : WorkerTelegramRepository {
-  override fun findByWorkerChatIdAndEmployerChatId(workerChatId: Long, employerChatId: Long): Mono<WorkerTelegram> {
+  override fun find(workerChatId: Long, employerChatId: Long): Mono<WorkerTelegram> {
     return Mono.fromSupplier {
       dslContext.selectFrom(WORKER_TELEGRAM)
         .where(WORKER_TELEGRAM.WORKER_TELEGRAM_CHAT_ID.eq(workerChatId))
@@ -27,6 +29,15 @@ class JooqWorkerTelegramRepository(
       dslContext.selectFrom(WORKER_TELEGRAM)
         .where(WORKER_TELEGRAM.EMPLOYER_TELEGRAM_CHAT_ID.eq(employerChatId))
         .fetch { it.workerTelegramChatId }
+    }
+  }
+
+  override fun remove(workerTelegramDto: WorkerTelegramDto): Mono<Unit> {
+    return Mono.fromSupplier {
+      dslContext.deleteFrom(WORKER_TELEGRAM)
+        .where(WORKER_TELEGRAM.EMPLOYER_TELEGRAM_CHAT_ID.eq(workerTelegramDto.employerChatId))
+        .and(WORKER_TELEGRAM.WORKER_TELEGRAM_CHAT_ID.eq(workerTelegramDto.employeeChatId))
+        .execute()
     }
   }
 

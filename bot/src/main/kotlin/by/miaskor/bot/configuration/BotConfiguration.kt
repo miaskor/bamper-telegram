@@ -2,18 +2,17 @@ package by.miaskor.bot.configuration
 
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.MAIN_MENU
-import by.miaskor.bot.service.handler.command.employee.AddEmployeeCommandHandler
 import by.miaskor.bot.service.handler.command.BackCommandHandler
-import by.miaskor.bot.service.handler.command.language.ChangeLanguageCommandHandler
 import by.miaskor.bot.service.handler.command.CommandHandlerRegistry
+import by.miaskor.bot.service.handler.command.UndefinedCommandHandler
+import by.miaskor.bot.service.handler.command.employee.AddEmployeeCommandHandler
 import by.miaskor.bot.service.handler.command.employee.EmployeeCommandHandler
 import by.miaskor.bot.service.handler.command.employee.EmployeesCommandHandler
-import by.miaskor.bot.service.handler.command.language.LanguageCommandHandler
 import by.miaskor.bot.service.handler.command.employee.ListEmployeeCommandHandler
-import by.miaskor.bot.service.handler.command.UndefinedCommandHandler
+import by.miaskor.bot.service.handler.command.employee.RemoveEmployeeCommandHandler
+import by.miaskor.bot.service.handler.command.language.ChangeLanguageCommandHandler
+import by.miaskor.bot.service.handler.command.language.LanguageCommandHandler
 import by.miaskor.bot.service.handler.state.BotStateHandlerRegistry
-import by.miaskor.bot.service.handler.state.ChangingLanguageHandler
-import by.miaskor.bot.service.handler.state.ChoosingLanguageHandler
 import by.miaskor.bot.service.handler.state.GreetingsHandler
 import by.miaskor.bot.service.handler.state.MenuHandler
 import by.miaskor.bot.telegram.Bot
@@ -41,7 +40,6 @@ open class BotConfiguration(
   open fun bot(): Bot {
     return Bot(
       telegramBot(),
-      stateHandlerRegistry(),
       serviceConfiguration.telegramClientCache()
     )
   }
@@ -49,26 +47,9 @@ open class BotConfiguration(
   @Bean
   open fun stateHandlerRegistry(): BotStateHandlerRegistry {
     return BotStateHandlerRegistry(
-      chooseLanguageHandler(),
       mainMenuHandler(),
       greetingsHandler(),
-      employeesMenuHandler(),
-      changingLanguageHandler()
-    )
-  }
-
-  @Bean
-  open fun chooseLanguageHandler(): ChoosingLanguageHandler {
-    return ChoosingLanguageHandler(
-      telegramBot(),
-      settingsConfiguration.stateSettingsEN()
-    )
-  }
-
-  @Bean
-  open fun changingLanguageHandler(): ChangingLanguageHandler {
-    return ChangingLanguageHandler(
-      chooseLanguageHandler()
+      employeesMenuHandler()
     )
   }
 
@@ -109,7 +90,8 @@ open class BotConfiguration(
       addEmployeeCommandHandler(),
       listEmployeeCommandHandler(),
       languageCommandHandler(),
-      employeeCommandHandler()
+      employeeCommandHandler(),
+      removeEmployeeCommandHandler()
     )
   }
 
@@ -124,7 +106,8 @@ open class BotConfiguration(
   @Bean
   open fun undefinedCommandHandler(): UndefinedCommandHandler {
     return UndefinedCommandHandler(
-      telegramBot()
+      telegramBot(),
+      serviceConfiguration.telegramClientCache()
     )
   }
 
@@ -141,6 +124,14 @@ open class BotConfiguration(
     return ListEmployeeCommandHandler(
       telegramBot(),
       connectorConfiguration.telegramClientConnector()
+    )
+  }
+
+  @Bean
+  open fun removeEmployeeCommandHandler(): RemoveEmployeeCommandHandler {
+    return RemoveEmployeeCommandHandler(
+      telegramBot(),
+      serviceConfiguration.keyboardBuilder()
     )
   }
 
@@ -177,7 +168,8 @@ open class BotConfiguration(
       telegramBot(),
       connectorConfiguration.telegramClientConnector(),
       connectorConfiguration.workerTelegramConnector(),
-      serviceConfiguration.keyboardBuilder()
+      serviceConfiguration.keyboardBuilder(),
+      serviceConfiguration.telegramClientCache(),
     )
   }
 }

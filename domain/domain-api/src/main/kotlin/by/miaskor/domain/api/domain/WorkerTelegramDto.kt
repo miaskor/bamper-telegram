@@ -1,6 +1,6 @@
 package by.miaskor.domain.api.domain
 
-data class WorkerTelegramRequest(
+data class WorkerTelegramDto(
   val employeeChatId: Long,
   val employerChatId: Long
 )

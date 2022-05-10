@@ -4,11 +4,11 @@ import by.miaskor.bot.configuration.settings.CommandSettings
 import by.miaskor.bot.domain.Command.LIST_EMPLOYEE
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.sendMessage
 import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.domain.api.connector.TelegramClientConnector
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
-import com.pengrad.telegrambot.request.SendMessage
 import reactor.core.publisher.Mono
 
 class ListEmployeeCommandHandler(
@@ -29,11 +29,7 @@ class ListEmployeeCommandHandler(
         telegramClientConnector.getAllEmployeesByEmployerChatId(it)
       }
       .flatMapIterable { it }
-      .map {
-        telegramBot.execute(
-          SendMessage(update.chatId, commandSettings.employeeUsernameMessage().format(it.username))
-        )
-
-      }.then(Mono.empty())
+      .map { telegramBot.sendMessage(update.chatId, commandSettings.employeeUsernameMessage().format(it.username)) }
+      .then(Mono.empty())
   }
 }

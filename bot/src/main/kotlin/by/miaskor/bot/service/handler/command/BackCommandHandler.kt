@@ -10,10 +10,10 @@ import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.TelegramClientCache
 import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.sendMessageWithKeyboard
 import by.miaskor.bot.service.pollLast
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
-import com.pengrad.telegrambot.request.SendMessage
 import reactor.core.publisher.Mono
 
 class BackCommandHandler(
@@ -46,10 +46,7 @@ class BackCommandHandler(
           EMPLOYEES_MENU -> stateSettings.employeesMenuMessage()
           else -> "Something bad happened"
         }
-        telegramBot.execute(
-          SendMessage(update.chatId, sendMessage)
-            .replyMarkup(it.t2)
-        )
+        telegramBot.sendMessageWithKeyboard(update.chatId, sendMessage, it.t2)
       }.then(Mono.empty())
   }
 }

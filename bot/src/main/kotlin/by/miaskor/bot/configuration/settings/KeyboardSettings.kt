@@ -6,5 +6,6 @@ interface KeyboardSettings {
   fun mainMenu(): Array<Array<String>>
   fun employeeMenu(): Array<Array<String>>
   fun addingEmployee(): Array<Array<String>>
+  fun removingEmployee(): Array<Array<String>>
   fun storeHouseMenu(): Array<Array<String>>
 }

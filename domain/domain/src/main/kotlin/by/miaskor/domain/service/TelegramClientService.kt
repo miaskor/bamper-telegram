@@ -3,6 +3,7 @@ package by.miaskor.domain.service
 import by.miaskor.domain.api.domain.EmployeeExistsRequest
 import by.miaskor.domain.api.domain.TelegramClientRequest
 import by.miaskor.domain.api.domain.TelegramClientResponse
+import by.miaskor.domain.api.domain.WorkerTelegramDto
 import by.miaskor.domain.repository.TelegramClientRepository
 import by.miaskor.domain.tables.pojos.TelegramClient
 import reactor.core.publisher.Mono
@@ -61,9 +62,14 @@ class TelegramClientService(
   fun isTelegramClientWorker(employeeExistsRequest: EmployeeExistsRequest): Mono<Boolean> {
     return Mono.just(employeeExistsRequest.employeeUsername)
       .flatMap(::getByUsername)
-      .flatMap {
-        workerTelegramService.getByWorkerChatIdAndEmployerChatId(it.chatId, employeeExistsRequest.employerChatId)
-          .hasElement()
-      }.defaultIfEmpty(false)
+      .map {
+        WorkerTelegramDto(
+          employeeChatId = it.chatId,
+          employerChatId = employeeExistsRequest.employerChatId
+        )
+      }
+      .flatMap(workerTelegramService::get)
+      .hasElement()
+      .defaultIfEmpty(false)
   }
 }

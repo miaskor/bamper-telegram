@@ -13,7 +13,6 @@ import reactor.core.publisher.Mono
 
 class Bot(
   telegramBot: TelegramBot,
-  private val botStateHandlerRegistry: BotStateHandlerRegistry,
   private val telegramClientCache: TelegramClientCache,
 ) {
 

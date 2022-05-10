@@ -7,9 +7,9 @@ import by.miaskor.bot.domain.BotState.GREETINGS
 import by.miaskor.bot.service.BotStateChanger.changeBotState
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.sendMessageWithKeyboard
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
-import com.pengrad.telegrambot.request.SendMessage
 import reactor.core.publisher.Mono
 
 class GreetingsHandler(
@@ -24,10 +24,7 @@ class GreetingsHandler(
       .changeBotState(update::chatId, CHOOSING_LANGUAGE)
       .flatMap(keyboardBuilder::build)
       .map { keyboard ->
-        telegramBot.execute(
-          SendMessage(update.chatId, stateSettings.greetingsMessage().trimIndent())
-            .replyMarkup(keyboard)
-        )
+        telegramBot.sendMessageWithKeyboard(update.chatId, stateSettings.greetingsMessage().trimIndent(), keyboard)
       }
   }
 }
