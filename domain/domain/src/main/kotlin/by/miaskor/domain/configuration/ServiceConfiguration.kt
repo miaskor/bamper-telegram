@@ -1,5 +1,6 @@
 package by.miaskor.domain.configuration
 
+import by.miaskor.domain.service.StoreHouseService
 import by.miaskor.domain.service.TelegramClientService
 import by.miaskor.domain.service.WorkerTelegramService
 import org.springframework.context.annotation.Bean
@@ -21,5 +22,10 @@ open class ServiceConfiguration(
   @Bean
   open fun workerTelegramService(): WorkerTelegramService {
     return WorkerTelegramService(repositoryConfiguration.workerTelegramRepository())
+  }
+
+  @Bean
+  open fun storeHouseService(): StoreHouseService {
+    return StoreHouseService(repositoryConfiguration.storeHouseRepository())
   }
 }

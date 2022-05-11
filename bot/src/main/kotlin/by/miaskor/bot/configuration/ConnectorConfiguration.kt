@@ -1,6 +1,7 @@
 package by.miaskor.bot.configuration
 
 import by.miaskor.bot.configuration.settings.ConnectorSettings
+import by.miaskor.domain.api.connector.StoreHouseConnector
 import by.miaskor.domain.api.connector.TelegramClientConnector
 import by.miaskor.domain.api.connector.WorkerTelegramConnector
 import org.springframework.context.annotation.Bean
@@ -33,5 +34,10 @@ open class ConnectorConfiguration(
   @Bean
   open fun workerTelegramConnector(): WorkerTelegramConnector {
     return WorkerTelegramConnector(webClient())
+  }
+
+  @Bean
+  open fun storeHouseConnector(): StoreHouseConnector {
+    return StoreHouseConnector(webClient())
   }
 }

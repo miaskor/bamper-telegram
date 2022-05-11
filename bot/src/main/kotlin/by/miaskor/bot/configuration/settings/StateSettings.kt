@@ -10,4 +10,7 @@ interface StateSettings {
   fun removingEmployeeSuccessMessage(): String
   fun employeeIsYourEmployerMessage(): String
   fun employeeIsYouMessage(): String
+  fun storeHouseMessage(): String
+  fun addingStoreHouseFailMessage(): String
+  fun addingStoreHouseSuccessMessage(): String
 }

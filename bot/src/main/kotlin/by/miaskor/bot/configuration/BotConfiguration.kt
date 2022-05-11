@@ -12,6 +12,8 @@ import by.miaskor.bot.service.handler.command.employee.ListEmployeeCommandHandle
 import by.miaskor.bot.service.handler.command.employee.RemoveEmployeeCommandHandler
 import by.miaskor.bot.service.handler.command.language.ChangeLanguageCommandHandler
 import by.miaskor.bot.service.handler.command.language.LanguageCommandHandler
+import by.miaskor.bot.service.handler.command.storehouse.CreateStoreHouseCommandHandler
+import by.miaskor.bot.service.handler.command.storehouse.StoreHouseCommandHandler
 import by.miaskor.bot.service.handler.state.BotStateHandlerRegistry
 import by.miaskor.bot.service.handler.state.GreetingsHandler
 import by.miaskor.bot.service.handler.state.MenuHandler
@@ -91,7 +93,9 @@ open class BotConfiguration(
       listEmployeeCommandHandler(),
       languageCommandHandler(),
       employeeCommandHandler(),
-      removeEmployeeCommandHandler()
+      removeEmployeeCommandHandler(),
+      createStoreHouseCommandHandler(),
+      storeHouseCommandHandler()
     )
   }
 
@@ -149,6 +153,22 @@ open class BotConfiguration(
     return AddEmployeeCommandHandler(
       telegramBot(),
       serviceConfiguration.keyboardBuilder()
+    )
+  }
+
+  @Bean
+  open fun createStoreHouseCommandHandler(): CreateStoreHouseCommandHandler {
+    return CreateStoreHouseCommandHandler(
+      telegramBot(),
+      serviceConfiguration.keyboardBuilder()
+    )
+  }
+
+  @Bean
+  open fun storeHouseCommandHandler(): StoreHouseCommandHandler {
+    return StoreHouseCommandHandler(
+      telegramBot(),
+      connectorConfiguration.storeHouseConnector()
     )
   }
 

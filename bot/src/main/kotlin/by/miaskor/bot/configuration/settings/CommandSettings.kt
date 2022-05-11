@@ -6,4 +6,5 @@ interface CommandSettings {
   fun undefinedCommandMessage(): String
   fun chooseLanguageFailMessage(): String
   fun incorrectUsernameFormatMessage(): String
+  fun incorrectStoreHouseNameFormatMessage(): String
 }
