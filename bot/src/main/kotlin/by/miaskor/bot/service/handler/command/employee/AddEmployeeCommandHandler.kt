@@ -1,6 +1,6 @@
 package by.miaskor.bot.service.handler.command.employee
 
-import by.miaskor.bot.configuration.settings.StateSettings
+import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE
 import by.miaskor.bot.domain.Command.ADD_EMPLOYEE
 import by.miaskor.bot.service.BotStateChanger.changeBotState
@@ -29,7 +29,7 @@ class AddEmployeeCommandHandler(
 
   private fun handle(keyboard: Keyboard, chatId: Long): Mono<Unit> {
     return Mono.just(chatId)
-      .resolveLanguage(StateSettings::class)
-      .map { telegramBot.sendMessageWithKeyboard(chatId, it.employeeMessage(), keyboard) }
+      .resolveLanguage(MessageSettings::class)
+      .map { telegramBot.sendMessageWithKeyboard(chatId, it.inputEmployeeMessage(), keyboard) }
   }
 }

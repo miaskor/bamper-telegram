@@ -4,6 +4,7 @@ import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE
 import by.miaskor.bot.domain.BotState.CHANGING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CHOOSING_LANGUAGE
+import by.miaskor.bot.domain.BotState.CREATING_STORE_HOUSE
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.MAIN_MENU
 import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
@@ -34,6 +35,7 @@ class KeyboardBuilder(
           EMPLOYEES_MENU -> buildKeyboard(it.employeeMenu())
           ADDING_EMPLOYEE -> buildKeyboard(it.addingEmployee())
           REMOVING_EMPLOYEE -> buildKeyboard(it.removingEmployee())
+          CREATING_STORE_HOUSE -> buildKeyboard(it.creatingStoreHouseMenu())
           else -> buildKeyboard(arrayOf(arrayOf("Something went wrong")))
         }
       }

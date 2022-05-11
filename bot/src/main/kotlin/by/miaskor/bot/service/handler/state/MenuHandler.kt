@@ -1,6 +1,6 @@
 package by.miaskor.bot.service.handler.state
 
-import by.miaskor.bot.configuration.settings.StateSettings
+import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.BotState
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
@@ -17,7 +17,7 @@ class MenuHandler(
 ) : BotStateHandler {
   override fun handle(update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
-      .resolveLanguage(StateSettings::class)
+      .resolveLanguage(MessageSettings::class)
       .zipWith(keyboardBuilder.build(update.chatId))
       .map {
         val message = when (state) {

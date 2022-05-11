@@ -6,8 +6,10 @@ import by.miaskor.domain.repository.CarRepository
 import by.miaskor.domain.repository.JooqAdvertisementRepository
 import by.miaskor.domain.repository.JooqBrandRepository
 import by.miaskor.domain.repository.JooqCarRepository
+import by.miaskor.domain.repository.JooqStoreHouseRepository
 import by.miaskor.domain.repository.JooqTelegramClientRepository
 import by.miaskor.domain.repository.JooqWorkerTelegramRepository
+import by.miaskor.domain.repository.StoreHouseRepository
 import by.miaskor.domain.repository.TelegramClientRepository
 import by.miaskor.domain.repository.WorkerTelegramRepository
 import org.jooq.DSLContext
@@ -42,5 +44,10 @@ open class RepositoryConfiguration(
   @Bean
   open fun workerTelegramRepository(): WorkerTelegramRepository {
     return JooqWorkerTelegramRepository(dslContext)
+  }
+
+  @Bean
+  open fun storeHouseRepository(): StoreHouseRepository {
+    return JooqStoreHouseRepository(dslContext)
   }
 }

@@ -1,6 +1,6 @@
 package by.miaskor.bot.service.handler.command.language
 
-import by.miaskor.bot.configuration.settings.StateSettings
+import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.BotState
 import by.miaskor.bot.domain.Command.LANGUAGE
 import by.miaskor.bot.domain.Language
@@ -44,7 +44,7 @@ class LanguageCommandHandler(
 
   private fun sendMessage(keyboard: Keyboard, chatId: Long): Mono<Unit> {
     return Mono.just(chatId)
-      .resolveLanguage(StateSettings::class)
+      .resolveLanguage(MessageSettings::class)
       .map {
         telegramBot.sendMessageWithKeyboard(chatId, it.mainMenuMessage(), keyboard)
       }

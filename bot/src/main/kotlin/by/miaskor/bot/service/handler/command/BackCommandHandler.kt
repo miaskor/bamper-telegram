@@ -1,6 +1,6 @@
 package by.miaskor.bot.service.handler.command
 
-import by.miaskor.bot.configuration.settings.StateSettings
+import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.MAIN_MENU
 import by.miaskor.bot.domain.Command.BACK
@@ -32,18 +32,18 @@ class BackCommandHandler(
   private fun handle(telegramClient: TelegramClient, update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
       .changeBotState(update::chatId, telegramClient.previousBotStates.pollLast(), true)
-      .resolveLanguage(StateSettings::class)
+      .resolveLanguage(MessageSettings::class)
       .flatMap { handle(it, update) }
   }
 
-  private fun handle(stateSettings: StateSettings, update: Update): Mono<Unit> {
+  private fun handle(MessageSettings: MessageSettings, update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
       .flatMap(telegramClientCache::getTelegramClient)
       .zipWith(keyboardBuilder.build(update.chatId))
       .map {
         val sendMessage = when (it.t1.currentBotState) {
-          MAIN_MENU -> stateSettings.mainMenuMessage()
-          EMPLOYEES_MENU -> stateSettings.employeesMenuMessage()
+          MAIN_MENU -> MessageSettings.mainMenuMessage()
+          EMPLOYEES_MENU -> MessageSettings.employeesMenuMessage()
           else -> "Something bad happened"
         }
         telegramBot.sendMessageWithKeyboard(update.chatId, sendMessage, it.t2)
