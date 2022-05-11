@@ -2,7 +2,7 @@ package by.miaskor.bot.domain
 
 enum class Command(private vararg val commands: String) {
   CHANGE_LANGUAGE("Изменить язык", "Change language"),
-  LANGUAGE("Русский", "English"),
+  LANGUAGE("Russian", "English", "Английский"),
 
   EMPLOYEE("@.{5,32}"),
   EMPLOYEES("Работники", "Employees"),

@@ -1,6 +1,6 @@
 package by.miaskor.bot.service.handler.command.employee
 
-import by.miaskor.bot.configuration.settings.CommandSettings
+import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.Command.LIST_EMPLOYEE
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.chatId
@@ -19,17 +19,17 @@ class ListEmployeeCommandHandler(
 
   override fun handle(update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
-      .resolveLanguage(CommandSettings::class)
+      .resolveLanguage(MessageSettings::class)
       .flatMap { handle(it, update) }
   }
 
-  private fun handle(commandSettings: CommandSettings, update: Update): Mono<Unit> {
+  private fun handle(messageSettings: MessageSettings, update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
       .flatMap {
         telegramClientConnector.getAllEmployeesByEmployerChatId(it)
       }
       .flatMapIterable { it }
-      .map { telegramBot.sendMessage(update.chatId, commandSettings.employeeUsernameMessage().format(it.username)) }
+      .map { telegramBot.sendMessage(update.chatId, messageSettings.employeeMessage().format(it.username)) }
       .then(Mono.empty())
   }
 }

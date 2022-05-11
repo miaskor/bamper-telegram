@@ -1,6 +1,6 @@
 package by.miaskor.bot.service.handler.command
 
-import by.miaskor.bot.configuration.settings.CommandSettings
+import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE
 import by.miaskor.bot.domain.BotState.CHANGING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CHOOSING_LANGUAGE
@@ -23,7 +23,7 @@ class UndefinedCommandHandler(
 
   override fun handle(update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
-      .resolveLanguage(CommandSettings::class)
+      .resolveLanguage(MessageSettings::class)
       .zipWith(telegramClientCache.getTelegramClient(update.chatId))
       .map {
         val message = when (it.t2.currentBotState) {

@@ -1,6 +1,6 @@
 package by.miaskor.bot.service.handler.command.storehouse
 
-import by.miaskor.bot.configuration.settings.StateSettings
+import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.Command.STORE_HOUSE
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.TelegramClientCache
@@ -41,7 +41,7 @@ class StoreHouseCommandHandler(
 
   private fun sendFailMessage(update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
-      .resolveLanguage(StateSettings::class)
+      .resolveLanguage(MessageSettings::class)
       .map {
         telegramBot.sendMessage(update.chatId, it.addingStoreHouseFailMessage())
       }.then(Mono.empty())
@@ -49,7 +49,7 @@ class StoreHouseCommandHandler(
 
   private fun sendSuccessMessage(update: Update): Mono<StoreHouseDto> {
     return Mono.just(update.chatId)
-      .resolveLanguage(StateSettings::class)
+      .resolveLanguage(MessageSettings::class)
       .map {
         telegramBot.sendMessage(update.chatId, it.addingStoreHouseSuccessMessage())
       }.then(Mono.empty())

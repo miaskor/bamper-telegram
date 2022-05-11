@@ -1,6 +1,6 @@
 package by.miaskor.bot.service.handler.command.language
 
-import by.miaskor.bot.configuration.settings.CommandSettings
+import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.BotState.CHANGING_LANGUAGE
 import by.miaskor.bot.domain.Command.CHANGE_LANGUAGE
 import by.miaskor.bot.service.BotStateChanger.changeBotState
@@ -12,7 +12,6 @@ import by.miaskor.bot.service.handler.command.CommandHandler
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.model.request.Keyboard
-import com.pengrad.telegrambot.request.SendMessage
 import reactor.core.publisher.Mono
 
 class ChangeLanguageCommandHandler(
@@ -30,7 +29,7 @@ class ChangeLanguageCommandHandler(
 
   private fun handle(keyboard: Keyboard, chatId: Long): Mono<Unit> {
     return Mono.just(chatId)
-      .resolveLanguage(CommandSettings::class)
+      .resolveLanguage(MessageSettings::class)
       .map {
         telegramBot.sendMessageWithKeyboard(chatId, it.changeLanguageMessage(), keyboard)
       }

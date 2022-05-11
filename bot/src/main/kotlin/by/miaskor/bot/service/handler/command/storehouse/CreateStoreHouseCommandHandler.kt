@@ -1,6 +1,6 @@
 package by.miaskor.bot.service.handler.command.storehouse
 
-import by.miaskor.bot.configuration.settings.StateSettings
+import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.BotState.CREATING_STORE_HOUSE
 import by.miaskor.bot.domain.Command.CREATE_STORE_HOUSE
 import by.miaskor.bot.service.BotStateChanger.changeBotState
@@ -29,7 +29,7 @@ class CreateStoreHouseCommandHandler(
 
   private fun handle(keyboard: Keyboard, chatId: Long): Mono<Unit> {
     return Mono.just(chatId)
-      .resolveLanguage(StateSettings::class)
+      .resolveLanguage(MessageSettings::class)
       .map { telegramBot.sendMessageWithKeyboard(chatId, it.storeHouseMessage(), keyboard) }
   }
 }

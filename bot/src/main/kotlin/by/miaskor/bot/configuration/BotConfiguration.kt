@@ -78,7 +78,7 @@ open class BotConfiguration(
     return GreetingsHandler(
       telegramBot(),
       serviceConfiguration.keyboardBuilder(),
-      settingsConfiguration.stateSettingsEN()
+      settingsConfiguration.messageSettingsEN()
     )
   }
 

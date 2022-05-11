@@ -1,6 +1,6 @@
 package by.miaskor.bot.service.handler.command.employee
 
-import by.miaskor.bot.configuration.settings.StateSettings
+import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE
 import by.miaskor.bot.domain.Command.EMPLOYEE
 import by.miaskor.bot.service.KeyboardBuilder
@@ -85,7 +85,7 @@ class EmployeeCommandHandler(
 
   private fun sendSuccessAddingMessage(update: Update): Mono<WorkerTelegramDto> {
     return Mono.just(update.chatId)
-      .resolveLanguage(StateSettings::class)
+      .resolveLanguage(MessageSettings::class)
       .zipWith(keyboardBuilder.build(update.chatId))
       .map {
         telegramBot.sendMessageWithKeyboard(update.chatId, it.t1.addingEmployeeSuccessMessage(), it.t2)
@@ -94,7 +94,7 @@ class EmployeeCommandHandler(
 
   private fun sendSuccessRemovingMessage(update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
-      .resolveLanguage(StateSettings::class)
+      .resolveLanguage(MessageSettings::class)
       .zipWith(keyboardBuilder.build(update.chatId))
       .map {
         telegramBot.sendMessageWithKeyboard(update.chatId, it.t1.removingEmployeeSuccessMessage(), it.t2)
@@ -103,15 +103,15 @@ class EmployeeCommandHandler(
 
   private fun sendFailMessage(update: Update): Mono<TelegramClientResponse> {
     return Mono.just(update.chatId)
-      .resolveLanguage(StateSettings::class)
+      .resolveLanguage(MessageSettings::class)
       .map {
-        telegramBot.sendMessage(update.chatId, it.employeeFoundFailMessage().format(update.text))
+        telegramBot.sendMessage(update.chatId, it.failFoundEmployeeMessage().format(update.text))
       }.then(Mono.empty())
   }
 
   private fun sendIsYourEmployerMessage(update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
-      .resolveLanguage(StateSettings::class)
+      .resolveLanguage(MessageSettings::class)
       .map {
         telegramBot.sendMessage(update.chatId, it.employeeIsYourEmployerMessage().format(update.text))
       }.then(Mono.empty())
@@ -119,7 +119,7 @@ class EmployeeCommandHandler(
 
   private fun sendIsYouMessage(update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
-      .resolveLanguage(StateSettings::class)
+      .resolveLanguage(MessageSettings::class)
       .map {
         telegramBot.sendMessage(update.chatId, it.employeeIsYouMessage().format(update.text))
       }.then(Mono.empty())

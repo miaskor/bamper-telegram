@@ -2,10 +2,9 @@ package by.miaskor.bot.configuration
 
 import by.miaskor.bot.configuration.settings.BotSettings
 import by.miaskor.bot.configuration.settings.CacheSettings
-import by.miaskor.bot.configuration.settings.CommandSettings
 import by.miaskor.bot.configuration.settings.ConnectorSettings
 import by.miaskor.bot.configuration.settings.KeyboardSettings
-import by.miaskor.bot.configuration.settings.StateSettings
+import by.miaskor.bot.configuration.settings.MessageSettings
 import org.cfg4j.provider.ConfigurationProvider
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -31,17 +30,6 @@ open class SettingsConfiguration(
   }
 
   @Bean
-  open fun stateSettingsEN(): StateSettings {
-    return confProvider.bind("state.en", StateSettings::class.java)
-  }
-
-
-  @Bean
-  open fun stateSettingsRU(): StateSettings {
-    return confProvider.bind("state.ru", StateSettings::class.java)
-  }
-
-  @Bean
   open fun keyboardSettingsRU(): KeyboardSettings {
     return confProvider.bind("keyboard.ru", KeyboardSettings::class.java)
   }
@@ -52,12 +40,12 @@ open class SettingsConfiguration(
   }
 
   @Bean
-  open fun commandSettingsRU(): CommandSettings {
-    return confProvider.bind("command.ru", CommandSettings::class.java)
+  open fun messageSettingsRU(): MessageSettings {
+    return confProvider.bind("command.ru", MessageSettings::class.java)
   }
 
   @Bean
-  open fun commandSettingsEN(): CommandSettings {
-    return confProvider.bind("command.en", CommandSettings::class.java)
+  open fun messageSettingsEN(): MessageSettings {
+    return confProvider.bind("command.en", MessageSettings::class.java)
   }
 }

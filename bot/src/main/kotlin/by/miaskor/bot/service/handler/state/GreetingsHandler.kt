@@ -1,6 +1,6 @@
 package by.miaskor.bot.service.handler.state
 
-import by.miaskor.bot.configuration.settings.StateSettings
+import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.BotState
 import by.miaskor.bot.domain.BotState.CHOOSING_LANGUAGE
 import by.miaskor.bot.domain.BotState.GREETINGS
@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono
 class GreetingsHandler(
   private val telegramBot: TelegramBot,
   private val keyboardBuilder: KeyboardBuilder,
-  private val stateSettings: StateSettings
+  private val messageSettings: MessageSettings
 ) : BotStateHandler {
   override val state: BotState = GREETINGS
 
@@ -24,7 +24,7 @@ class GreetingsHandler(
       .changeBotState(update::chatId, CHOOSING_LANGUAGE)
       .flatMap(keyboardBuilder::build)
       .map { keyboard ->
-        telegramBot.sendMessageWithKeyboard(update.chatId, stateSettings.greetingsMessage().trimIndent(), keyboard)
+        telegramBot.sendMessageWithKeyboard(update.chatId, messageSettings.greetingsMessage().trimIndent(), keyboard)
       }
   }
 }

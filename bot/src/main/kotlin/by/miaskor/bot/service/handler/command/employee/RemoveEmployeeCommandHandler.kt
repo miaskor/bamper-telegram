@@ -1,6 +1,6 @@
 package by.miaskor.bot.service.handler.command.employee
 
-import by.miaskor.bot.configuration.settings.StateSettings
+import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
 import by.miaskor.bot.domain.Command.REMOVE_EMPLOYEE
 import by.miaskor.bot.service.BotStateChanger.changeBotState
@@ -29,9 +29,9 @@ class RemoveEmployeeCommandHandler(
 
   private fun handle(keyboard: Keyboard, chatId: Long): Mono<Unit> {
     return Mono.just(chatId)
-      .resolveLanguage(StateSettings::class)
+      .resolveLanguage(MessageSettings::class)
       .map {
-        telegramBot.sendMessageWithKeyboard(chatId, it.employeeMessage(), keyboard)
+        telegramBot.sendMessageWithKeyboard(chatId, it.inputEmployeeMessage(), keyboard)
       }
   }
 }

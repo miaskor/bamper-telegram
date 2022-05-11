@@ -18,9 +18,8 @@ open class ApplicationConfiguration(
   @PostConstruct
   fun init() {
     BotStateChanger.telegramClientCache = serviceConfiguration.telegramClientCache()
-    LanguageSettingsResolver.commandSettingsRegistry = serviceConfiguration.commandSettingsRegistry()
+    LanguageSettingsResolver.messageSettingsRegistry = serviceConfiguration.messageSettingsRegistry()
     LanguageSettingsResolver.keyboardSettingsRegistry = serviceConfiguration.keyboardSettingsRegistry()
-    LanguageSettingsResolver.stateSettingsRegistry = serviceConfiguration.stateSettingsRegistry()
     LanguageSettingsResolver.telegramClientCache = serviceConfiguration.telegramClientCache()
     CommandResolver.commandHandlerRegistry = commandHandlerRegistry
     CommandResolver.botStateHandlerRegistry = botStateHandlerRegistry
