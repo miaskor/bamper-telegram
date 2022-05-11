@@ -51,7 +51,8 @@ open class CommandHandlerConfiguration(
   open fun listEmployeeCommandHandler(): CommandHandler {
     return ListEmployeeCommandHandler(
       telegramBot,
-      connectorConfiguration.telegramClientConnector()
+      connectorConfiguration.telegramClientConnector(),
+      serviceConfiguration.telegramClientCache()
     )
   }
 

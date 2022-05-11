@@ -8,5 +8,21 @@ data class TelegramClient(
   val chatLanguage: String = "",
   val bamperClientId: Long? = null,
   val currentBotState: BotState,
-  val previousBotStates: SortedSet<BotState> = sortedSetOf(MAIN_MENU)
-)
+  val previousBotStates: SortedSet<BotState> = sortedSetOf(MAIN_MENU),
+  var employeeUsernames: TelegramClientEmployees = TelegramClientEmployees()
+) {
+
+  fun modified() {
+    employeeUsernames = employeeUsernames.copy(
+      isModified = true,
+      employees = employeeUsernames.employees
+    )
+  }
+
+  fun refreshEmployees(usernames: List<String>) {
+    employeeUsernames = employeeUsernames.copy(
+      isModified = false,
+      employees = sortedSetOf<String>().plus(usernames)
+    )
+  }
+}
