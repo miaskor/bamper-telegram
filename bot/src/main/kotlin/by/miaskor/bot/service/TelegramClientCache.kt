@@ -3,6 +3,7 @@ package by.miaskor.bot.service
 import by.miaskor.bot.configuration.settings.CacheSettings
 import by.miaskor.bot.domain.BotState.GREETINGS
 import by.miaskor.bot.domain.BotState.MAIN_MENU
+import by.miaskor.bot.domain.Language.ENGLISH
 import by.miaskor.bot.domain.TelegramClient
 import by.miaskor.domain.api.connector.TelegramClientConnector
 import com.github.benmanes.caffeine.cache.Cache
@@ -36,7 +37,8 @@ class TelegramClientCache(
       .defaultIfEmpty(
         TelegramClient(
           chatId = chatId,
-          currentBotState = GREETINGS
+          currentBotState = GREETINGS,
+          chatLanguage = ENGLISH.domain
         )
       ).doOnNext { populate(chatId, it) }
   }

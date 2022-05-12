@@ -36,4 +36,11 @@ class StoreHouseController(
       .flatMap { storeHouseService.create(it) }
       .then(Mono.just(ResponseEntity.ok().build()))
   }
+
+  @GetMapping("/{chatId}")
+  fun getAllByChatId(@PathVariable chatId: Long): Mono<ResponseEntity<List<StoreHouseDto>>> {
+    return Mono.just(chatId)
+      .flatMap(storeHouseService::getAllByChatId)
+      .map { ResponseEntity.ok(it) }
+  }
 }

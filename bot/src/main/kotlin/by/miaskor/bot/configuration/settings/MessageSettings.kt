@@ -19,4 +19,5 @@ interface MessageSettings {
   fun storeHouseMessage(): String
   fun addingStoreHouseFailMessage(): String
   fun addingStoreHouseSuccessMessage(): String
+  fun allStoreHousesMessage(): String
 }

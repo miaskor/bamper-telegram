@@ -14,6 +14,17 @@ class StoreHouseService(
       .flatMap { Mono.just(storeHouseDto) }
   }
 
+  fun getAllByChatId(chatId: Long): Mono<List<StoreHouseDto>> {
+    return storeHouseRepository.findAllByChatId(chatId)
+      .flatMapIterable { it }
+      .map {
+        StoreHouseDto(
+          chatId = it.telegramChatId ?: -1,
+          name = it.storeHouseName ?: ""
+        )
+      }.collectList()
+  }
+
   fun create(storeHouseDto: StoreHouseDto): Mono<Unit> {
     return Mono.fromSupplier {
       StoreHouse(
