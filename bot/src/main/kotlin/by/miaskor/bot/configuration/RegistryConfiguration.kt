@@ -38,7 +38,8 @@ open class RegistryConfiguration(
       commandHandlerConfiguration.employeeCommandHandler(),
       commandHandlerConfiguration.removeEmployeeCommandHandler(),
       commandHandlerConfiguration.createStoreHouseCommandHandler(),
-      commandHandlerConfiguration.storeHouseCommandHandler()
+      commandHandlerConfiguration.storeHouseCommandHandler(),
+      commandHandlerConfiguration.chooseStoreHouseCommandHandler()
     )
   }
 

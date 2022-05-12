@@ -1,7 +1,6 @@
 package by.miaskor.domain.api.connector
 
 import by.miaskor.domain.api.domain.StoreHouseDto
-import by.miaskor.domain.api.domain.TelegramClientResponse
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
@@ -21,6 +20,13 @@ class StoreHouseConnector(
   fun getByNameAndTelegramChatId(storeHouseDto: StoreHouseDto): Mono<StoreHouseDto> {
     return webClient.get()
       .uri("/store-house/${storeHouseDto.chatId}/${storeHouseDto.name}")
+      .retrieve()
+      .bodyToMono()
+  }
+
+  fun getAllByChatId(chatId: Long): Mono<List<StoreHouseDto>> {
+    return webClient.get()
+      .uri("/store-house/$chatId")
       .retrieve()
       .bodyToMono()
   }

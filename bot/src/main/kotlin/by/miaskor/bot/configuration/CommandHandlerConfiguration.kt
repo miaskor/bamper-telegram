@@ -10,6 +10,7 @@ import by.miaskor.bot.service.handler.command.employee.ListEmployeeCommandHandle
 import by.miaskor.bot.service.handler.command.employee.RemoveEmployeeCommandHandler
 import by.miaskor.bot.service.handler.command.language.ChangeLanguageCommandHandler
 import by.miaskor.bot.service.handler.command.language.LanguageCommandHandler
+import by.miaskor.bot.service.handler.command.storehouse.ChooseStoreHouseCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.CreateStoreHouseCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.StoreHouseCommandHandler
 import com.pengrad.telegrambot.TelegramBot
@@ -86,6 +87,15 @@ open class CommandHandlerConfiguration(
     return CreateStoreHouseCommandHandler(
       telegramBot,
       serviceConfiguration.keyboardBuilder()
+    )
+  }
+
+  @Bean
+  open fun chooseStoreHouseCommandHandler(): CommandHandler {
+    return ChooseStoreHouseCommandHandler(
+      serviceConfiguration.keyboardBuilder(),
+      connectorConfiguration.storeHouseConnector(),
+      telegramBot
     )
   }
 
