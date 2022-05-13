@@ -9,4 +9,5 @@ interface KeyboardSettings {
   fun removingEmployee(): Array<Array<String>>
   fun creatingStoreHouseMenu(): Array<Array<String>>
   fun choosingStoreHouseMenu(): Array<Array<String>>
+  fun storeHouseMenu(): Array<Array<String>>
 }

@@ -12,6 +12,7 @@ import by.miaskor.bot.service.handler.command.language.ChangeLanguageCommandHand
 import by.miaskor.bot.service.handler.command.language.LanguageCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.ChooseStoreHouseCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.CreateStoreHouseCommandHandler
+import by.miaskor.bot.service.handler.command.storehouse.SelectCertainStoreHouseCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.StoreHouseCommandHandler
 import com.pengrad.telegrambot.TelegramBot
 import org.springframework.context.annotation.Bean
@@ -95,6 +96,16 @@ open class CommandHandlerConfiguration(
     return ChooseStoreHouseCommandHandler(
       serviceConfiguration.keyboardBuilder(),
       connectorConfiguration.storeHouseConnector(),
+      telegramBot,
+      serviceConfiguration.telegramClientCache()
+    )
+  }
+
+  @Bean
+  open fun selectCertainStoreHouseCommandHandler(): CommandHandler {
+    return SelectCertainStoreHouseCommandHandler(
+      serviceConfiguration.keyboardBuilder(),
+      serviceConfiguration.telegramClientCache(),
       telegramBot
     )
   }

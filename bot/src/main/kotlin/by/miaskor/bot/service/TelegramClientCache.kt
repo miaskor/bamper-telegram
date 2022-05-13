@@ -34,13 +34,8 @@ class TelegramClientCache(
   fun getTelegramClient(chatId: Long): Mono<TelegramClient> {
     return Mono.justOrEmpty(cache.getIfPresent(chatId))
       .switchIfEmpty(Mono.defer { isClientExists(chatId) })
-      .defaultIfEmpty(
-        TelegramClient(
-          chatId = chatId,
-          currentBotState = GREETINGS,
-          chatLanguage = ENGLISH.domain
-        )
-      ).doOnNext { populate(chatId, it) }
+      .defaultIfEmpty(TelegramClient(chatId = chatId))
+      .doOnNext { populate(chatId, it) }
   }
 
   private fun isClientExists(chatId: Long): Mono<TelegramClient> {

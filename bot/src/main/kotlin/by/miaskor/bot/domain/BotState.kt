@@ -10,6 +10,7 @@ import by.miaskor.bot.domain.Command.EMPLOYEES
 import by.miaskor.bot.domain.Command.LANGUAGE
 import by.miaskor.bot.domain.Command.LIST_EMPLOYEE
 import by.miaskor.bot.domain.Command.REMOVE_EMPLOYEE
+import by.miaskor.bot.domain.Command.SELECT_CERTAIN_STORE_HOUSE
 import by.miaskor.bot.domain.Command.STORE_HOUSE
 import by.miaskor.bot.domain.Command.UNDEFINED
 import reactor.core.publisher.Mono
@@ -22,10 +23,9 @@ enum class BotState(private vararg val commands: Command) {
   REMOVING_EMPLOYEE(BACK, EMPLOYEE, UNDEFINED),
   MAIN_MENU(CREATE_STORE_HOUSE, CHOOSE_STORE_HOUSE, CHANGE_LANGUAGE, EMPLOYEES),
   CREATING_STORE_HOUSE(BACK, STORE_HOUSE, UNDEFINED),
-  CHOOSING_STORE_HOUSE(BACK, UNDEFINED),
+  CHOOSING_STORE_HOUSE(BACK, SELECT_CERTAIN_STORE_HOUSE, UNDEFINED),
+  STORE_HOUSE_MENU(BACK, UNDEFINED),
   EMPLOYEES_MENU(LIST_EMPLOYEE, ADD_EMPLOYEE, REMOVE_EMPLOYEE, BACK),
-  STORE_HOUSES_MENU,
-  STORE_HOUSE_MENU,
   FINDING_PARTS_MENU,
   BAMPER_MENU;
 

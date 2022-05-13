@@ -1,6 +1,7 @@
 package by.miaskor.bot.service.handler.command
 
 import by.miaskor.bot.configuration.settings.MessageSettings
+import by.miaskor.bot.domain.BotState.CHOOSING_STORE_HOUSE
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.MAIN_MENU
 import by.miaskor.bot.domain.Command.BACK
@@ -44,6 +45,7 @@ class BackCommandHandler(
         val sendMessage = when (it.t1.currentBotState) {
           MAIN_MENU -> MessageSettings.mainMenuMessage()
           EMPLOYEES_MENU -> MessageSettings.employeesMenuMessage()
+          CHOOSING_STORE_HOUSE -> MessageSettings.allStoreHousesMessage()
           else -> "Something bad happened"
         }
         telegramBot.sendMessageWithKeyboard(update.chatId, sendMessage, it.t2)
