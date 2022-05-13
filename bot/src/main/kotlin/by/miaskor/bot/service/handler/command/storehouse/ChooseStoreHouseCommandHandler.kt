@@ -6,21 +6,22 @@ import by.miaskor.bot.domain.Command.CHOOSE_STORE_HOUSE
 import by.miaskor.bot.service.BotStateChanger.changeBotState
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
+import by.miaskor.bot.service.TelegramClientCache
 import by.miaskor.bot.service.chatId
-import by.miaskor.bot.service.extension.addRowsToEnd
 import by.miaskor.bot.service.extension.sendMessageWithKeyboard
 import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.domain.api.connector.StoreHouseConnector
+import by.miaskor.domain.api.domain.StoreHouseDto
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.model.request.Keyboard
-import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup
 import reactor.core.publisher.Mono
 
 class ChooseStoreHouseCommandHandler(
   private val keyboardBuilder: KeyboardBuilder,
   private val storeHouseConnector: StoreHouseConnector,
-  private val telegramBot: TelegramBot
+  private val telegramBot: TelegramBot,
+  private val telegramClientCache: TelegramClientCache
 ) : CommandHandler {
   override val command = CHOOSE_STORE_HOUSE
 
@@ -28,15 +29,17 @@ class ChooseStoreHouseCommandHandler(
     return Mono.just(update.chatId)
       .changeBotState(update::chatId, CHOOSING_STORE_HOUSE)
       .flatMap { storeHouseConnector.getAllByChatId(it) }
-      .map { storeHouses -> storeHouses.map { it.name } }
+      .flatMap { handle(it, update) }
+  }
+
+  private fun handle(storeHouses: List<StoreHouseDto>, update: Update): Mono<Unit> {
+    return Mono.fromSupplier { storeHouses.map { it.name } }
       .flatMap { storeHouseNames ->
-        val arrays = storeHouseNames.chunked(2).map {
-          it.toTypedArray()
-        }.toTypedArray()
-        keyboardBuilder.build(update.chatId)
-        .cast(ReplyKeyboardMarkup::class.java)
-        .map { it.addRowsToEnd(arrays) }
+        telegramClientCache.getTelegramClient(update.chatId)
+          .map { it.refreshStoreHouses(storeHouseNames) }
+          .thenReturn(storeHouseNames)
       }
+      .flatMap { keyboardBuilder.build(update.chatId) }
       .flatMap { handle(it, update.chatId) }
   }
 

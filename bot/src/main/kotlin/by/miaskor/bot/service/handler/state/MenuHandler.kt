@@ -23,6 +23,7 @@ class MenuHandler(
         val message = when (state) {
           BotState.MAIN_MENU -> it.t1.mainMenuMessage()
           BotState.EMPLOYEES_MENU -> it.t1.employeesMenuMessage()
+          BotState.STORE_HOUSE_MENU -> it.t1.storeHouseMenuMessage()
           else -> "Something bad happened in menuHandler"
         }
         telegramBot.sendMessageWithKeyboard(update.chatId, message, it.t2)

@@ -68,7 +68,7 @@ class EmployeeCommandHandler(
       }.flatMap(workerTelegramConnector::remove)
       .then(
         telegramClientCache.getTelegramClient(update.chatId)
-          .map { it.modified() }
+          .map { it.modifiedEmployees() }
       )
       .then(sendSuccessRemovingMessage(update))
   }
@@ -84,7 +84,7 @@ class EmployeeCommandHandler(
         workerTelegramConnector.create(workerTelegramDto)
           .then(
             telegramClientCache.getTelegramClient(update.chatId)
-              .map { it.modified() }
+              .map { it.modifiedEmployees() }
           )
           .then(sendSuccessAddingMessage(update))
       )

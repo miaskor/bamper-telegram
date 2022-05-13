@@ -4,7 +4,7 @@ import com.pengrad.telegrambot.model.request.KeyboardButton
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup
 
 @Suppress("UNCHECKED_CAST")
-fun ReplyKeyboardMarkup.addRowsToEnd(keyboardValues: Array<Array<String>>): ReplyKeyboardMarkup {
+fun ReplyKeyboardMarkup.addRowsToBegin(keyboardValues: Array<Array<String>>): ReplyKeyboardMarkup {
   val keyboardButtons: MutableList<Array<String>> = mutableListOf()
   keyboardValues.forEach {
     keyboardButtons.add(it)

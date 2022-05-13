@@ -12,6 +12,7 @@ interface MessageSettings {
   fun greetingsMessage(): String
   fun mainMenuMessage(): String
   fun employeesMenuMessage(): String
+  fun storeHouseMenuMessage(): String
   fun addingEmployeeSuccessMessage(): String
   fun removingEmployeeSuccessMessage(): String
   fun employeeIsYourEmployerMessage(): String
@@ -20,4 +21,5 @@ interface MessageSettings {
   fun addingStoreHouseFailMessage(): String
   fun addingStoreHouseSuccessMessage(): String
   fun allStoreHousesMessage(): String
+  fun storeHouseNotFoundMessage(): String
 }

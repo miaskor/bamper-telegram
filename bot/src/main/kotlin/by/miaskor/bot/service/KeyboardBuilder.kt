@@ -9,6 +9,7 @@ import by.miaskor.bot.domain.BotState.CREATING_STORE_HOUSE
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.MAIN_MENU
 import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
+import by.miaskor.bot.domain.BotState.STORE_HOUSE_MENU
 import by.miaskor.bot.domain.TelegramClient
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import com.pengrad.telegrambot.model.request.Keyboard
@@ -25,6 +26,7 @@ class KeyboardBuilder(
       .flatMap(::build)
   }
 
+  @Suppress("UNCHECKED_CAST")
   private fun build(telegramClient: TelegramClient): Mono<Keyboard> {
     return Mono.just(telegramClient.chatId)
       .resolveLanguage(KeyboardSettings::class)
@@ -37,7 +39,17 @@ class KeyboardBuilder(
           ADDING_EMPLOYEE -> buildKeyboard(it.addingEmployee())
           REMOVING_EMPLOYEE -> buildKeyboard(it.removingEmployee())
           CREATING_STORE_HOUSE -> buildKeyboard(it.creatingStoreHouseMenu())
-          CHOOSING_STORE_HOUSE -> buildKeyboard(it.choosingStoreHouseMenu())
+          CHOOSING_STORE_HOUSE -> {
+            val storeHouses = telegramClient.telegramClientStoreHouses
+              .storeHouses
+              .chunked(2)
+              .map { it.toTypedArray() }
+              .toTypedArray()
+            val storeHouseMenuKeyboards = it.choosingStoreHouseMenu().flatten().toTypedArray()
+            val keyboards = storeHouses.plus(storeHouseMenuKeyboards)
+            buildKeyboard(keyboards)
+          }
+          STORE_HOUSE_MENU -> buildKeyboard(it.storeHouseMenu())
           else -> buildKeyboard(arrayOf(arrayOf("Something went wrong")))
         }
       }
