@@ -3,11 +3,10 @@ package by.miaskor.cloud.drive.service.connector
 import by.miaskor.cloud.drive.domain.DownloadUrlResponse
 import by.miaskor.cloud.drive.domain.UploadUrlResponse
 import by.miaskor.cloud.drive.settings.CloudDriveSettings
+import org.springframework.core.io.buffer.DataBuffer
 import org.springframework.http.MediaType
-import org.springframework.util.MultiValueMap
-import org.springframework.util.MultiValueMapAdapter
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToMono
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 class CloudYandexDriveConnector(
@@ -40,11 +39,20 @@ class CloudYandexDriveConnector(
       .bodyToMono(Unit::class.java)
   }
 
-  fun getImage(url: String): Mono<ByteArray> {
+  fun getImage(downloadUrl: String): Flux<DataBuffer> {
     return webClient.get()
-      .uri(url)
-      .retrieve()
-      .bodyToMono()
+      .uri(downloadUrl)
+      .exchangeToFlux { response ->
+        response.toEntity(Any::class.java)
+          .mapNotNull { it.headers.location }
+          .flatMapMany { redirectUrl ->
+            webClient.get()
+              .uri(redirectUrl.toString())
+              .accept(MediaType.APPLICATION_OCTET_STREAM)
+              .retrieve()
+              .bodyToFlux(DataBuffer::class.java)
+          }
+      }
   }
 
   fun isFolderExists(path: String): Mono<Boolean> {

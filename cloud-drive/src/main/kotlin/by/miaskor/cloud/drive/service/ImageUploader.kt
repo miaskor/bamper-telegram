@@ -28,12 +28,6 @@ class DefaultImageUploader(
   private fun upload(path: String, image: ByteArray): Mono<UploadFileResponse> {
     return Mono.just(path)
       .flatMap { cloudYandexDriveConnector.uploadImage(image, it) }
-      .flatMap { cloudYandexDriveConnector.getDownloadedUrl(path) }
-      .map {
-        UploadFileResponse(
-          path = path,
-          downloadUrl = it
-        )
-      }
+      .thenReturn(UploadFileResponse(path))
   }
 }
