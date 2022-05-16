@@ -3,6 +3,8 @@ package by.miaskor.cloud.drive.service
 import by.miaskor.cloud.drive.domain.UploadFileRequest
 import by.miaskor.cloud.drive.domain.UploadFileResponse
 import by.miaskor.cloud.drive.service.connector.CloudYandexDriveConnector
+import org.springframework.core.io.buffer.DataBuffer
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 interface ImageUploader {
@@ -25,7 +27,7 @@ class DefaultImageUploader(
       .flatMap { upload(it, uploadFileRequest.image) }
   }
 
-  private fun upload(path: String, image: ByteArray): Mono<UploadFileResponse> {
+  private fun upload(path: String, image: Flux<DataBuffer>): Mono<UploadFileResponse> {
     return Mono.just(path)
       .flatMap { cloudYandexDriveConnector.uploadImage(image, it) }
       .thenReturn(UploadFileResponse(path))

@@ -5,6 +5,7 @@ import by.miaskor.cloud.drive.domain.UploadUrlResponse
 import by.miaskor.cloud.drive.settings.CloudDriveSettings
 import org.springframework.core.io.buffer.DataBuffer
 import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -14,14 +15,13 @@ class CloudYandexDriveConnector(
   private val cloudDriveSettings: CloudDriveSettings
 ) {
 
-  fun uploadImage(image: ByteArray, path: String): Mono<Unit> {
+  fun uploadImage(image: Flux<DataBuffer>, path: String): Mono<Unit> {
     return getUploadedUrl(path)
       .flatMap {
         webClient.put()
           .uri(it)
           .header("Authorization", cloudDriveSettings.authToken())
-          .contentType(MediaType.IMAGE_JPEG)
-          .bodyValue(image)
+          .body(BodyInserters.fromPublisher(image, DataBuffer::class.java))
           .retrieve()
           .bodyToMono(Unit::class.java)
       }
