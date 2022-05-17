@@ -2,6 +2,7 @@ package by.miaskor.bot.configuration
 
 import by.miaskor.bot.domain.BotState
 import by.miaskor.bot.service.handler.state.BotStateHandler
+import by.miaskor.bot.service.handler.state.CreatingCarHandler
 import by.miaskor.bot.service.handler.state.GreetingsHandler
 import by.miaskor.bot.service.handler.state.MenuHandler
 import com.pengrad.telegrambot.TelegramBot
@@ -39,6 +40,16 @@ open class BotStateHandlerConfiguration(
       telegramBot,
       serviceConfiguration.keyboardBuilder(),
       settingsConfiguration.messageSettingsEN()
+    )
+  }
+
+  @Bean
+  open fun creatingCarHandler(): BotStateHandler {
+    return CreatingCarHandler(
+      settingsConfiguration.cacheSettings(),
+      telegramBot,
+      serviceConfiguration.telegramClientCache(),
+      serviceConfiguration.keyboardBuilder()
     )
   }
 }

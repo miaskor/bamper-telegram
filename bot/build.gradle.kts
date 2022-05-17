@@ -5,6 +5,8 @@ dependencies {
   implementation("org.springframework:spring-webflux")
   implementation("org.jetbrains.kotlin:kotlin-reflect:1.6.21")
   implementation("io.projectreactor.netty:reactor-netty:1.0.18")
+  implementation("io.projectreactor.kotlin:reactor-kotlin-extensions:1.1.6")
+
 
   implementation(project(":domain:domain-api"))
 }

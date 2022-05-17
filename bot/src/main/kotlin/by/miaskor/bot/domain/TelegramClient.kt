@@ -14,6 +14,10 @@ data class TelegramClient(
   var telegramClientStoreHouses: TelegramClientStoreHouses = TelegramClientStoreHouses()
 ) {
 
+  fun currentStoreHouseName(): String {
+    return telegramClientStoreHouses.currentStoreHouse
+  }
+
   fun refreshStoreHouses(storeHouseNames: List<String>) {
     telegramClientStoreHouses = telegramClientStoreHouses.copy(
       isModified = false,

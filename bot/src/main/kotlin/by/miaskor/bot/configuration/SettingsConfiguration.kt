@@ -3,6 +3,7 @@ package by.miaskor.bot.configuration
 import by.miaskor.bot.configuration.settings.BotSettings
 import by.miaskor.bot.configuration.settings.CacheSettings
 import by.miaskor.bot.configuration.settings.ConnectorSettings
+import by.miaskor.bot.configuration.settings.CreatingCarMessageSettings
 import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.configuration.settings.MessageSettings
 import org.cfg4j.provider.ConfigurationProvider
@@ -47,5 +48,15 @@ open class SettingsConfiguration(
   @Bean
   open fun messageSettingsEN(): MessageSettings {
     return confProvider.bind("command.en", MessageSettings::class.java)
+  }
+
+  @Bean
+  open fun creatingCarMessageSettingsRU(): CreatingCarMessageSettings {
+    return confProvider.bind("creating.car.ru", CreatingCarMessageSettings::class.java)
+  }
+
+  @Bean
+  open fun creatingCarMessageSettingsEN(): CreatingCarMessageSettings {
+    return confProvider.bind("creating.car.en", CreatingCarMessageSettings::class.java)
   }
 }

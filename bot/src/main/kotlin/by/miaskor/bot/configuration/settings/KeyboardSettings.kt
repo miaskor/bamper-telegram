@@ -10,4 +10,6 @@ interface KeyboardSettings {
   fun creatingStoreHouseMenu(): Array<Array<String>>
   fun choosingStoreHouseMenu(): Array<Array<String>>
   fun storeHouseMenu(): Array<Array<String>>
+  fun creatingSparePartMenu(): Array<Array<String>>
+  fun creatingCarMenu(): Array<Array<String>>
 }

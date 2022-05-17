@@ -18,6 +18,7 @@ open class ApplicationConfiguration(
     LanguageSettingsResolver.messageSettingsRegistry = registryConfiguration.messageSettingsRegistry()
     LanguageSettingsResolver.keyboardSettingsRegistry = registryConfiguration.keyboardSettingsRegistry()
     LanguageSettingsResolver.telegramClientCache = serviceConfiguration.telegramClientCache()
+    LanguageSettingsResolver.creatingCarMessageSettingsRegistry = registryConfiguration.creatingCarMessageSettingsRegistry()
     CommandResolver.commandHandlerRegistry = registryConfiguration.commandHandlerRegistry()
     CommandResolver.botStateHandlerRegistry = registryConfiguration.botStateHandlerRegistry()
   }

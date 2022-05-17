@@ -29,21 +29,23 @@ class SelectCertainStoreHouseCommandHandler(
       .flatMapIterable { it.storeHouses }
       .filter { storeHouseName -> storeHouseName == update.text }
       .next()
+      .switchIfEmpty(storeHouseNotFound(update))
       .flatMap { storeHouseName ->
         telegramClientCache.getTelegramClient(update.chatId)
           .map { it.refreshCurrentStoreHouse(storeHouseName) }
           .thenReturn(storeHouseName)
       }
       .flatMap { processMessage(update) }
-      .switchIfEmpty(
-        Mono.just(update.chatId)
-          .resolveLanguage(MessageSettings::class)
-          .map {
-            telegramBot.sendMessage(
-              update.chatId, it.storeHouseNotFoundMessage().format(update.text)
-            )
-          }
-      )
+  }
+
+  private fun storeHouseNotFound(update: Update): Mono<String> {
+    return Mono.just(update.chatId)
+      .resolveLanguage(MessageSettings::class)
+      .map {
+        telegramBot.sendMessage(
+          update.chatId, it.storeHouseNotFoundMessage().format(update.text)
+        )
+      }.then(Mono.empty())
   }
 
   private fun processMessage(update: Update): Mono<Unit> {
@@ -55,6 +57,6 @@ class SelectCertainStoreHouseCommandHandler(
         telegramBot.sendMessageWithKeyboard(
           update.chatId, it.t1.storeHouseMenuMessage().format(update.text), it.t2
         )
-      }
+      }.then(Mono.empty())
   }
 }
