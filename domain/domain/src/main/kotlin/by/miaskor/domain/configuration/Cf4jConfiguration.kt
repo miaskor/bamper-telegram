@@ -12,7 +12,12 @@ open class Cf4jConfiguration {
 
   @Bean
   open fun classPathConfigurationSource(): FilesConfigurationSource {
-    return FilesConfigurationSource { listOf(Path(PROPERTY_PATH)) }
+    return FilesConfigurationSource {
+      listOf(
+        Path(DOMAIN_PROPERTY_PATH),
+        Path(CLOUD_DRIVE_PROPERTY_PATH)
+      )
+    }
   }
 
   @Bean
@@ -23,7 +28,9 @@ open class Cf4jConfiguration {
   }
 
   private companion object {
-    private const val PROPERTY_PATH =
+    private const val DOMAIN_PROPERTY_PATH =
       "/home/mikhailskorohododv/Documents/pet-projects/bamper-telegram-properties/domain.properties"
+    private const val CLOUD_DRIVE_PROPERTY_PATH =
+      "/home/mikhailskorohododv/Documents/pet-projects/bamper-telegram-properties/cloud-drive.yaml"
   }
 }
