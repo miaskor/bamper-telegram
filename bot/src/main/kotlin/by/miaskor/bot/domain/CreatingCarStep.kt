@@ -9,7 +9,7 @@ enum class CreatingCarStep(private vararg val values: String) : AbstractStep<Cre
     override fun next() = YEAR
     override fun previous() = BRAND_NAME
   },
-  YEAR("\\d{4}") {
+  YEAR("199[2-9]", "20[0-2][0-9]") {
     override fun next() = BODY
     override fun previous() = MODEL
   },
@@ -45,12 +45,18 @@ enum class CreatingCarStep(private vararg val values: String) : AbstractStep<Cre
     "Kompr", "MPI", "TFSI", "TSI", "VTEC", "VTI", "VVT-i", "карб",
     "моно", "carb", "mono"
   ) {
-    override fun next() = ENGINE_TYPE
+    override fun next(): CreatingCarStep {
+      isComplete = true
+      return ENGINE_TYPE
+    }
+
     override fun previous() = FUEL_TYPE
   };
 
+  var isComplete = false
+
   fun isAcceptable(value: String): Boolean {
-    return this.values.firstOrNull { value.matches(Regex(it)) } != null
+    return this.values.firstOrNull { value.matches(Regex(it, RegexOption.IGNORE_CASE)) } != null
   }
 
   companion object {

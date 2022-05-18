@@ -5,7 +5,9 @@ import by.miaskor.domain.tables.references.CAR
 import org.jooq.DSLContext
 import reactor.core.publisher.Mono
 
-interface CarRepository : CrudRepository<Car>
+interface CarRepository : CrudRepository<Car> {
+  fun create(entity: Car): Mono<Long>
+}
 
 class JooqCarRepository(
   private val dslContext: DSLContext
@@ -17,6 +19,18 @@ class JooqCarRepository(
         dslContext.insertInto(CAR)
           .set(carRecord)
           .executeAsync()
+      }
+  }
+
+  override fun create(entity: Car): Mono<Long> {
+    return Mono.just(entity)
+      .map { dslContext.newRecord(CAR, it) }
+      .mapNotNull { carRecord ->
+        dslContext.insertInto(CAR)
+          .set(carRecord)
+          .returning(CAR.ID)
+          .fetchOne()
+          ?.getValue(CAR.ID)
       }
   }
 

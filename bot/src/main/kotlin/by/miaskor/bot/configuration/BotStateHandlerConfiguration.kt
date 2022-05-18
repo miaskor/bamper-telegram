@@ -13,7 +13,8 @@ import org.springframework.context.annotation.Configuration
 open class BotStateHandlerConfiguration(
   private val telegramBot: TelegramBot,
   private val settingsConfiguration: SettingsConfiguration,
-  private val serviceConfiguration: ServiceConfiguration
+  private val serviceConfiguration: ServiceConfiguration,
+  private val connectorConfiguration: ConnectorConfiguration
 ) {
 
   @Bean
@@ -49,7 +50,9 @@ open class BotStateHandlerConfiguration(
       settingsConfiguration.cacheSettings(),
       telegramBot,
       serviceConfiguration.telegramClientCache(),
-      serviceConfiguration.keyboardBuilder()
+      serviceConfiguration.keyboardBuilder(),
+      connectorConfiguration.brandConnector(),
+      connectorConfiguration.carConnector()
     )
   }
 }

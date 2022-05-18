@@ -5,11 +5,31 @@ import by.miaskor.domain.tables.references.BRAND
 import org.jooq.DSLContext
 import reactor.core.publisher.Mono
 
-interface BrandRepository : CrudRepository<Brand>
+interface BrandRepository : CrudRepository<Brand> {
+  fun findByBrandName(brandName: String): Mono<Brand>
+  fun findByBrandNameAndModel(brandName: String, model: String): Mono<Brand>
+}
 
 class JooqBrandRepository(
   private val dslContext: DSLContext
 ) : BrandRepository {
+  override fun findByBrandName(brandName: String): Mono<Brand> {
+    return Mono.fromSupplier {
+      dslContext.selectFrom(BRAND)
+        .where(BRAND.BRAND_NAME.equalIgnoreCase(brandName))
+        .fetchAnyInto(Brand::class.java)
+    }
+  }
+
+  override fun findByBrandNameAndModel(brandName: String, model: String): Mono<Brand> {
+    return Mono.fromSupplier {
+      dslContext.selectFrom(BRAND)
+        .where(BRAND.BRAND_NAME.equalIgnoreCase(brandName))
+        .and(BRAND.MODEL.equalIgnoreCase(model))
+        .fetchAnyInto(Brand::class.java)
+    }
+  }
+
   override fun save(entity: Brand): Mono<Unit> {
     return Mono.just(entity)
       .map { dslContext.newRecord(BRAND, it) }

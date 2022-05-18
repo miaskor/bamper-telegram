@@ -9,7 +9,7 @@ val Update.chatId: Long
 
 val Update.text: String
   get() {
-    return this.message().text()
+    return this.message().text() ?: ""
   }
 
 val Update.username: String

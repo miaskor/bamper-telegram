@@ -1,6 +1,9 @@
 package by.miaskor.bot.domain
 
+import by.miaskor.domain.api.domain.CarDto
+
 class CarBuilder {
+  private lateinit var brandIdValue: String
   private lateinit var brandNameValue: String
   private lateinit var modelValue: String
   private lateinit var yearValue: String
@@ -10,6 +13,11 @@ class CarBuilder {
   private lateinit var fuelTypeValue: String
   private lateinit var engineTypeValue: String
   private var carStep: CreatingCarStep = CreatingCarStep.BRAND_NAME
+
+  fun brandId(brandId: Long): CarBuilder {
+    this.brandIdValue = brandId.toString()
+    return this
+  }
 
   fun brandName(brandName: String): CarBuilder {
     this.brandNameValue = brandName
@@ -27,7 +35,7 @@ class CarBuilder {
   }
 
   fun body(body: String): CarBuilder {
-    this.bodyValue = brandNameValue
+    this.bodyValue = body
     return this
   }
 
@@ -65,9 +73,14 @@ class CarBuilder {
     return this
   }
 
-  fun build(): CarDto {
+  fun getBrandName(): String {
+    return if (::brandNameValue.isInitialized) brandNameValue else ""
+  }
+
+  fun build(storeHouseName: String, chatId: Long): CarDto {
     return CarDto(
-      brandName = brandNameValue,
+      brandId = brandIdValue.toLong(),
+      storeHouseName = storeHouseName,
       model = modelValue,
       year = yearValue,
       body = if (::bodyValue.isInitialized) bodyValue else "",
@@ -75,6 +88,7 @@ class CarBuilder {
       engineCapacity = if (::engineCapacityValue.isInitialized) engineCapacityValue.toDouble() else 0.0,
       fuelType = if (::fuelTypeValue.isInitialized) fuelTypeValue else "",
       engineType = if (::engineTypeValue.isInitialized) engineTypeValue else "",
+      chatId = chatId
     )
   }
 }

@@ -1,5 +1,7 @@
 package by.miaskor.domain.configuration
 
+import by.miaskor.domain.service.BrandService
+import by.miaskor.domain.service.CarService
 import by.miaskor.domain.service.StoreHouseService
 import by.miaskor.domain.service.TelegramClientService
 import by.miaskor.domain.service.WorkerTelegramService
@@ -27,5 +29,15 @@ open class ServiceConfiguration(
   @Bean
   open fun storeHouseService(): StoreHouseService {
     return StoreHouseService(repositoryConfiguration.storeHouseRepository())
+  }
+
+  @Bean
+  open fun brandService(): BrandService {
+    return BrandService(repositoryConfiguration.brandRepository())
+  }
+
+  @Bean
+  open fun carService(): CarService {
+    return CarService(repositoryConfiguration.carRepository(), storeHouseService())
   }
 }
