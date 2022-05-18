@@ -15,7 +15,13 @@ enum class Command(private vararg val commands: String) {
   CHOOSE_STORE_HOUSE("Choose store house", "Выбрать склад"),
   SELECT_CERTAIN_STORE_HOUSE(".{1,10}"),
 
-  BACK("Назад", "Back"),
+  CREATE_SPARE_PART("Add spare part", "Добавить запчасть"),
+
+  CREATE_CAR("Add car", "Добавить машину"),
+
+  BACK("Back", "Назад"),
+  NEXT_STEP("Next step", "Следующий шаг"),
+  PREVIOUS_STEP("Previous step", "Предыдущий шаг"),
   UNDEFINED(".*");
 
   fun isCommand(command: String): Boolean {

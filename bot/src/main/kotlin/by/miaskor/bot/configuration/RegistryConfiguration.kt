@@ -1,9 +1,11 @@
 package by.miaskor.bot.configuration
 
+import by.miaskor.bot.configuration.settings.CreatingCarMessageSettings
+import by.miaskor.bot.configuration.settings.KeyboardSettings
+import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.Language.ENGLISH
 import by.miaskor.bot.domain.Language.RUSSIAN
-import by.miaskor.bot.service.KeyboardSettingsRegistry
-import by.miaskor.bot.service.MessageSettingsRegistry
+import by.miaskor.bot.service.LanguageSettingsRegistry
 import by.miaskor.bot.service.handler.command.CommandHandlerRegistry
 import by.miaskor.bot.service.handler.state.BotStateHandlerRegistry
 import org.springframework.context.annotation.Bean
@@ -21,7 +23,8 @@ open class RegistryConfiguration(
     return BotStateHandlerRegistry(
       botStateHandlerConfiguration.mainMenuHandler(),
       botStateHandlerConfiguration.greetingsHandler(),
-      botStateHandlerConfiguration.employeesMenuHandler()
+      botStateHandlerConfiguration.employeesMenuHandler(),
+      botStateHandlerConfiguration.creatingCarHandler()
     )
   }
 
@@ -40,13 +43,15 @@ open class RegistryConfiguration(
       commandHandlerConfiguration.createStoreHouseCommandHandler(),
       commandHandlerConfiguration.storeHouseCommandHandler(),
       commandHandlerConfiguration.chooseStoreHouseCommandHandler(),
-      commandHandlerConfiguration.selectCertainStoreHouseCommandHandler()
+      commandHandlerConfiguration.selectCertainStoreHouseCommandHandler(),
+      commandHandlerConfiguration.createSparePartCommandHandler(),
+      commandHandlerConfiguration.createCarCommandHandler()
     )
   }
 
   @Bean
-  open fun keyboardSettingsRegistry(): KeyboardSettingsRegistry {
-    return KeyboardSettingsRegistry(
+  open fun keyboardSettingsRegistry(): LanguageSettingsRegistry<KeyboardSettings> {
+    return LanguageSettingsRegistry(
       mapOf(
         ENGLISH to settingsConfiguration.keyboardSettingsEN(),
         RUSSIAN to settingsConfiguration.keyboardSettingsRU()
@@ -55,11 +60,21 @@ open class RegistryConfiguration(
   }
 
   @Bean
-  open fun messageSettingsRegistry(): MessageSettingsRegistry {
-    return MessageSettingsRegistry(
+  open fun messageSettingsRegistry(): LanguageSettingsRegistry<MessageSettings> {
+    return LanguageSettingsRegistry(
       mapOf(
         ENGLISH to settingsConfiguration.messageSettingsEN(),
         RUSSIAN to settingsConfiguration.messageSettingsRU()
+      )
+    )
+  }
+
+  @Bean
+  open fun creatingCarMessageSettingsRegistry(): LanguageSettingsRegistry<CreatingCarMessageSettings> {
+    return LanguageSettingsRegistry(
+      mapOf(
+        ENGLISH to settingsConfiguration.creatingCarMessageSettingsEN(),
+        RUSSIAN to settingsConfiguration.creatingCarMessageSettingsRU()
       )
     )
   }

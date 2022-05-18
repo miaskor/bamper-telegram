@@ -11,7 +11,13 @@ class StoreHouseService(
 
   fun getByNameAndTelegramChatId(storeHouseDto: StoreHouseDto): Mono<StoreHouseDto> {
     return storeHouseRepository.findByNameAndTelegramChatId(storeHouseDto.name, storeHouseDto.chatId)
-      .flatMap { Mono.just(storeHouseDto) }
+      .map {
+        StoreHouseDto(
+          id = it.id ?: -1,
+          name = it.storeHouseName ?: "",
+          chatId = it.telegramChatId ?: -1
+        )
+      }
   }
 
   fun getAllByChatId(chatId: Long): Mono<List<StoreHouseDto>> {

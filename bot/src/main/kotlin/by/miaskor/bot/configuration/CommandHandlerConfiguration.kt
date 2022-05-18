@@ -3,6 +3,7 @@ package by.miaskor.bot.configuration
 import by.miaskor.bot.service.handler.command.BackCommandHandler
 import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.bot.service.handler.command.UndefinedCommandHandler
+import by.miaskor.bot.service.handler.command.car.CreateCarCommandHandler
 import by.miaskor.bot.service.handler.command.employee.AddEmployeeCommandHandler
 import by.miaskor.bot.service.handler.command.employee.EmployeeCommandHandler
 import by.miaskor.bot.service.handler.command.employee.EmployeesCommandHandler
@@ -10,6 +11,7 @@ import by.miaskor.bot.service.handler.command.employee.ListEmployeeCommandHandle
 import by.miaskor.bot.service.handler.command.employee.RemoveEmployeeCommandHandler
 import by.miaskor.bot.service.handler.command.language.ChangeLanguageCommandHandler
 import by.miaskor.bot.service.handler.command.language.LanguageCommandHandler
+import by.miaskor.bot.service.handler.command.spare_part.CreateSparePartCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.ChooseStoreHouseCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.CreateStoreHouseCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.SelectCertainStoreHouseCommandHandler
@@ -86,6 +88,22 @@ open class CommandHandlerConfiguration(
   @Bean
   open fun createStoreHouseCommandHandler(): CommandHandler {
     return CreateStoreHouseCommandHandler(
+      telegramBot,
+      serviceConfiguration.keyboardBuilder()
+    )
+  }
+
+  @Bean
+  open fun createSparePartCommandHandler(): CommandHandler {
+    return CreateSparePartCommandHandler(
+      telegramBot,
+      serviceConfiguration.keyboardBuilder()
+    )
+  }
+
+  @Bean
+  open fun createCarCommandHandler(): CommandHandler {
+    return CreateCarCommandHandler(
       telegramBot,
       serviceConfiguration.keyboardBuilder()
     )

@@ -18,7 +18,8 @@ open class Cf4jConfiguration {
         Path(PROPERTY_BOT_PATH),
         Path(PROPERTY_KEYBOARD_PATH),
         Path(PROPERTY_CACHE_PATH),
-        Path(PROPERTY_COMMAND_PATH)
+        Path(PROPERTY_COMMAND_PATH),
+        Path(PROPERTY_CREATING_CAR_PATH)
       )
     }
   }
@@ -37,5 +38,6 @@ open class Cf4jConfiguration {
     private const val PROPERTY_CONNECTOR_PATH = "$COMMON_PATH/connector.properties"
     private const val PROPERTY_CACHE_PATH = "$COMMON_PATH/cache.yaml"
     private const val PROPERTY_COMMAND_PATH = "$COMMON_PATH/command.yaml"
+    private const val PROPERTY_CREATING_CAR_PATH = "$COMMON_PATH/creating-car-message.yaml"
   }
 }

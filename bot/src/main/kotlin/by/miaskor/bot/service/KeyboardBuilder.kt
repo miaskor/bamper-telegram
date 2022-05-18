@@ -5,6 +5,8 @@ import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE
 import by.miaskor.bot.domain.BotState.CHANGING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CHOOSING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CHOOSING_STORE_HOUSE
+import by.miaskor.bot.domain.BotState.CREATING_CAR
+import by.miaskor.bot.domain.BotState.CREATING_SPARE_PART
 import by.miaskor.bot.domain.BotState.CREATING_STORE_HOUSE
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.MAIN_MENU
@@ -50,12 +52,14 @@ class KeyboardBuilder(
             buildKeyboard(keyboards)
           }
           STORE_HOUSE_MENU -> buildKeyboard(it.storeHouseMenu())
+          CREATING_SPARE_PART -> buildKeyboard(it.creatingSparePartMenu())
+          CREATING_CAR -> buildKeyboard(it.creatingCarMenu())
           else -> buildKeyboard(arrayOf(arrayOf("Something went wrong")))
         }
       }
   }
 
-  private fun buildKeyboard(keyboardButtons: Array<Array<String>>): Keyboard {
+  fun buildKeyboard(keyboardButtons: Array<Array<String>>): Keyboard {
     return ReplyKeyboardMarkup(keyboardButtons, true, false, true)
   }
 }

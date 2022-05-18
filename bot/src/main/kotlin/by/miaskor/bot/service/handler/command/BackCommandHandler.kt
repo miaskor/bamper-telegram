@@ -4,6 +4,7 @@ import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.BotState.CHOOSING_STORE_HOUSE
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.MAIN_MENU
+import by.miaskor.bot.domain.BotState.STORE_HOUSE_MENU
 import by.miaskor.bot.domain.Command.BACK
 import by.miaskor.bot.domain.TelegramClient
 import by.miaskor.bot.service.BotStateChanger.changeBotState
@@ -46,6 +47,7 @@ class BackCommandHandler(
           MAIN_MENU -> MessageSettings.mainMenuMessage()
           EMPLOYEES_MENU -> MessageSettings.employeesMenuMessage()
           CHOOSING_STORE_HOUSE -> MessageSettings.allStoreHousesMessage()
+          STORE_HOUSE_MENU -> MessageSettings.storeHouseMenuMessage().format(it.t1.currentStoreHouseName())
           else -> "Something bad happened"
         }
         telegramBot.sendMessageWithKeyboard(update.chatId, sendMessage, it.t2)
