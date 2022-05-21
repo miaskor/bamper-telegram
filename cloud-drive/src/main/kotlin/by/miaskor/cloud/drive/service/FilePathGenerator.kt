@@ -19,7 +19,7 @@ class DefaultFilePathGenerator : FilePathGenerator {
     }
   }
 
-  fun getTime(): String {
+  private fun getTime(): String {
     val ofPattern = DateTimeFormatter.ofPattern("yyyy-MM-dd|HH-mm-ss")
     return LocalDateTime.now().format(ofPattern)
   }

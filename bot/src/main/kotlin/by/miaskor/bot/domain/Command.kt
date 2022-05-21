@@ -1,28 +1,59 @@
 package by.miaskor.bot.domain
 
+import by.miaskor.bot.service.enrich.FieldEnrich
+
 enum class Command(private vararg val commands: String) {
-  CHANGE_LANGUAGE("Изменить язык", "Change language"),
-  LANGUAGE("Russian", "English", "Английский"),
 
-  EMPLOYEE("@.{5,32}"),
-  EMPLOYEES("Работники", "Employees"),
-  ADD_EMPLOYEE("Добавить работника", "Add employee"),
-  REMOVE_EMPLOYEE("Удалить работника", "Remove employee"),
-  LIST_EMPLOYEE("Список работников", "List of employees"),
+  @FieldEnrich("changeLanguages", "commands")
+  CHANGE_LANGUAGE,
 
-  STORE_HOUSE(".{1,10}"),
-  CREATE_STORE_HOUSE("Create store house", "Создать склад"),
-  CHOOSE_STORE_HOUSE("Choose store house", "Выбрать склад"),
-  SELECT_CERTAIN_STORE_HOUSE(".{1,10}"),
+  @FieldEnrich("languages", "commands")
+  LANGUAGE,
 
-  CREATE_SPARE_PART("Add spare part", "Добавить запчасть"),
+  @FieldEnrich("employee", "commands")
+  EMPLOYEE,
 
-  CREATE_CAR("Add car", "Добавить машину"),
+  @FieldEnrich("employees", "commands")
+  EMPLOYEES,
 
-  BACK("Back", "Назад"),
-  NEXT_STEP("Next step", "Следующий шаг"),
-  PREVIOUS_STEP("Previous step", "Предыдущий шаг"),
-  UNDEFINED(".*");
+  @FieldEnrich("addEmployees", "commands")
+  ADD_EMPLOYEE,
+
+  @FieldEnrich("removeEmployees", "commands")
+  REMOVE_EMPLOYEE,
+
+  @FieldEnrich("listEmployees", "commands")
+  LIST_EMPLOYEE,
+
+  @FieldEnrich("storeHouse", "commands")
+  STORE_HOUSE,
+
+  @FieldEnrich("createStoreHouses", "commands")
+  CREATE_STORE_HOUSE,
+
+  @FieldEnrich("chooseStoreHouses", "commands")
+  CHOOSE_STORE_HOUSE,
+
+  @FieldEnrich("storeHouse", "commands")
+  SELECT_CERTAIN_STORE_HOUSE,
+
+  @FieldEnrich("createAutoParts", "commands")
+  CREATE_SPARE_PART,
+
+  @FieldEnrich("createCars", "commands")
+  CREATE_CAR,
+
+  @FieldEnrich("backs", "commands")
+  BACK,
+
+  @FieldEnrich("nextSteps", "commands")
+  NEXT_STEP,
+
+  @FieldEnrich("previousSteps", "commands")
+  PREVIOUS_STEP,
+
+  @FieldEnrich("undefined", "commands")
+  UNDEFINED;
 
   fun isCommand(command: String): Boolean {
     return this.commands.firstOrNull { command.matches(Regex(it)) } != null

@@ -42,12 +42,12 @@ open class SettingsConfiguration(
 
   @Bean
   open fun messageSettingsRU(): MessageSettings {
-    return confProvider.bind("command.ru", MessageSettings::class.java)
+    return confProvider.bind("message.ru", MessageSettings::class.java)
   }
 
   @Bean
   open fun messageSettingsEN(): MessageSettings {
-    return confProvider.bind("command.en", MessageSettings::class.java)
+    return confProvider.bind("message.en", MessageSettings::class.java)
   }
 
   @Bean
