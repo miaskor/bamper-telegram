@@ -18,7 +18,7 @@ interface MessageSettings {
   fun employeeIsYourEmployerMessage(): String
   fun employeeIsYouMessage(): String
   fun storeHouseMessage(): String
-  fun creatingSparePartMessage(): String
+  fun creatingAutoPartMessage(): String
   fun creatingCarMessage(): String
   fun addingStoreHouseFailMessage(): String
   fun addingStoreHouseSuccessMessage(): String

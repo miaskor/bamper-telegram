@@ -1,4 +1,4 @@
-package by.miaskor.bot.service.handler.command.spare_part
+package by.miaskor.bot.service.handler.command.autopart
 
 import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.BotState
@@ -14,15 +14,15 @@ import com.pengrad.telegrambot.model.Update
 import com.pengrad.telegrambot.model.request.Keyboard
 import reactor.core.publisher.Mono
 
-class CreateSparePartCommandHandler(
+class CreateAutoPartCommandHandler(
   private val telegramBot: TelegramBot,
   private val keyboardBuilder: KeyboardBuilder
 ) : CommandHandler {
-  override val command = Command.CREATE_SPARE_PART
+  override val command = Command.CREATE_AUTO_PART
 
   override fun handle(update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
-      .changeBotState(update::chatId, BotState.CREATING_SPARE_PART)
+      .changeBotState(update::chatId, BotState.CREATING_AUTO_PART)
       .flatMap(keyboardBuilder::build)
       .flatMap { handle(it, update.chatId) }
   }
@@ -30,6 +30,6 @@ class CreateSparePartCommandHandler(
   private fun handle(keyboard: Keyboard, chatId: Long): Mono<Unit> {
     return Mono.just(chatId)
       .resolveLanguage(MessageSettings::class)
-      .map { telegramBot.sendMessageWithKeyboard(chatId, it.creatingSparePartMessage(), keyboard) }
+      .map { telegramBot.sendMessageWithKeyboard(chatId, it.creatingAutoPartMessage(), keyboard) }
   }
 }

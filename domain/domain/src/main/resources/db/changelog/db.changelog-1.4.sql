@@ -22,4 +22,7 @@ alter table car
     add constraint store_house_id_fk
         foreign key (store_house_id) references store_house(id), lock = shared;
 
+-- changeset miaskor:134
+rename table spare_part to auto_part
+
 
