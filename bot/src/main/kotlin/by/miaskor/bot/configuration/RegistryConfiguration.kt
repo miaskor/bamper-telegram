@@ -44,7 +44,7 @@ open class RegistryConfiguration(
       commandHandlerConfiguration.storeHouseCommandHandler(),
       commandHandlerConfiguration.chooseStoreHouseCommandHandler(),
       commandHandlerConfiguration.selectCertainStoreHouseCommandHandler(),
-      commandHandlerConfiguration.createSparePartCommandHandler(),
+      commandHandlerConfiguration.createAutoPartCommandHandler(),
       commandHandlerConfiguration.createCarCommandHandler()
     )
   }

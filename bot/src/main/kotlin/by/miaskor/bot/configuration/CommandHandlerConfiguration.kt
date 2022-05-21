@@ -11,7 +11,7 @@ import by.miaskor.bot.service.handler.command.employee.ListEmployeeCommandHandle
 import by.miaskor.bot.service.handler.command.employee.RemoveEmployeeCommandHandler
 import by.miaskor.bot.service.handler.command.language.ChangeLanguageCommandHandler
 import by.miaskor.bot.service.handler.command.language.LanguageCommandHandler
-import by.miaskor.bot.service.handler.command.spare_part.CreateSparePartCommandHandler
+import by.miaskor.bot.service.handler.command.autopart.CreateAutoPartCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.ChooseStoreHouseCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.CreateStoreHouseCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.SelectCertainStoreHouseCommandHandler
@@ -94,8 +94,8 @@ open class CommandHandlerConfiguration(
   }
 
   @Bean
-  open fun createSparePartCommandHandler(): CommandHandler {
-    return CreateSparePartCommandHandler(
+  open fun createAutoPartCommandHandler(): CommandHandler {
+    return CreateAutoPartCommandHandler(
       telegramBot,
       serviceConfiguration.keyboardBuilder()
     )

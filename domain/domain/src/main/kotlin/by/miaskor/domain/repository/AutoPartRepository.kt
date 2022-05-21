@@ -1,19 +1,19 @@
 package by.miaskor.domain.repository
 
-import by.miaskor.domain.tables.pojos.SparePart
+import by.miaskor.domain.tables.pojos.AutoPart
 import org.jooq.DSLContext
 import reactor.core.publisher.Mono
 
-interface SparePartRepository : CrudRepository<SparePart>
+interface AutoPartRepository : CrudRepository<AutoPart>
 
-class JooqSparePartRepository(
+class JooqAutoPartRepository(
   private val dslContext: DSLContext
-) : SparePartRepository {
-  override fun save(entity: SparePart): Mono<Unit> {
+) : AutoPartRepository {
+  override fun save(entity: AutoPart): Mono<Unit> {
     TODO("Not yet implemented")
   }
 
-  override fun findById(id: Long): Mono<SparePart> {
+  override fun findById(id: Long): Mono<AutoPart> {
     TODO("Not yet implemented")
   }
 
@@ -21,7 +21,7 @@ class JooqSparePartRepository(
     TODO("Not yet implemented")
   }
 
-  override fun update(entity: SparePart): Mono<Unit> {
+  override fun update(entity: AutoPart): Mono<Unit> {
     TODO("Not yet implemented")
   }
 }

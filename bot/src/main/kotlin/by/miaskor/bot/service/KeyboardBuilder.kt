@@ -6,7 +6,7 @@ import by.miaskor.bot.domain.BotState.CHANGING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CHOOSING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CHOOSING_STORE_HOUSE
 import by.miaskor.bot.domain.BotState.CREATING_CAR
-import by.miaskor.bot.domain.BotState.CREATING_SPARE_PART
+import by.miaskor.bot.domain.BotState.CREATING_AUTO_PART
 import by.miaskor.bot.domain.BotState.CREATING_STORE_HOUSE
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.MAIN_MENU
@@ -52,7 +52,7 @@ class KeyboardBuilder(
             buildKeyboard(keyboards)
           }
           STORE_HOUSE_MENU -> buildKeyboard(it.storeHouseMenu())
-          CREATING_SPARE_PART -> buildKeyboard(it.creatingSparePartMenu())
+          CREATING_AUTO_PART -> buildKeyboard(it.creatingAutoPartMenu())
           CREATING_CAR -> buildKeyboard(it.creatingCarMenu())
           else -> buildKeyboard(arrayOf(arrayOf("Something went wrong")))
         }

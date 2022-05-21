@@ -13,7 +13,7 @@ interface FilePathGenerator {
 class DefaultFilePathGenerator : FilePathGenerator {
   override fun generate(uploadFileRequest: UploadFileRequest): Mono<String> {
     return Mono.fromSupplier {
-      val entityName = if (uploadFileRequest.isAdvertisement) "advertisement" else "spare_part"
+      val entityName = if (uploadFileRequest.isAdvertisement) "advertisement" else "auto_part"
 
       "${uploadFileRequest.chatId}/${entityName}-${getTime()}-entityId-${uploadFileRequest.entityId}"
     }

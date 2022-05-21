@@ -38,7 +38,7 @@ enum class Command(private vararg val commands: String) {
   SELECT_CERTAIN_STORE_HOUSE,
 
   @FieldEnrich("createAutoParts", "commands")
-  CREATE_SPARE_PART,
+  CREATE_AUTO_PART,
 
   @FieldEnrich("createCars", "commands")
   CREATE_CAR,
