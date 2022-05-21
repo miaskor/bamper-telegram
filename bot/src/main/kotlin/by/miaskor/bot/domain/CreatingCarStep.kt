@@ -1,50 +1,52 @@
 package by.miaskor.bot.domain
 
+import by.miaskor.bot.service.enrich.FieldEnrich
+
 enum class CreatingCarStep(private vararg val values: String) : AbstractStep<CreatingCarStep> {
-  BRAND_NAME("[a-zA-Z\\s]+\$") {
+  @FieldEnrich("brand-name", "values")
+  BRAND_NAME {
     override fun next() = MODEL
     override fun previous() = BRAND_NAME
   },
-  MODEL(".*") {
+
+  @FieldEnrich("model", "values")
+  MODEL {
     override fun next() = YEAR
     override fun previous() = BRAND_NAME
   },
-  YEAR("199[2-9]", "20[0-2][0-9]") {
+
+  @FieldEnrich("year", "values")
+  YEAR {
     override fun next() = BODY
     override fun previous() = MODEL
   },
-  BODY(
-    "седан", "хэтчбек", "универсал", "купе", "кабриолет", "бортовой",
-    "минивэн", "пикап", "фургон", "тягач", "лифтбек", "внедорожник",
-    "sedan", "hatchback", "universal", "compartment", "convertible",
-    "onboard", "minivan", "pickup", "van", "tractor", "liftback", "suv"
-  ) {
+
+  @FieldEnrich("body", "values")
+  BODY {
     override fun next() = TRANSMISSION
     override fun previous() = YEAR
   },
-  TRANSMISSION(
-    "АКПП", "МКПП", "Робот", "Вариатор",
-    "Automatic", "Manual", "Robot", "Variator"
-  ) {
+
+  @FieldEnrich("transmission", "values")
+  TRANSMISSION {
     override fun next() = ENGINE_CAPACITY
     override fun previous() = BODY
   },
-  ENGINE_CAPACITY("\\d.\\d") {
+
+  @FieldEnrich("engine-capacity", "values")
+  ENGINE_CAPACITY {
     override fun next() = FUEL_TYPE
     override fun previous() = TRANSMISSION
   },
-  FUEL_TYPE(
-    "Бензин", "Дизель", "Гибрид", "Электро",
-    "Gas", "Diesel", "Hybrid", "Electro",
-  ) {
+
+  @FieldEnrich("fuel-type", "values")
+  FUEL_TYPE {
     override fun next() = ENGINE_TYPE
     override fun previous() = ENGINE_CAPACITY
   },
-  ENGINE_TYPE(
-    "EcoBoost", "FSI", "GDi", "HPi", "i", "i-VTEC", "IDE", "JTS",
-    "Kompr", "MPI", "TFSI", "TSI", "VTEC", "VTI", "VVT-i", "карб",
-    "моно", "carb", "mono"
-  ) {
+
+  @FieldEnrich("engine-type", "values")
+  ENGINE_TYPE {
     override fun next(): CreatingCarStep {
       isComplete = true
       return ENGINE_TYPE
