@@ -8,5 +8,5 @@ import kotlin.annotation.AnnotationTarget.FIELD
 @Retention(RUNTIME)
 annotation class FieldEnrich(
   val property: String,
-  val field: String
+  val field: String = "values"
 )

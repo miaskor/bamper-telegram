@@ -48,7 +48,7 @@ enum class BotState(private vararg val commands: Command) {
   fun getCommand(command: String): Mono<Command> {
     return Mono.fromSupplier {
       this.commands
-        .firstOrNull { it.isCommand(command) }
+        .firstOrNull { it isCommand command }
     }
   }
 }

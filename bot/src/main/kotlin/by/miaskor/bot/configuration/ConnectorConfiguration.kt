@@ -1,6 +1,7 @@
 package by.miaskor.bot.configuration
 
 import by.miaskor.bot.configuration.settings.ConnectorSettings
+import by.miaskor.domain.api.connector.AutoPartConnector
 import by.miaskor.domain.api.connector.BrandConnector
 import by.miaskor.domain.api.connector.CarConnector
 import by.miaskor.domain.api.connector.StoreHouseConnector
@@ -51,5 +52,10 @@ open class ConnectorConfiguration(
   @Bean
   open fun carConnector(): CarConnector {
     return CarConnector(webClient())
+  }
+
+  @Bean
+  open fun autoPartConnector(): AutoPartConnector {
+    return AutoPartConnector(webClient())
   }
 }

@@ -7,10 +7,10 @@ object FieldEnricher {
 
   lateinit var configurationProvider: ConfigurationProvider
 
-  fun enrichClass(clazz: Class<*>) {
-    clazz.declaredFields.forEach {
-      if (it.isEnumConstant) {
-        enrichField(it, clazz)
+  fun enrich(clazz: Class<*>) {
+    clazz.declaredFields.forEach { field ->
+      if (field.isEnumConstant) {
+        enrichField(field, clazz)
       }
     }
   }
@@ -24,9 +24,9 @@ object FieldEnricher {
       } else {
         value.split(",").toTypedArray()
       }
-      val field = clazz.declaredFields.firstOrNull { it.name == fieldEnrich.field }
-      field?.isAccessible = true
-      field?.set(enumField.get(null), values)
+      val actualField = clazz.declaredFields.firstOrNull { it.name == fieldEnrich.field }
+      actualField?.isAccessible = true
+      actualField?.set(enumField.get(null), values)
     }
   }
 }

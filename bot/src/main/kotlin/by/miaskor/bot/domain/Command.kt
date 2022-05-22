@@ -55,7 +55,7 @@ enum class Command(private vararg val commands: String) {
   @FieldEnrich("undefined", "commands")
   UNDEFINED;
 
-  fun isCommand(command: String): Boolean {
+  infix fun isCommand(command: String): Boolean {
     return this.commands.firstOrNull { command.matches(Regex(it)) } != null
   }
 }

@@ -3,49 +3,49 @@ package by.miaskor.bot.domain
 import by.miaskor.bot.service.enrich.FieldEnrich
 
 enum class CreatingCarStep(private vararg val values: String) : AbstractStep<CreatingCarStep> {
-  @FieldEnrich("brand-name", "values")
+  @FieldEnrich("brand-name")
   BRAND_NAME {
     override fun next() = MODEL
     override fun previous() = BRAND_NAME
   },
 
-  @FieldEnrich("model", "values")
+  @FieldEnrich("model")
   MODEL {
     override fun next() = YEAR
     override fun previous() = BRAND_NAME
   },
 
-  @FieldEnrich("year", "values")
+  @FieldEnrich("year")
   YEAR {
     override fun next() = BODY
     override fun previous() = MODEL
   },
 
-  @FieldEnrich("body", "values")
+  @FieldEnrich("body")
   BODY {
     override fun next() = TRANSMISSION
     override fun previous() = YEAR
   },
 
-  @FieldEnrich("transmission", "values")
+  @FieldEnrich("transmission")
   TRANSMISSION {
     override fun next() = ENGINE_CAPACITY
     override fun previous() = BODY
   },
 
-  @FieldEnrich("engine-capacity", "values")
+  @FieldEnrich("engine-capacity")
   ENGINE_CAPACITY {
     override fun next() = FUEL_TYPE
     override fun previous() = TRANSMISSION
   },
 
-  @FieldEnrich("fuel-type", "values")
+  @FieldEnrich("fuel-type")
   FUEL_TYPE {
     override fun next() = ENGINE_TYPE
     override fun previous() = ENGINE_CAPACITY
   },
 
-  @FieldEnrich("engine-type", "values")
+  @FieldEnrich("engine-type")
   ENGINE_TYPE {
     override fun next(): CreatingCarStep {
       isComplete = true

@@ -1,5 +1,7 @@
 package by.miaskor.domain.configuration
 
+import by.miaskor.cloud.drive.service.ImageUploader
+import by.miaskor.domain.service.AutoPartService
 import by.miaskor.domain.service.BrandService
 import by.miaskor.domain.service.CarService
 import by.miaskor.domain.service.StoreHouseService
@@ -10,7 +12,8 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 open class ServiceConfiguration(
-  private val repositoryConfiguration: RepositoryConfiguration
+  private val repositoryConfiguration: RepositoryConfiguration,
+  private val uploader: ImageUploader
 ) {
 
   @Bean
@@ -39,5 +42,14 @@ open class ServiceConfiguration(
   @Bean
   open fun carService(): CarService {
     return CarService(repositoryConfiguration.carRepository(), storeHouseService())
+  }
+
+  @Bean
+  open fun autoPartService(): AutoPartService {
+    return AutoPartService(
+      repositoryConfiguration.autoPartRepository(),
+      uploader,
+      storeHouseService()
+    )
   }
 }

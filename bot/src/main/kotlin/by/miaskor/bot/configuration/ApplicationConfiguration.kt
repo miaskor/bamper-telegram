@@ -32,8 +32,8 @@ open class ApplicationConfiguration(
     }
     FieldEnricher.apply {
       configurationProvider = confProvider
-      enrichClass(Command::class.java)
-      enrichClass(CreatingCarStep::class.java)
+      enrich(Command::class.java)
+      enrich(CreatingCarStep::class.java)
     }
   }
 }
