@@ -101,7 +101,7 @@ class CreatingCarHandler(
     return Mono.just(update.chatId)
       .changeBotState(update::chatId, telegramClient.previousBotStates.pollLast())
       .flatMap(keyboardBuilder::build)
-      .zipWith(carConnector.create(carBuilder.build(telegramClient.currentStoreHouseName(), update.chatId)))
+      .zipWith(carConnector.create(carBuilder.build(telegramClient.currentStoreHouseId())))
       .map { (keyboard, carId) ->
         telegramBot.sendMessageWithKeyboard(
           update.chatId,

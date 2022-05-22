@@ -30,8 +30,14 @@ enum class CreatingAutoPartStep(private vararg val values: String) : AbstractSte
 
   @FieldEnrich("price")
   PRICE {
-    override fun next() = QUALITY
+    override fun next() = CURRENCY
     override fun previous() = DESCRIPTION
+  },
+
+  @FieldEnrich("currency")
+  CURRENCY {
+    override fun next() = QUALITY
+    override fun previous() = PRICE
   },
 
   @FieldEnrich("quality")
@@ -40,7 +46,6 @@ enum class CreatingAutoPartStep(private vararg val values: String) : AbstractSte
     override fun previous() = PRICE
   },
 
-  @FieldEnrich("photo")
   PHOTO {
     override fun next() = PHOTO
     override fun previous() = QUALITY
@@ -56,6 +61,7 @@ enum class CreatingAutoPartStep(private vararg val values: String) : AbstractSte
       DESCRIPTION,
       PRICE,
       QUALITY,
+      CURRENCY,
       PHOTO
     )
   }

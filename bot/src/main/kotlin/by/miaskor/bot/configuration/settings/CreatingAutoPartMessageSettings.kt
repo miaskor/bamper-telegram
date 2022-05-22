@@ -9,6 +9,8 @@ interface CreatingAutoPartMessageSettings {
   fun descriptionMessage(): String
   fun priceMessage(): String
   fun priceInvalidMessage(): String
+  fun currencyMessage(): String
+  fun currencyInvalidMessage(): String
   fun qualityMessage(): String
   fun qualityInvalidMessage(): String
   fun photoMessage(): String

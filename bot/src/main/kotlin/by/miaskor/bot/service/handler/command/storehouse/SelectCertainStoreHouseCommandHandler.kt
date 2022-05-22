@@ -26,19 +26,19 @@ class SelectCertainStoreHouseCommandHandler(
   override fun handle(update: Update): Mono<Unit> {
     return telegramClientCache.getTelegramClient(update.chatId)
       .map { it.telegramClientStoreHouses }
-      .flatMapIterable { it.storeHouses }
-      .filter { storeHouseName -> storeHouseName == update.text }
+      .flatMapIterable { it.storeHouses.entries }
+      .filter { storeHouseName -> storeHouseName.key == update.text }
       .next()
       .switchIfEmpty(storeHouseNotFound(update))
       .flatMap { storeHouseName ->
         telegramClientCache.getTelegramClient(update.chatId)
-          .map { it.refreshCurrentStoreHouse(storeHouseName) }
+          .map { it.refreshCurrentStoreHouse(Pair(storeHouseName.key, storeHouseName.value)) }
           .thenReturn(storeHouseName)
       }
       .flatMap { processMessage(update) }
   }
 
-  private fun storeHouseNotFound(update: Update): Mono<String> {
+  private fun storeHouseNotFound(update: Update): Mono<out Map.Entry<String, Long>> {
     return Mono.just(update.chatId)
       .resolveLanguage(MessageSettings::class)
       .map {

@@ -9,6 +9,7 @@ import by.miaskor.bot.domain.Command
 import by.miaskor.bot.domain.CreatingAutoPartStep
 import by.miaskor.bot.domain.CreatingAutoPartStep.AUTO_PART
 import by.miaskor.bot.domain.CreatingAutoPartStep.CAR
+import by.miaskor.bot.domain.CreatingAutoPartStep.CURRENCY
 import by.miaskor.bot.domain.CreatingAutoPartStep.DESCRIPTION
 import by.miaskor.bot.domain.CreatingAutoPartStep.PART_NUMBER
 import by.miaskor.bot.domain.CreatingAutoPartStep.PHOTO
@@ -22,11 +23,12 @@ import by.miaskor.bot.service.TelegramClientCache
 import by.miaskor.bot.service.chatId
 import by.miaskor.bot.service.extension.sendMessage
 import by.miaskor.bot.service.extension.sendMessageWithKeyboard
+import by.miaskor.bot.service.photoId
 import by.miaskor.bot.service.pollLast
 import by.miaskor.bot.service.text
 import by.miaskor.domain.api.connector.AutoPartConnector
-import by.miaskor.domain.api.connector.BrandConnector
-import by.miaskor.domain.api.domain.BrandDto
+import by.miaskor.domain.api.connector.CarConnector
+import by.miaskor.domain.api.connector.CarPartConnector
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.pengrad.telegrambot.TelegramBot
@@ -41,8 +43,9 @@ class CreatingAutoPartHandler(
   private val telegramBot: TelegramBot,
   private val telegramClientCache: TelegramClientCache,
   private val keyboardBuilder: KeyboardBuilder,
-  private val brandConnector: BrandConnector,
-  private val autoPartConnector: AutoPartConnector
+  private val autoPartConnector: AutoPartConnector,
+  private val carConnector: CarConnector,
+  private val carPartConnector: CarPartConnector,
 ) : BotStateHandler {
   override val state = BotState.CREATING_AUTO_PART
 
@@ -81,34 +84,34 @@ class CreatingAutoPartHandler(
   private fun completeCreatingCar(
     update: Update,
     creatingAutoPartMessageSettings: CreatingAutoPartMessageSettings,
-    autoPartBuilder: AutoPartBuilder,
-    photo: ByteArray
+    autoPartBuilder: AutoPartBuilder
   ): Mono<Unit> {
     return Mono.just(update.chatId)
       .flatMap(telegramClientCache::getTelegramClient)
-      .flatMap { completeCreatingCar(update, creatingAutoPartMessageSettings, it, autoPartBuilder, photo) }
+      .flatMap { completeCreatingCar(update, creatingAutoPartMessageSettings, it, autoPartBuilder) }
   }
 
   private fun completeCreatingCar(
     update: Update,
     creatingAutoPartMessageSettings: CreatingAutoPartMessageSettings,
     telegramClient: TelegramClient,
-    autoPartBuilder: AutoPartBuilder,
-    photo: ByteArray
+    autoPartBuilder: AutoPartBuilder
   ): Mono<Unit> {
     return Mono.just(update.chatId)
       .changeBotState(update::chatId, telegramClient.previousBotStates.pollLast())
       .flatMap(keyboardBuilder::build)
-      .flatMap {
-        autoPartConnector.create(autoPartBuilder.build(telegramClient.currentStoreHouseName(), photo)).thenReturn(it)
-      }
       .map { keyboard ->
         telegramBot.sendMessageWithKeyboard(
           update.chatId,
           creatingAutoPartMessageSettings.completeMessage(), keyboard
         )
         populateCache(update)
-      }.then(Mono.empty())
+        keyboard
+      }.map {
+        autoPartConnector.create(autoPartBuilder.build(telegramClient.currentStoreHouseId(), update.chatId))
+          .toFuture()
+          .completeAsync {}
+      }
   }
 
   private fun sendMessage(
@@ -131,7 +134,7 @@ class CreatingAutoPartHandler(
           }
 
           PART_NUMBER -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForMandatorySteps())
+            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
             telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.partNumberMessage(), keyboard)
           }
 
@@ -143,6 +146,11 @@ class CreatingAutoPartHandler(
           PRICE -> {
             val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
             telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.priceMessage(), keyboard)
+          }
+
+          CURRENCY -> {
+            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+            telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.currencyMessage(), keyboard)
           }
 
           QUALITY -> {
@@ -159,37 +167,42 @@ class CreatingAutoPartHandler(
   }
 
   private fun processStep(
-    AutoPartBuilder: AutoPartBuilder,
+    autoPartBuilder: AutoPartBuilder,
     update: Update,
     creatingAutoPartMessage: CreatingAutoPartMessageSettings
   ): Mono<Unit> {
-    val currentStep = AutoPartBuilder.currentStep()
+    val currentStep = autoPartBuilder.currentStep()
     return Mono.just(update.chatId)
       .resolveLanguage(KeyboardSettings::class)
-      .map { keyboardSettings ->
+      .zipWith(telegramClientCache.getTelegramClient(update.chatId))
+      .map { (keyboardSettings, telegramClient) ->
         when (currentStep) {
           CAR -> {
-            val brandDtoMono = Mono.defer { brandConnector.getByBrandName(update.text).hasElement() }
-            if (CAR.isAcceptable(update.text) && brandDtoMono.toFuture().get()) {
+            val car = Mono.defer {
+              carConnector.getByStoreHouseIdAndId(
+                telegramClient.currentStoreHouseId(),
+                update.text.toLong()
+              ).hasElement()
+            }
+            if (CAR.isAcceptable(update.text) && car.toFuture().get()) {
               val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForMandatorySteps())
-              populateCache(update, AutoPartBuilder.carId(update.text).nextStep())
+              populateCache(update, autoPartBuilder.carId(update.text.toLong()).nextStep())
               telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.autoPartMessage(), keyboard)
             } else {
-              telegramBot.sendMessage(update.chatId, creatingAutoPartMessage.carInvalidMessage())
+              telegramBot.sendMessage(update.chatId, creatingAutoPartMessage.carInvalidMessage().format(update.text))
             }
           }
 
           AUTO_PART -> {
-            val brandDtoMono = Mono.defer {
-              brandConnector.getByBrandNameAndModel(
-                BrandDto(brandName = AutoPartBuilder.getBrandName(), model = update.text)
-              ).doOnNext {
-                AutoPartBuilder.brandId(it.id)
-              }.hasElement()
+            if (!AUTO_PART.isAcceptable(update.text)) {
+              telegramBot.sendMessage(
+                update.chatId, creatingAutoPartMessage.autoPartInvalidMessage()
+              )
             }
-            if (AUTO_PART.isAcceptable(update.text) && brandDtoMono.toFuture().get()) {
-              val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForMandatorySteps())
-              populateCache(update, AutoPartBuilder.carPartId(update.text).nextStep())
+            val carPartId: Long? = carPartConnector.getIdByName(update.text).toFuture().get()
+            if (carPartId != null) {
+              val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+              populateCache(update, autoPartBuilder.carPartId(carPartId).nextStep())
               telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.partNumberMessage(), keyboard)
             } else {
               telegramBot.sendMessage(
@@ -200,13 +213,13 @@ class CreatingAutoPartHandler(
 
           PART_NUMBER -> {
             val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
-            populateCache(update, AutoPartBuilder.partNumber(update.text).nextStep())
+            populateCache(update, autoPartBuilder.partNumber(update.text).nextStep())
             telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.descriptionMessage(), keyboard)
           }
 
           DESCRIPTION -> {
             val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
-            populateCache(update, AutoPartBuilder.description(update.text).nextStep())
+            populateCache(update, autoPartBuilder.description(update.text).nextStep())
             telegramBot.sendMessageWithKeyboard(
               update.chatId,
               creatingAutoPartMessage.priceMessage(),
@@ -217,10 +230,10 @@ class CreatingAutoPartHandler(
           PRICE -> {
             val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
             if (PRICE.isAcceptable(update.text)) {
-              populateCache(update, AutoPartBuilder.price(update.text).nextStep())
+              populateCache(update, autoPartBuilder.price(update.text).nextStep())
               telegramBot.sendMessageWithKeyboard(
                 update.chatId,
-                creatingAutoPartMessage.qualityMessage(),
+                creatingAutoPartMessage.currencyMessage(),
                 keyboard
               )
             } else {
@@ -232,10 +245,28 @@ class CreatingAutoPartHandler(
             }
           }
 
+          CURRENCY -> {
+            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+            if (CURRENCY.isAcceptable(update.text)) {
+              populateCache(update, autoPartBuilder.currency(update.text).nextStep())
+              telegramBot.sendMessageWithKeyboard(
+                update.chatId,
+                creatingAutoPartMessage.qualityMessage(),
+                keyboard
+              )
+            } else {
+              telegramBot.sendMessageWithKeyboard(
+                update.chatId,
+                creatingAutoPartMessage.currencyInvalidMessage(),
+                keyboard
+              )
+            }
+          }
+
           QUALITY -> {
             val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
             if (QUALITY.isAcceptable(update.text)) {
-              populateCache(update, AutoPartBuilder.quality(update.text).nextStep())
+              populateCache(update, autoPartBuilder.quality(update.text).nextStep())
               telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.photoMessage(), keyboard)
             } else {
               telegramBot.sendMessageWithKeyboard(
@@ -248,8 +279,9 @@ class CreatingAutoPartHandler(
 
           PHOTO -> {
             val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
-            if (PHOTO.isAcceptable(update.text)) {
-              completeCreatingCar(update, creatingAutoPartMessage, AutoPartBuilder)
+            if (!update.message().photo().isNullOrEmpty()) {
+              populateCache(update, autoPartBuilder.photoId(update.photoId).nextStep())
+              completeCreatingCar(update, creatingAutoPartMessage, autoPartBuilder).subscribe()
             } else {
               telegramBot.sendMessageWithKeyboard(
                 update.chatId,

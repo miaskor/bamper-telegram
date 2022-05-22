@@ -25,6 +25,7 @@ class StoreHouseService(
       .flatMapIterable { it }
       .map {
         StoreHouseDto(
+          id = it.id ?: -1,
           chatId = it.telegramChatId ?: -1,
           name = it.storeHouseName ?: ""
         )

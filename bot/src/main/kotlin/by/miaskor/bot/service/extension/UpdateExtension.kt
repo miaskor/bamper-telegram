@@ -16,3 +16,8 @@ val Update.username: String
   get() {
     return this.message().chat().username()
   }
+
+val Update.photoId: String
+  get() {
+    return this.message().photo().last().fileId()
+  }

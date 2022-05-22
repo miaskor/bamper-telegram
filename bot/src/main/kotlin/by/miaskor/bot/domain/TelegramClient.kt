@@ -3,6 +3,7 @@ package by.miaskor.bot.domain
 import by.miaskor.bot.domain.BotState.GREETINGS
 import by.miaskor.bot.domain.BotState.MAIN_MENU
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 data class TelegramClient(
   val chatId: Long,
@@ -15,20 +16,24 @@ data class TelegramClient(
 ) {
 
   fun currentStoreHouseName(): String {
-    return telegramClientStoreHouses.currentStoreHouse
+    return telegramClientStoreHouses.currentStoreHouse.first
   }
 
-  fun refreshStoreHouses(storeHouseNames: List<String>) {
+  fun currentStoreHouseId(): Long {
+    return telegramClientStoreHouses.currentStoreHouse.second
+  }
+
+  fun refreshStoreHouses(mapStoreHouses: Map<String, Long>) {
     telegramClientStoreHouses = telegramClientStoreHouses.copy(
       isModified = false,
-      storeHouses = sortedSetOf<String>().plus(storeHouseNames),
+      storeHouses = ConcurrentHashMap(mapStoreHouses),
     )
   }
 
-  fun refreshCurrentStoreHouse(currentStoreHouse: String) {
+  fun refreshCurrentStoreHouse(currentStoreHouse: Pair<String, Long>) {
     telegramClientStoreHouses = telegramClientStoreHouses.copy(
       isModified = false,
-      storeHouses = sortedSetOf<String>().plus(telegramClientStoreHouses.storeHouses),
+      storeHouses = telegramClientStoreHouses.storeHouses.plus(currentStoreHouse),
       currentStoreHouse = currentStoreHouse
     )
   }

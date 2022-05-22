@@ -4,6 +4,7 @@ import by.miaskor.bot.configuration.settings.ConnectorSettings
 import by.miaskor.domain.api.connector.AutoPartConnector
 import by.miaskor.domain.api.connector.BrandConnector
 import by.miaskor.domain.api.connector.CarConnector
+import by.miaskor.domain.api.connector.CarPartConnector
 import by.miaskor.domain.api.connector.StoreHouseConnector
 import by.miaskor.domain.api.connector.TelegramClientConnector
 import by.miaskor.domain.api.connector.WorkerTelegramConnector
@@ -57,5 +58,10 @@ open class ConnectorConfiguration(
   @Bean
   open fun autoPartConnector(): AutoPartConnector {
     return AutoPartConnector(webClient())
+  }
+
+  @Bean
+  open fun carPartConnector(): CarPartConnector {
+    return CarPartConnector(webClient())
   }
 }

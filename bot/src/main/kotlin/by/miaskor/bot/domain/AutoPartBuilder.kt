@@ -10,6 +10,7 @@ class AutoPartBuilder {
   private lateinit var qualityValue: String
   private lateinit var currencyValue: String
   private lateinit var partNumberValue: String
+  private lateinit var photoIdValue: String
 
   private var autoPartStep: CreatingAutoPartStep = CreatingAutoPartStep.CAR
 
@@ -48,6 +49,11 @@ class AutoPartBuilder {
     return this
   }
 
+  fun photoId(photoId: String): AutoPartBuilder {
+    this.photoIdValue = photoId
+    return this
+  }
+
   fun nextStep(): AutoPartBuilder {
     this.autoPartStep = autoPartStep.next()
     return this
@@ -62,17 +68,18 @@ class AutoPartBuilder {
     return this
   }
 
-  fun build(storeHouseName: String, photo: ByteArray): AutoPartDto {
+  fun build(storeHouseId: Long, chatId: Long): AutoPartDto {
     return AutoPartDto(
       carId = carIdValue.toLong(),
       carPartId = carPartIdValue.toLong(),
-      storeHouseName = storeHouseName,
+      storeHouseId = storeHouseId,
       description = if (::descriptionValue.isInitialized) descriptionValue else "",
       price = if (::priceValue.isInitialized) priceValue.toDouble() else 0.0,
       quality = if (::qualityValue.isInitialized) qualityValue.toBoolean() else false,
-      currency = if (::currencyValue.isInitialized) currencyValue else "",
+      currency = if (::currencyValue.isInitialized) currencyValue else "BYN",
       partNumber = if (::partNumberValue.isInitialized) partNumberValue else "",
-      photo = photo
+      photoId = photoIdValue,
+      chatId = chatId
     )
   }
 }

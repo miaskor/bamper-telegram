@@ -3,10 +3,12 @@ package by.miaskor.domain.configuration
 import by.miaskor.domain.repository.AdvertisementRepository
 import by.miaskor.domain.repository.AutoPartRepository
 import by.miaskor.domain.repository.BrandRepository
+import by.miaskor.domain.repository.CarPartRepository
 import by.miaskor.domain.repository.CarRepository
 import by.miaskor.domain.repository.JooqAdvertisementRepository
 import by.miaskor.domain.repository.JooqAutoPartRepository
 import by.miaskor.domain.repository.JooqBrandRepository
+import by.miaskor.domain.repository.JooqCarPartRepository
 import by.miaskor.domain.repository.JooqCarRepository
 import by.miaskor.domain.repository.JooqStoreHouseRepository
 import by.miaskor.domain.repository.JooqTelegramClientRepository
@@ -56,5 +58,10 @@ open class RepositoryConfiguration(
   @Bean
   open fun autoPartRepository(): AutoPartRepository {
     return JooqAutoPartRepository(dslContext)
+  }
+
+  @Bean
+  open fun carPartRepository(): CarPartRepository {
+    return JooqCarPartRepository(dslContext)
   }
 }

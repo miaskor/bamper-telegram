@@ -33,13 +33,12 @@ class ChooseStoreHouseCommandHandler(
   }
 
   private fun handle(storeHouses: List<StoreHouseDto>, update: Update): Mono<Unit> {
-    return Mono.fromSupplier { storeHouses.map { it.name } }
-      .flatMap { storeHouseNames ->
+    return Mono.fromSupplier { storeHouses.associateBy({ it.name }, { it.id }) }
+      .flatMap { mapStoreHouses ->
         telegramClientCache.getTelegramClient(update.chatId)
-          .map { it.refreshStoreHouses(storeHouseNames) }
-          .thenReturn(storeHouseNames)
+          .map { it.refreshStoreHouses(mapStoreHouses) }
       }
-      .flatMap { keyboardBuilder.build(update.chatId) }
+      .then(keyboardBuilder.build(update.chatId))
       .flatMap { handle(it, update.chatId) }
   }
 

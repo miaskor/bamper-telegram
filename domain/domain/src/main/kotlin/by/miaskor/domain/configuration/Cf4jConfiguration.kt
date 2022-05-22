@@ -15,7 +15,8 @@ open class Cf4jConfiguration {
     return FilesConfigurationSource {
       listOf(
         Path(DOMAIN_PROPERTY_PATH),
-        Path(CLOUD_DRIVE_PROPERTY_PATH)
+        Path(CLOUD_DRIVE_PROPERTY_PATH),
+        Path(TELEGRAM_PROPERTY_PATH)
       )
     }
   }
@@ -32,5 +33,7 @@ open class Cf4jConfiguration {
       "/home/mikhailskorohododv/Documents/pet-projects/bamper-telegram-properties/domain.properties"
     private const val CLOUD_DRIVE_PROPERTY_PATH =
       "/home/mikhailskorohododv/Documents/pet-projects/bamper-telegram-properties/cloud-drive.yaml"
+    private const val TELEGRAM_PROPERTY_PATH =
+      "/home/mikhailskorohododv/Documents/pet-projects/bamper-telegram-properties/bot.yaml"
   }
 }

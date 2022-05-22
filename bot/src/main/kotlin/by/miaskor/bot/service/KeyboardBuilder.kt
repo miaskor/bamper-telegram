@@ -44,6 +44,7 @@ class KeyboardBuilder(
           CHOOSING_STORE_HOUSE -> {
             val storeHouses = telegramClient.telegramClientStoreHouses
               .storeHouses
+              .keys
               .chunked(2)
               .map { it.toTypedArray() }
               .toTypedArray()
