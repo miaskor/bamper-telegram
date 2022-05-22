@@ -1,0 +1,62 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/db.changelog-1.0.sql
+  - include:
+      file: db/changelog/db.changelog-1.1.sql
+  - include:
+      file: db/changelog/db.changelog-1.2.sql
+  - include:
+      file: db/changelog/db.changelog-1.3.sql
+  - include:
+      file: db/changelog/db.changelog-1.4.sql
+  - logicalFilePath: db/changelog/db.changelog-master.yaml
+  - changeSet:
+      id: master-1
+      author: miaskor
+      changes:
+        - loadData:
+            catalogName: bamper_db
+            columns:
+              - column:
+                  header: brand_name
+                  name: brand_name
+                  type: varchar(50)
+              - column:
+                  header: model
+                  name: model
+                  type: varchar(50)
+              - column:
+                  header: year_manufacture_from
+                  name: year_manufacture_from
+                  type: varchar(4)
+              - column:
+                  header: year_manufacture_to
+                  name: year_manufacture_to
+                  type: varchar(4)
+            encoding: UTF-8
+            file: db/cars.csv
+            schemaName: bamper_db
+            tableName: brand
+            separator: ','
+            usePreparedStatements: true
+  - changeSet:
+      id: master-2
+      author: miaskor
+      changes:
+        - loadData:
+            catalogName: bamper_db
+            columns:
+              - column:
+                  header: name_ru
+                  name: name_ru
+                  type: varchar(100)
+              - column:
+                  header: name_en
+                  name: name_en
+                  type: varchar(100)
+            encoding: UTF-8
+            file: db/all-details.csv
+            schemaName: bamper_db
+            tableName: car_part
+            separator: ','
+            usePreparedStatements: true

@@ -1,2 +1,5 @@
 rootProject.name = "bamper-telegram"
-include("domain")
+include("bot")
+include("domain:domain-api")
+include("domain:domain")
+include("cloud-drive")
