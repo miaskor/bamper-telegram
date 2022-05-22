@@ -17,6 +17,8 @@ import by.miaskor.bot.service.pollLast
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.util.function.component1
+import reactor.kotlin.core.util.function.component2
 
 class BackCommandHandler(
   private val telegramClientCache: TelegramClientCache,
@@ -38,19 +40,18 @@ class BackCommandHandler(
       .flatMap { handle(it, update) }
   }
 
-  private fun handle(MessageSettings: MessageSettings, update: Update): Mono<Unit> {
-    return Mono.just(update.chatId)
-      .flatMap(telegramClientCache::getTelegramClient)
+  private fun handle(messageSettings: MessageSettings, update: Update): Mono<Unit> {
+    return telegramClientCache.getTelegramClient(update.chatId)
       .zipWith(keyboardBuilder.build(update.chatId))
-      .map {
-        val sendMessage = when (it.t1.currentBotState) {
-          MAIN_MENU -> MessageSettings.mainMenuMessage()
-          EMPLOYEES_MENU -> MessageSettings.employeesMenuMessage()
-          CHOOSING_STORE_HOUSE -> MessageSettings.allStoreHousesMessage()
-          STORE_HOUSE_MENU -> MessageSettings.storeHouseMenuMessage().format(it.t1.currentStoreHouseName())
+      .map { (telegramClient, keyboard) ->
+        val sendMessage = when (telegramClient.currentBotState) {
+          MAIN_MENU -> messageSettings.mainMenuMessage()
+          EMPLOYEES_MENU -> messageSettings.employeesMenuMessage()
+          CHOOSING_STORE_HOUSE -> messageSettings.allStoreHousesMessage()
+          STORE_HOUSE_MENU -> messageSettings.storeHouseMenuMessage().format(telegramClient.currentStoreHouseName())
           else -> "Something bad happened"
         }
-        telegramBot.sendMessageWithKeyboard(update.chatId, sendMessage, it.t2)
+        telegramBot.sendMessageWithKeyboard(update.chatId, sendMessage, keyboard)
       }.then(Mono.empty())
   }
 }

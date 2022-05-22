@@ -6,13 +6,12 @@ import by.miaskor.bot.service.handler.state.CreatingAutoPartHandler
 import by.miaskor.bot.service.handler.state.CreatingCarHandler
 import by.miaskor.bot.service.handler.state.GreetingsHandler
 import by.miaskor.bot.service.handler.state.MenuHandler
-import com.pengrad.telegrambot.TelegramBot
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 open class BotStateHandlerConfiguration(
-  private val telegramBot: TelegramBot,
+  private val botConfiguration: BotConfiguration,
   private val settingsConfiguration: SettingsConfiguration,
   private val serviceConfiguration: ServiceConfiguration,
   private val connectorConfiguration: ConnectorConfiguration
@@ -21,7 +20,7 @@ open class BotStateHandlerConfiguration(
   @Bean
   open fun mainMenuHandler(): BotStateHandler {
     return MenuHandler(
-      telegramBot,
+      botConfiguration.telegramBot(),
       serviceConfiguration.keyboardBuilder(),
       BotState.MAIN_MENU
     )
@@ -30,7 +29,7 @@ open class BotStateHandlerConfiguration(
   @Bean
   open fun employeesMenuHandler(): BotStateHandler {
     return MenuHandler(
-      telegramBot,
+      botConfiguration.telegramBot(),
       serviceConfiguration.keyboardBuilder(),
       BotState.EMPLOYEES_MENU
     )
@@ -39,7 +38,7 @@ open class BotStateHandlerConfiguration(
   @Bean
   open fun greetingsHandler(): BotStateHandler {
     return GreetingsHandler(
-      telegramBot,
+      botConfiguration.telegramBot(),
       serviceConfiguration.keyboardBuilder(),
       settingsConfiguration.messageSettingsEN()
     )
@@ -49,10 +48,10 @@ open class BotStateHandlerConfiguration(
   open fun creatingCarHandler(): BotStateHandler {
     return CreatingCarHandler(
       settingsConfiguration.cacheSettings(),
-      telegramBot,
+      botConfiguration.telegramBot(),
       serviceConfiguration.telegramClientCache(),
       serviceConfiguration.keyboardBuilder(),
-      connectorConfiguration.brandConnector(),
+      botConfiguration.processingStepService(),
       connectorConfiguration.carConnector()
     )
   }
@@ -61,7 +60,7 @@ open class BotStateHandlerConfiguration(
   open fun creatingAutoPartHandler(): CreatingAutoPartHandler {
     return CreatingAutoPartHandler(
       settingsConfiguration.cacheSettings(),
-      telegramBot,
+      botConfiguration.telegramBot(),
       serviceConfiguration.telegramClientCache(),
       serviceConfiguration.keyboardBuilder(),
       connectorConfiguration.autoPartConnector(),

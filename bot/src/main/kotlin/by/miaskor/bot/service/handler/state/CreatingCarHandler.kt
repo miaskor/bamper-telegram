@@ -7,28 +7,18 @@ import by.miaskor.bot.domain.BotState.CREATING_CAR
 import by.miaskor.bot.domain.CarBuilder
 import by.miaskor.bot.domain.Command.NEXT_STEP
 import by.miaskor.bot.domain.Command.PREVIOUS_STEP
-import by.miaskor.bot.domain.CreatingCarStep.BODY
-import by.miaskor.bot.domain.CreatingCarStep.BRAND_NAME
 import by.miaskor.bot.domain.CreatingCarStep.Companion.stepsWithMovementForward
-import by.miaskor.bot.domain.CreatingCarStep.ENGINE_CAPACITY
 import by.miaskor.bot.domain.CreatingCarStep.ENGINE_TYPE
-import by.miaskor.bot.domain.CreatingCarStep.FUEL_TYPE
-import by.miaskor.bot.domain.CreatingCarStep.MODEL
-import by.miaskor.bot.domain.CreatingCarStep.TRANSMISSION
-import by.miaskor.bot.domain.CreatingCarStep.YEAR
 import by.miaskor.bot.domain.TelegramClient
 import by.miaskor.bot.service.BotStateChanger.changeBotState
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.TelegramClientCache
 import by.miaskor.bot.service.chatId
-import by.miaskor.bot.service.extension.sendMessage
 import by.miaskor.bot.service.extension.sendMessageWithKeyboard
 import by.miaskor.bot.service.pollLast
 import by.miaskor.bot.service.text
-import by.miaskor.domain.api.connector.BrandConnector
 import by.miaskor.domain.api.connector.CarConnector
-import by.miaskor.domain.api.domain.BrandDto
 import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.pengrad.telegrambot.TelegramBot
@@ -43,7 +33,7 @@ class CreatingCarHandler(
   private val telegramBot: TelegramBot,
   private val telegramClientCache: TelegramClientCache,
   private val keyboardBuilder: KeyboardBuilder,
-  private val brandConnector: BrandConnector,
+  private val processingStepService: ProcessingStepService,
   private val carConnector: CarConnector
 ) : BotStateHandler {
   override val state = CREATING_CAR
@@ -71,11 +61,11 @@ class CreatingCarHandler(
         ) {
           val nextStep = carBuilder.nextStep()
           populateCache(update, nextStep)
-          sendMessage(nextStep, update, creatingCarMessage)
+          sendMessage(nextStep, update)
         } else if (PREVIOUS_STEP isCommand update.text) {
           val previousStep = carBuilder.previousStep()
           populateCache(update, previousStep)
-          sendMessage(previousStep, update, creatingCarMessage)
+          sendMessage(previousStep, update)
         } else {
           processStep(carBuilder, update, creatingCarMessage)
         }
@@ -113,53 +103,14 @@ class CreatingCarHandler(
 
   private fun sendMessage(
     carBuilder: CarBuilder,
-    update: Update,
-    creatingCarMessage: CreatingCarMessageSettings
+    update: Update
   ): Mono<Unit> {
     return Mono.just(update.chatId)
       .resolveLanguage(KeyboardSettings::class)
-      .map { keyboardSettings ->
-        when (carBuilder.currentStep()) {
-          BRAND_NAME -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForMandatorySteps())
-            telegramBot.sendMessageWithKeyboard(update.chatId, creatingCarMessage.brandNameMessage(), keyboard)
-          }
-
-          MODEL -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForMandatorySteps())
-            telegramBot.sendMessageWithKeyboard(update.chatId, creatingCarMessage.modelMessage(), keyboard)
-          }
-
-          YEAR -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForMandatorySteps())
-            telegramBot.sendMessageWithKeyboard(update.chatId, creatingCarMessage.yearMessage(), keyboard)
-          }
-
-          BODY -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
-            telegramBot.sendMessageWithKeyboard(update.chatId, creatingCarMessage.bodyMessage(), keyboard)
-          }
-
-          TRANSMISSION -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
-            telegramBot.sendMessageWithKeyboard(update.chatId, creatingCarMessage.transmissionMessage(), keyboard)
-          }
-
-          ENGINE_CAPACITY -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
-            telegramBot.sendMessageWithKeyboard(update.chatId, creatingCarMessage.engineCapacityMessage(), keyboard)
-          }
-
-          FUEL_TYPE -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
-            telegramBot.sendMessageWithKeyboard(update.chatId, creatingCarMessage.fuelTypeMessage(), keyboard)
-          }
-
-          ENGINE_TYPE -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
-            telegramBot.sendMessageWithKeyboard(update.chatId, creatingCarMessage.engineTypeMessage(), keyboard)
-          }
-        }
+      .zipWith(CreatingCarStepMessageResolver.resolve(update, carBuilder.currentStep(), true))
+      .map { (keyboardSettings, message) ->
+        val keyboard = keyboardBuilder.buildCreatingCarStepKeyboard(carBuilder.currentStep(), keyboardSettings)
+        telegramBot.sendMessageWithKeyboard(update.chatId, message, keyboard)
       }
   }
 
@@ -169,112 +120,8 @@ class CreatingCarHandler(
     creatingCarMessage: CreatingCarMessageSettings
   ): Mono<Unit> {
     val currentStep = carBuilder.currentStep()
-    return Mono.just(update.chatId)
-      .resolveLanguage(KeyboardSettings::class)
-      .map { keyboardSettings ->
-        when (currentStep) {
-          BRAND_NAME -> {
-            val brandDtoMono = Mono.defer { brandConnector.getByBrandName(update.text).hasElement() }
-            if (BRAND_NAME.isAcceptable(update.text) && brandDtoMono.toFuture().get()) {
-              val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForMandatorySteps())
-              populateCache(update, carBuilder.brandName(update.text).nextStep())
-              telegramBot.sendMessageWithKeyboard(update.chatId, creatingCarMessage.modelMessage(), keyboard)
-            } else {
-              telegramBot.sendMessage(update.chatId, creatingCarMessage.invalidBrandNameMessage())
-            }
-          }
-
-          MODEL -> {
-            val brandDtoMono = Mono.defer {
-              brandConnector.getByBrandNameAndModel(
-                BrandDto(brandName = carBuilder.getBrandName(), model = update.text)
-              ).doOnNext {
-                carBuilder.brandId(it.id)
-              }.hasElement()
-            }
-            if (MODEL.isAcceptable(update.text) && brandDtoMono.toFuture().get()) {
-              val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForMandatorySteps())
-              populateCache(update, carBuilder.model(update.text).nextStep())
-              telegramBot.sendMessageWithKeyboard(update.chatId, creatingCarMessage.yearMessage(), keyboard)
-            } else {
-              telegramBot.sendMessage(
-                update.chatId, creatingCarMessage.invalidModelMessage().format(carBuilder.getBrandName())
-              )
-            }
-          }
-
-          YEAR -> {
-            if (YEAR.isAcceptable(update.text)) {
-              val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
-              populateCache(update, carBuilder.year(update.text).nextStep())
-              telegramBot.sendMessageWithKeyboard(update.chatId, creatingCarMessage.bodyMessage(), keyboard)
-            } else {
-              telegramBot.sendMessage(update.chatId, creatingCarMessage.invalidYearMessage())
-            }
-          }
-
-          BODY -> {
-            if (BODY.isAcceptable(update.text)) {
-              val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
-              populateCache(update, carBuilder.body(update.text).nextStep())
-              telegramBot.sendMessageWithKeyboard(update.chatId, creatingCarMessage.transmissionMessage(), keyboard)
-            } else {
-              telegramBot.sendMessage(update.chatId, creatingCarMessage.invalidBodyMessage())
-            }
-          }
-
-          TRANSMISSION -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
-            if (TRANSMISSION.isAcceptable(update.text)) {
-              populateCache(update, carBuilder.transmission(update.text).nextStep())
-              telegramBot.sendMessageWithKeyboard(update.chatId, creatingCarMessage.engineCapacityMessage(), keyboard)
-            } else {
-              telegramBot.sendMessageWithKeyboard(
-                update.chatId,
-                creatingCarMessage.invalidTransmissionMessage(),
-                keyboard
-              )
-            }
-          }
-
-          ENGINE_CAPACITY -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
-            if (ENGINE_CAPACITY.isAcceptable(update.text)) {
-              populateCache(update, carBuilder.engineCapacity(update.text).nextStep())
-              telegramBot.sendMessageWithKeyboard(update.chatId, creatingCarMessage.fuelTypeMessage(), keyboard)
-            } else {
-              telegramBot.sendMessageWithKeyboard(
-                update.chatId,
-                creatingCarMessage.invalidEngineCapacityMessage(),
-                keyboard
-              )
-            }
-          }
-
-          FUEL_TYPE -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
-            if (FUEL_TYPE.isAcceptable(update.text)) {
-              populateCache(update, carBuilder.fuelType(update.text).nextStep())
-              telegramBot.sendMessageWithKeyboard(update.chatId, creatingCarMessage.engineTypeMessage(), keyboard)
-            } else {
-              telegramBot.sendMessageWithKeyboard(update.chatId, creatingCarMessage.invalidFuelTypeMessage(), keyboard)
-            }
-          }
-
-          ENGINE_TYPE -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
-            if (ENGINE_TYPE.isAcceptable(update.text)) {
-              populateCache(update, carBuilder.engineType(update.text).nextStep())
-            } else {
-              telegramBot.sendMessageWithKeyboard(
-                update.chatId,
-                creatingCarMessage.invalidEngineTypeMessage(),
-                keyboard
-              )
-            }
-          }
-        }
-      }.filter { currentStep.isComplete }
+    return processingStepService.process(update, currentStep, carBuilder, this::populateCache)
+      .filter { currentStep.isComplete }
       .flatMap { completeCreatingCar(update, creatingCarMessage, carBuilder) }
   }
 

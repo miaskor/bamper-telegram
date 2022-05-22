@@ -14,6 +14,8 @@ import by.miaskor.bot.service.extension.sendMessage
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.util.function.component1
+import reactor.kotlin.core.util.function.component2
 
 class UndefinedCommandHandler(
   private val telegramBot: TelegramBot,
@@ -25,13 +27,13 @@ class UndefinedCommandHandler(
     return Mono.just(update.chatId)
       .resolveLanguage(MessageSettings::class)
       .zipWith(telegramClientCache.getTelegramClient(update.chatId))
-      .map {
-        val message = when (it.t2.currentBotState) {
-          CHOOSING_LANGUAGE, CHANGING_LANGUAGE -> it.t1.chooseLanguageFailMessage()
-          ADDING_EMPLOYEE -> it.t1.incorrectUsernameFormatMessage()
-          REMOVING_EMPLOYEE -> it.t1.incorrectUsernameFormatMessage()
-          CREATING_STORE_HOUSE -> it.t1.incorrectStoreHouseNameFormatMessage()
-          else -> it.t1.undefinedCommandMessage()
+      .map { (messageSettings, telegramClient) ->
+        val message = when (telegramClient.currentBotState) {
+          CHOOSING_LANGUAGE, CHANGING_LANGUAGE -> messageSettings.chooseLanguageFailMessage()
+          ADDING_EMPLOYEE -> messageSettings.incorrectUsernameFormatMessage()
+          REMOVING_EMPLOYEE -> messageSettings.incorrectUsernameFormatMessage()
+          CREATING_STORE_HOUSE -> messageSettings.incorrectStoreHouseNameFormatMessage()
+          else -> messageSettings.undefinedCommandMessage()
         }
         telegramBot.sendMessage(update.chatId, message)
       }.then(Mono.empty())
