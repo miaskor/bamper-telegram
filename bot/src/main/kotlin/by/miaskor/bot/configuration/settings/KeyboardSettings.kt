@@ -12,4 +12,6 @@ interface KeyboardSettings {
   fun storeHouseMenu(): Array<Array<String>>
   fun creatingAutoPartMenu(): Array<Array<String>>
   fun creatingCarMenu(): Array<Array<String>>
+  fun keyboardForMandatorySteps(): Array<Array<String>>
+  fun keyboardForNotMandatorySteps(): Array<Array<String>>
 }

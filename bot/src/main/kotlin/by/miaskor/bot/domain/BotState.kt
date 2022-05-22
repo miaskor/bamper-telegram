@@ -28,7 +28,7 @@ enum class BotState(private vararg val commands: Command) {
   CHOOSING_STORE_HOUSE(BACK, SELECT_CERTAIN_STORE_HOUSE, UNDEFINED),
   STORE_HOUSE_MENU(BACK, CREATE_AUTO_PART, CREATE_CAR, UNDEFINED),
   EMPLOYEES_MENU(LIST_EMPLOYEE, ADD_EMPLOYEE, REMOVE_EMPLOYEE, BACK),
-  CREATING_AUTO_PART(BACK, UNDEFINED),
+  CREATING_AUTO_PART(BACK),
   CREATING_CAR(BACK),
   FINDING_PARTS_MENU,
   BAMPER_MENU;
@@ -37,7 +37,7 @@ enum class BotState(private vararg val commands: Command) {
     private val finalStates =
       listOf(
         ADDING_EMPLOYEE, REMOVING_EMPLOYEE, MAIN_MENU, CHOOSING_LANGUAGE,
-        CHANGING_LANGUAGE, CREATING_STORE_HOUSE, CREATING_CAR
+        CHANGING_LANGUAGE, CREATING_STORE_HOUSE, CREATING_CAR, CREATING_AUTO_PART
       )
 
     fun isNotFinalState(botState: BotState): Boolean {
@@ -48,7 +48,7 @@ enum class BotState(private vararg val commands: Command) {
   fun getCommand(command: String): Mono<Command> {
     return Mono.fromSupplier {
       this.commands
-        .firstOrNull { it.isCommand(command) }
+        .firstOrNull { it isCommand command }
     }
   }
 }

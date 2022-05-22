@@ -1,5 +1,6 @@
 package by.miaskor.bot.configuration
 
+import by.miaskor.bot.configuration.settings.CreatingAutoPartMessageSettings
 import by.miaskor.bot.configuration.settings.CreatingCarMessageSettings
 import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.configuration.settings.MessageSettings
@@ -24,7 +25,8 @@ open class RegistryConfiguration(
       botStateHandlerConfiguration.mainMenuHandler(),
       botStateHandlerConfiguration.greetingsHandler(),
       botStateHandlerConfiguration.employeesMenuHandler(),
-      botStateHandlerConfiguration.creatingCarHandler()
+      botStateHandlerConfiguration.creatingCarHandler(),
+      botStateHandlerConfiguration.creatingAutoPartHandler()
     )
   }
 
@@ -75,6 +77,16 @@ open class RegistryConfiguration(
       mapOf(
         ENGLISH to settingsConfiguration.creatingCarMessageSettingsEN(),
         RUSSIAN to settingsConfiguration.creatingCarMessageSettingsRU()
+      )
+    )
+  }
+
+  @Bean
+  open fun creatingAutoPartMessageSettingsRegistry(): LanguageSettingsRegistry<CreatingAutoPartMessageSettings> {
+    return LanguageSettingsRegistry(
+      mapOf(
+        ENGLISH to settingsConfiguration.creatingAutoPartMessageSettingsEN(),
+        RUSSIAN to settingsConfiguration.creatingAutoPartMessageSettingsRU()
       )
     )
   }

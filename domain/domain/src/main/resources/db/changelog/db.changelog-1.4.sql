@@ -25,4 +25,8 @@ alter table car
 -- changeset miaskor:134
 rename table spare_part to auto_part
 
+-- changeset miaskor:135
+alter table auto_part
+ modify column photo_path varchar(100) null
+
 

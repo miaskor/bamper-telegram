@@ -1,16 +1,24 @@
 package by.miaskor.domain.configuration
 
+import by.miaskor.cloud.drive.service.ImageUploader
+import by.miaskor.domain.service.AutoPartService
 import by.miaskor.domain.service.BrandService
+import by.miaskor.domain.service.CarPartService
 import by.miaskor.domain.service.CarService
 import by.miaskor.domain.service.StoreHouseService
 import by.miaskor.domain.service.TelegramClientService
 import by.miaskor.domain.service.WorkerTelegramService
+import by.miaskor.domain.service.telegram.TelegramApiService
+import org.cfg4j.provider.ConfigurationProvider
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 open class ServiceConfiguration(
-  private val repositoryConfiguration: RepositoryConfiguration
+  private val repositoryConfiguration: RepositoryConfiguration,
+  private val uploader: ImageUploader,
+  private val confProvider: ConfigurationProvider,
+  private val connectorConfiguration: ConnectorConfiguration
 ) {
 
   @Bean
@@ -39,5 +47,31 @@ open class ServiceConfiguration(
   @Bean
   open fun carService(): CarService {
     return CarService(repositoryConfiguration.carRepository(), storeHouseService())
+  }
+
+  @Bean
+  open fun carPartService(): CarPartService {
+    return CarPartService(repositoryConfiguration.carPartRepository())
+  }
+
+  @Bean
+  open fun telegramApiService(): TelegramApiService {
+    val getPhotoPathUrl = confProvider.getProperty("bot.getPhotoPathUrl", String::class.java)
+    val getPhotoUrl = confProvider.getProperty("bot.getPhotoUrl", String::class.java)
+    return TelegramApiService(
+      connectorConfiguration.telegramWebClient(),
+      getPhotoPathUrl,
+      getPhotoUrl
+    )
+  }
+
+  @Bean
+  open fun autoPartService(): AutoPartService {
+    return AutoPartService(
+      repositoryConfiguration.autoPartRepository(),
+      uploader,
+      storeHouseService(),
+      telegramApiService()
+    )
   }
 }

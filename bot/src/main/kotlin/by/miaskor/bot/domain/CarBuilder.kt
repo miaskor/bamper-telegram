@@ -77,10 +77,10 @@ class CarBuilder {
     return if (::brandNameValue.isInitialized) brandNameValue else ""
   }
 
-  fun build(storeHouseName: String, chatId: Long): CarDto {
+  fun build(storeHouseId: Long): CarDto {
     return CarDto(
       brandId = brandIdValue.toLong(),
-      storeHouseName = storeHouseName,
+      storeHouseId = storeHouseId,
       model = modelValue,
       year = yearValue,
       body = if (::bodyValue.isInitialized) bodyValue else "",
@@ -88,7 +88,6 @@ class CarBuilder {
       engineCapacity = if (::engineCapacityValue.isInitialized) engineCapacityValue.toDouble() else 0.0,
       fuelType = if (::fuelTypeValue.isInitialized) fuelTypeValue else "",
       engineType = if (::engineTypeValue.isInitialized) engineTypeValue else "",
-      chatId = chatId
     )
   }
 }

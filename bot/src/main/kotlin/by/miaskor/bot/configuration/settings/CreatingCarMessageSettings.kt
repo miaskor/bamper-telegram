@@ -18,6 +18,4 @@ interface CreatingCarMessageSettings {
   fun engineTypeMessage(): String
   fun invalidEngineTypeMessage(): String
   fun completeCreatingMessage(): String
-  fun keyboardForMandatorySteps(): Array<Array<String>>
-  fun keyboardForNotMandatorySteps(): Array<Array<String>>
 }

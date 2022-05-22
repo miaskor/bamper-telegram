@@ -1,6 +1,7 @@
 package by.miaskor.bot.configuration
 
 import by.miaskor.bot.domain.Command
+import by.miaskor.bot.domain.CreatingAutoPartStep
 import by.miaskor.bot.domain.CreatingCarStep
 import by.miaskor.bot.service.BotStateChanger
 import by.miaskor.bot.service.CommandResolver
@@ -25,6 +26,7 @@ open class ApplicationConfiguration(
       keyboardSettingsRegistry = registryConfiguration.keyboardSettingsRegistry()
       telegramClientCache = serviceConfiguration.telegramClientCache()
       creatingCarMessageSettingsRegistry = registryConfiguration.creatingCarMessageSettingsRegistry()
+      creatingAutoPartMessageSettingsRegistry = registryConfiguration.creatingAutoPartMessageSettingsRegistry()
     }
     CommandResolver.apply {
       commandHandlerRegistry = registryConfiguration.commandHandlerRegistry()
@@ -32,8 +34,9 @@ open class ApplicationConfiguration(
     }
     FieldEnricher.apply {
       configurationProvider = confProvider
-      enrichClass(Command::class.java)
-      enrichClass(CreatingCarStep::class.java)
+      enrich(Command::class.java)
+      enrich(CreatingCarStep::class.java)
+      enrich(CreatingAutoPartStep::class.java)
     }
   }
 }

@@ -2,6 +2,8 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
   implementation("org.springframework.boot:spring-boot-starter-data-rest")
+  implementation("org.springframework:spring-webflux")
+  implementation("io.projectreactor.netty:reactor-netty:1.0.18")
   implementation("org.liquibase:liquibase-core")
   implementation("io.projectreactor:reactor-core:3.4.17")
   implementation("org.jooq:jooq-meta:3.15.1")

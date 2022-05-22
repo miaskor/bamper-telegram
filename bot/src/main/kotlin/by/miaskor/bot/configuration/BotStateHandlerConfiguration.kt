@@ -2,6 +2,7 @@ package by.miaskor.bot.configuration
 
 import by.miaskor.bot.domain.BotState
 import by.miaskor.bot.service.handler.state.BotStateHandler
+import by.miaskor.bot.service.handler.state.CreatingAutoPartHandler
 import by.miaskor.bot.service.handler.state.CreatingCarHandler
 import by.miaskor.bot.service.handler.state.GreetingsHandler
 import by.miaskor.bot.service.handler.state.MenuHandler
@@ -53,6 +54,19 @@ open class BotStateHandlerConfiguration(
       serviceConfiguration.keyboardBuilder(),
       connectorConfiguration.brandConnector(),
       connectorConfiguration.carConnector()
+    )
+  }
+
+  @Bean
+  open fun creatingAutoPartHandler(): CreatingAutoPartHandler {
+    return CreatingAutoPartHandler(
+      settingsConfiguration.cacheSettings(),
+      telegramBot,
+      serviceConfiguration.telegramClientCache(),
+      serviceConfiguration.keyboardBuilder(),
+      connectorConfiguration.autoPartConnector(),
+      connectorConfiguration.carConnector(),
+      connectorConfiguration.carPartConnector()
     )
   }
 }

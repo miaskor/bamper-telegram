@@ -2,7 +2,7 @@ package by.miaskor.domain.api.domain
 
 data class CarDto(
   val brandId: Long,
-  val storeHouseName: String,
+  val storeHouseId: Long,
   val model: String,
   val year: String,
   val body: String,
@@ -10,5 +10,4 @@ data class CarDto(
   val engineCapacity: Double,
   val fuelType: String,
   val engineType: String,
-  val chatId: Long
 )
