@@ -1,19 +1,28 @@
 package by.miaskor.bot.configuration
 
+import by.miaskor.bot.configuration.settings.MessageSettings
+import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE
+import by.miaskor.bot.domain.BotState.CHANGING_LANGUAGE
+import by.miaskor.bot.domain.BotState.CREATING_AUTO_PART
+import by.miaskor.bot.domain.BotState.CREATING_CAR
+import by.miaskor.bot.domain.BotState.CREATING_STORE_HOUSE
+import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
+import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
+import by.miaskor.bot.domain.Command.ADD_EMPLOYEE
+import by.miaskor.bot.domain.Command.CHANGE_LANGUAGE
+import by.miaskor.bot.domain.Command.CREATE_AUTO_PART
+import by.miaskor.bot.domain.Command.CREATE_CAR
+import by.miaskor.bot.domain.Command.CREATE_STORE_HOUSE
+import by.miaskor.bot.domain.Command.EMPLOYEES
+import by.miaskor.bot.domain.Command.REMOVE_EMPLOYEE
 import by.miaskor.bot.service.handler.command.BackCommandHandler
+import by.miaskor.bot.service.handler.command.ChangingBotStateCommandHandler
 import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.bot.service.handler.command.UndefinedCommandHandler
-import by.miaskor.bot.service.handler.command.car.CreateCarCommandHandler
-import by.miaskor.bot.service.handler.command.employee.AddEmployeeCommandHandler
 import by.miaskor.bot.service.handler.command.employee.EmployeeCommandHandler
-import by.miaskor.bot.service.handler.command.employee.EmployeesCommandHandler
 import by.miaskor.bot.service.handler.command.employee.ListEmployeeCommandHandler
-import by.miaskor.bot.service.handler.command.employee.RemoveEmployeeCommandHandler
-import by.miaskor.bot.service.handler.command.language.ChangeLanguageCommandHandler
 import by.miaskor.bot.service.handler.command.language.LanguageCommandHandler
-import by.miaskor.bot.service.handler.command.autopart.CreateAutoPartCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.ChooseStoreHouseCommandHandler
-import by.miaskor.bot.service.handler.command.storehouse.CreateStoreHouseCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.SelectCertainStoreHouseCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.StoreHouseCommandHandler
 import com.pengrad.telegrambot.TelegramBot
@@ -29,9 +38,12 @@ open class CommandHandlerConfiguration(
 
   @Bean
   open fun changeLanguageCommandHandler(): CommandHandler {
-    return ChangeLanguageCommandHandler(
+    return ChangingBotStateCommandHandler(
       telegramBot,
-      serviceConfiguration.keyboardBuilder()
+      serviceConfiguration.keyboardBuilder(),
+      CHANGE_LANGUAGE,
+      CHANGING_LANGUAGE,
+      MessageSettings::changeLanguageMessage
     )
   }
 
@@ -45,9 +57,12 @@ open class CommandHandlerConfiguration(
 
   @Bean
   open fun employeesCommandHandler(): CommandHandler {
-    return EmployeesCommandHandler(
+    return ChangingBotStateCommandHandler(
       telegramBot,
-      serviceConfiguration.keyboardBuilder()
+      serviceConfiguration.keyboardBuilder(),
+      EMPLOYEES,
+      EMPLOYEES_MENU,
+      MessageSettings::employeesMenuMessage
     )
   }
 
@@ -62,9 +77,12 @@ open class CommandHandlerConfiguration(
 
   @Bean
   open fun removeEmployeeCommandHandler(): CommandHandler {
-    return RemoveEmployeeCommandHandler(
+    return ChangingBotStateCommandHandler(
       telegramBot,
-      serviceConfiguration.keyboardBuilder()
+      serviceConfiguration.keyboardBuilder(),
+      REMOVE_EMPLOYEE,
+      REMOVING_EMPLOYEE,
+      MessageSettings::inputEmployeeMessage
     )
   }
 
@@ -79,33 +97,45 @@ open class CommandHandlerConfiguration(
 
   @Bean
   open fun addEmployeeCommandHandler(): CommandHandler {
-    return AddEmployeeCommandHandler(
+    return ChangingBotStateCommandHandler(
       telegramBot,
-      serviceConfiguration.keyboardBuilder()
+      serviceConfiguration.keyboardBuilder(),
+      ADD_EMPLOYEE,
+      ADDING_EMPLOYEE,
+      MessageSettings::inputEmployeeMessage
     )
   }
 
   @Bean
   open fun createStoreHouseCommandHandler(): CommandHandler {
-    return CreateStoreHouseCommandHandler(
+    return ChangingBotStateCommandHandler(
       telegramBot,
-      serviceConfiguration.keyboardBuilder()
+      serviceConfiguration.keyboardBuilder(),
+      CREATE_STORE_HOUSE,
+      CREATING_STORE_HOUSE,
+      MessageSettings::storeHouseMessage
     )
   }
 
   @Bean
   open fun createAutoPartCommandHandler(): CommandHandler {
-    return CreateAutoPartCommandHandler(
+    return ChangingBotStateCommandHandler(
       telegramBot,
-      serviceConfiguration.keyboardBuilder()
+      serviceConfiguration.keyboardBuilder(),
+      CREATE_AUTO_PART,
+      CREATING_AUTO_PART,
+      MessageSettings::creatingAutoPartMessage
     )
   }
 
   @Bean
   open fun createCarCommandHandler(): CommandHandler {
-    return CreateCarCommandHandler(
+    return ChangingBotStateCommandHandler(
       telegramBot,
-      serviceConfiguration.keyboardBuilder()
+      serviceConfiguration.keyboardBuilder(),
+      CREATE_CAR,
+      CREATING_CAR,
+      MessageSettings::creatingCarMessage
     )
   }
 

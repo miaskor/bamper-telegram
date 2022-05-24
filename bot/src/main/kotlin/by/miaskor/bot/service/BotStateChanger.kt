@@ -10,17 +10,21 @@ object BotStateChanger {
   lateinit var telegramClientCache: TelegramClientCache
   private val log = LogManager.getLogger()
 
-  fun <T : Any> Mono<T>.changeBotState(chatId: () -> Long, botState: BotState, isBackCommand: Boolean = false): Mono<T> {
+  fun <T : Any> Mono<T>.changeBotState(
+    chatId: () -> Long,
+    botState: BotState,
+    isBackCommand: Boolean = false
+  ): Mono<T> {
     return this.flatMap { t ->
-      Mono.fromSupplier{chatId.invoke()}
-        .flatMap (telegramClientCache::getTelegramClient)
+      Mono.fromSupplier { chatId.invoke() }
+        .flatMap(telegramClientCache::getTelegramClient)
         .doOnNext { log.info("Change botState for=$it") }
-        .doOnNext {
+        .doOnNext { telegramClient ->
           telegramClientCache.populate(
-            it.chatId,
-            it.copy(currentBotState = botState).apply {
-              if (isNotFinalState(it.currentBotState) && !isBackCommand) {
-                this.previousBotStates.add(it.currentBotState)
+            telegramClient.chatId,
+            telegramClient.copy(currentBotState = botState).apply {
+              if (isNotFinalState(telegramClient.currentBotState) && !isBackCommand) {
+                this.previousBotStates.add(telegramClient.currentBotState)
               }
             }
           )

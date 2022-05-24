@@ -9,6 +9,8 @@ import by.miaskor.bot.service.extension.sendMessageWithKeyboard
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.util.function.component1
+import reactor.kotlin.core.util.function.component2
 
 class MenuHandler(
   private val telegramBot: TelegramBot,
@@ -19,14 +21,14 @@ class MenuHandler(
     return Mono.just(update.chatId)
       .resolveLanguage(MessageSettings::class)
       .zipWith(keyboardBuilder.build(update.chatId))
-      .map {
+      .map { (messageSettings, keyboard) ->
         val message = when (state) {
-          BotState.MAIN_MENU -> it.t1.mainMenuMessage()
-          BotState.EMPLOYEES_MENU -> it.t1.employeesMenuMessage()
-          BotState.STORE_HOUSE_MENU -> it.t1.storeHouseMenuMessage()
+          BotState.MAIN_MENU -> messageSettings.mainMenuMessage()
+          BotState.EMPLOYEES_MENU -> messageSettings.employeesMenuMessage()
+          BotState.STORE_HOUSE_MENU -> messageSettings.storeHouseMenuMessage()
           else -> "Something bad happened in menuHandler"
         }
-        telegramBot.sendMessageWithKeyboard(update.chatId, message, it.t2)
+        telegramBot.sendMessageWithKeyboard(update.chatId, message, keyboard)
       }
   }
 }
