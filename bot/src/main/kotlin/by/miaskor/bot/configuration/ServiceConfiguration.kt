@@ -2,8 +2,7 @@ package by.miaskor.bot.configuration
 
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.TelegramClientCache
-import by.miaskor.bot.service.handler.state.CreationCarStepValidation
-import com.pengrad.telegrambot.TelegramBot
+import by.miaskor.bot.service.carstep.CreationCarStepValidation
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 

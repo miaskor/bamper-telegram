@@ -1,4 +1,4 @@
-package by.miaskor.bot.service.handler.state
+package by.miaskor.bot.service.carstep
 
 import by.miaskor.bot.domain.CarBuilder
 import by.miaskor.bot.domain.CreatingCarStep
@@ -30,6 +30,7 @@ class CreationCarStepValidation(
                 model = message
               )
             }.flatMap(brandConnector::getByBrandNameAndModel)
+              .doOnNext { carBuilder.brandId(it.id) }
               .hasElement()
           }
 

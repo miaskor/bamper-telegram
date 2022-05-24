@@ -1,6 +1,6 @@
 package by.miaskor.bot.configuration
 
-import by.miaskor.bot.service.handler.state.ProcessingStepService
+import by.miaskor.bot.service.carstep.ProcessingStepService
 import by.miaskor.bot.telegram.Bot
 import com.pengrad.telegrambot.TelegramBot
 import okhttp3.OkHttpClient

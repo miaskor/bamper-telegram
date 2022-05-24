@@ -1,10 +1,13 @@
-package by.miaskor.bot.service.handler.state
+package by.miaskor.bot.service.carstep
 
 import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.domain.CarBuilder
 import by.miaskor.bot.domain.CreatingCarStep
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
+import by.miaskor.bot.service.carstep.CarBuilderFieldResolver
+import by.miaskor.bot.service.carstep.CreatingCarStepMessageResolver
+import by.miaskor.bot.service.carstep.CreationCarStepValidation
 import by.miaskor.bot.service.chatId
 import by.miaskor.bot.service.extension.sendMessage
 import by.miaskor.bot.service.extension.sendMessageWithKeyboard
