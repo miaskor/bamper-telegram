@@ -13,6 +13,8 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders.CONTENT_TYPE
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.http.client.reactive.ReactorClientHttpConnector
+import org.springframework.http.codec.ClientCodecConfigurer
+import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.netty.http.client.HttpClient
 
@@ -23,7 +25,15 @@ open class ConnectorConfiguration(
 
   @Bean
   open fun webClient(): WebClient {
+    val size = 16 * 1024 * 1024
+    val strategies = ExchangeStrategies.builder()
+      .codecs { codecs: ClientCodecConfigurer ->
+        codecs.defaultCodecs().maxInMemorySize(size)
+      }
+      .build()
+
     return WebClient.builder()
+      .exchangeStrategies(strategies)
       .baseUrl(connectorSettings.baseUrl())
       .defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
       .clientConnector(ReactorClientHttpConnector(HttpClient.create().compress(true)))

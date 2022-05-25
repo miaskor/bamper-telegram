@@ -10,6 +10,7 @@ import by.miaskor.bot.domain.Command.CREATE_STORE_HOUSE
 import by.miaskor.bot.domain.Command.EMPLOYEE
 import by.miaskor.bot.domain.Command.EMPLOYEES
 import by.miaskor.bot.domain.Command.LANGUAGE
+import by.miaskor.bot.domain.Command.LIST_AUTO_PART
 import by.miaskor.bot.domain.Command.LIST_CAR
 import by.miaskor.bot.domain.Command.LIST_EMPLOYEE
 import by.miaskor.bot.domain.Command.REMOVE_EMPLOYEE
@@ -27,7 +28,7 @@ enum class BotState(private vararg val commands: Command) {
   MAIN_MENU(CREATE_STORE_HOUSE, CHOOSE_STORE_HOUSE, CHANGE_LANGUAGE, EMPLOYEES),
   CREATING_STORE_HOUSE(BACK, STORE_HOUSE, UNDEFINED),
   CHOOSING_STORE_HOUSE(BACK, SELECT_CERTAIN_STORE_HOUSE, UNDEFINED),
-  STORE_HOUSE_MENU(BACK, CREATE_AUTO_PART, CREATE_CAR, LIST_CAR, UNDEFINED),
+  STORE_HOUSE_MENU(BACK, CREATE_AUTO_PART, CREATE_CAR, LIST_CAR, LIST_AUTO_PART, UNDEFINED),
   EMPLOYEES_MENU(LIST_EMPLOYEE, ADD_EMPLOYEE, REMOVE_EMPLOYEE, BACK),
   CREATING_AUTO_PART(BACK),
   CREATING_CAR(BACK),

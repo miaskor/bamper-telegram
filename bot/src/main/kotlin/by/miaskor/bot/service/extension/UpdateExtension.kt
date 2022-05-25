@@ -9,12 +9,12 @@ val Update.chatId: Long
 
 val Update.text: String
   get() {
-    return this.message()?.text() ?: this.callbackQuery().data()
+    return this.message()?.text() ?: this.callbackQuery()?.data() ?: ""
   }
 
 val Update.username: String
   get() {
-    return this.message()?.chat()?.username() ?: this.callbackQuery().from().username()
+    return this.message()?.chat()?.username() ?: this.callbackQuery()?.from()?.username() ?: ""
   }
 
 val Update.photoId: String

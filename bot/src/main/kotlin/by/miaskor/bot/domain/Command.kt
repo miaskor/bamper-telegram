@@ -55,6 +55,9 @@ enum class Command(private vararg val commands: String) {
   @FieldEnrich("listCars", "commands")
   LIST_CAR,
 
+  @FieldEnrich("listAutoParts", "commands")
+  LIST_AUTO_PART,
+
   @FieldEnrich("undefined", "commands")
   UNDEFINED;
 

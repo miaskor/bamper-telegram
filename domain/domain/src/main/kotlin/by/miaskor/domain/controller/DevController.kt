@@ -4,6 +4,7 @@ import by.miaskor.cloud.drive.domain.DownloadFile
 import by.miaskor.cloud.drive.domain.UploadFileRequest
 import by.miaskor.cloud.drive.service.ImageDownloader
 import by.miaskor.cloud.drive.service.ImageUploader
+import by.miaskor.domain.service.AutoPartKeyGenerator
 import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
@@ -37,8 +38,7 @@ class DevController(
       UploadFileRequest(
         chatId = chatId.toLong(),
         image = image.block()!!.content(),
-        entityId = entityId.toLong(),
-        isAdvertisement = isAdvertisement.toBoolean()
+        uniqueKey = AutoPartKeyGenerator.generate()
       )
     }
       .flatMap(uploader::upload)
@@ -46,7 +46,7 @@ class DevController(
   }
 
   @PostMapping(path = ["/download"], produces = [MediaType.APPLICATION_OCTET_STREAM_VALUE])
-  fun upload(@RequestBody downloadFile: DownloadFile, response: HttpServletResponse) {
+  fun download(@RequestBody downloadFile: DownloadFile, response: HttpServletResponse) {
     val image = imageDownloader.download(downloadFile)
 
     DataBufferUtils.write(image, response.outputStream)
