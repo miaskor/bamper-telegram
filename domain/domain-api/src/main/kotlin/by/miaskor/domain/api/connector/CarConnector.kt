@@ -25,4 +25,11 @@ class CarConnector(
       .retrieve()
       .bodyToMono()
   }
+
+  fun getAllByStoreHouseId(storeHouseId: Long): Mono<List<CarResponse>> {
+    return webClient.get()
+      .uri("/car/$storeHouseId")
+      .retrieve()
+      .bodyToMono()
+  }
 }

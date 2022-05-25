@@ -29,4 +29,10 @@ class CarController(
     return carService.getByStoreHouseIdAndId(storeHouseId, id)
       .map { ResponseEntity.ok(it) }
   }
+
+  @GetMapping("/{storeHouseId}")
+  fun getById(@PathVariable storeHouseId: Long): Mono<ResponseEntity<List<CarResponse>>> {
+    return carService.getByAllStoreHouseId(storeHouseId)
+      .map { ResponseEntity.ok(it) }
+  }
 }

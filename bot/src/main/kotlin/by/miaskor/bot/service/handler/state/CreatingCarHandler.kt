@@ -109,7 +109,7 @@ class CreatingCarHandler(
   ): Mono<Unit> {
     return Mono.just(update.chatId)
       .resolveLanguage(KeyboardSettings::class)
-      .zipWith(CreatingCarStepMessageResolver.resolve(update, carBuilder.currentStep(), true))
+      .zipWith(CreatingCarStepMessageResolver.resolve(update, carBuilder.currentStep(), carBuilder, true))
       .map { (keyboardSettings, message) ->
         val keyboard = keyboardBuilder.buildCreatingCarStepKeyboard(carBuilder.currentStep(), keyboardSettings)
         telegramBot.sendMessageWithKeyboard(update.chatId, message, keyboard)

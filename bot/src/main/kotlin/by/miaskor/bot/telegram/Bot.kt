@@ -3,7 +3,7 @@ package by.miaskor.bot.telegram
 import by.miaskor.bot.service.CommandResolver.processCommand
 import by.miaskor.bot.service.TelegramClientCache
 import by.miaskor.bot.service.chatId
-import by.miaskor.bot.service.handler.state.BotStateHandlerRegistry
+import by.miaskor.bot.service.info
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.UpdatesListener.CONFIRMED_UPDATES_ALL
 import com.pengrad.telegrambot.model.Update
@@ -19,7 +19,9 @@ class Bot(
   init {
     telegramBot.setUpdatesListener { updates ->
       Flux.fromIterable(updates)
-        .doOnNext { log.info("Processing update=$it") }
+        .doOnNext {
+          log.info("Processing update=${it.info()}")
+        }
         .flatMap(::processChatId)
         .then(Mono.just(CONFIRMED_UPDATES_ALL))
         .toFuture()

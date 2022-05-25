@@ -23,5 +23,6 @@ interface MessageSettings {
   fun addingStoreHouseFailMessage(): String
   fun addingStoreHouseSuccessMessage(): String
   fun allStoreHousesMessage(): String
+  fun listCarMessage(): String
   fun storeHouseNotFoundMessage(): String
 }
