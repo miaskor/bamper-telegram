@@ -19,6 +19,8 @@ import by.miaskor.bot.service.handler.command.BackCommandHandler
 import by.miaskor.bot.service.handler.command.ChangingBotStateCommandHandler
 import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.bot.service.handler.command.UndefinedCommandHandler
+import by.miaskor.bot.service.handler.command.autopart.ListAutoPartCommandHandler
+import by.miaskor.bot.service.handler.command.car.ListCarCommandHandler
 import by.miaskor.bot.service.handler.command.employee.EmployeeCommandHandler
 import by.miaskor.bot.service.handler.command.employee.ListEmployeeCommandHandler
 import by.miaskor.bot.service.handler.command.language.LanguageCommandHandler
@@ -71,6 +73,24 @@ open class CommandHandlerConfiguration(
     return ListEmployeeCommandHandler(
       telegramBot,
       connectorConfiguration.telegramClientConnector(),
+      serviceConfiguration.telegramClientCache()
+    )
+  }
+
+  @Bean
+  open fun listCarCommandHandler(): CommandHandler {
+    return ListCarCommandHandler(
+      telegramBot,
+      connectorConfiguration.carConnector(),
+      serviceConfiguration.telegramClientCache()
+    )
+  }
+
+  @Bean
+  open fun listAutoPartCommandHandler(): CommandHandler {
+    return ListAutoPartCommandHandler(
+      telegramBot,
+      connectorConfiguration.autoPartConnector(),
       serviceConfiguration.telegramClientCache()
     )
   }

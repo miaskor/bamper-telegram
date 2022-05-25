@@ -2,7 +2,6 @@ package by.miaskor.domain.service
 
 import by.miaskor.domain.api.domain.CarDto
 import by.miaskor.domain.api.domain.CarResponse
-import by.miaskor.domain.api.domain.StoreHouseDto
 import by.miaskor.domain.repository.CarRepository
 import by.miaskor.domain.tables.pojos.Car
 import reactor.core.publisher.Mono
@@ -14,17 +13,17 @@ class CarService(
 
   fun create(carDto: CarDto): Mono<Long> {
     return Mono.fromSupplier {
-        Car(
-          body = carDto.body,
-          transmission = carDto.transmission,
-          engineCapacity = carDto.engineCapacity,
-          fuelType = carDto.fuelType,
-          engineType = carDto.engineType,
-          brandId = carDto.brandId,
-          year = carDto.year,
-          storeHouseId = carDto.storeHouseId
-        )
-      }.flatMap(carRepository::create)
+      Car(
+        body = carDto.body,
+        transmission = carDto.transmission,
+        engineCapacity = carDto.engineCapacity,
+        fuelType = carDto.fuelType,
+        engineType = carDto.engineType,
+        brandId = carDto.brandId,
+        year = carDto.year,
+        storeHouseId = carDto.storeHouseId
+      )
+    }.flatMap(carRepository::create)
   }
 
   fun getByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<CarResponse> {
@@ -32,5 +31,9 @@ class CarService(
       .map {
         CarResponse(it.id ?: -1)
       }
+  }
+
+  fun getByAllStoreHouseId(storeHouseId: Long): Mono<List<CarResponse>> {
+    return carRepository.findAllByStoreHouseId(storeHouseId)
   }
 }

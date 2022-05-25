@@ -9,5 +9,5 @@ data class CarDto(
   val transmission: String,
   val engineCapacity: Double,
   val fuelType: String,
-  val engineType: String,
+  val engineType: String
 )

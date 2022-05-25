@@ -52,6 +52,12 @@ enum class Command(private vararg val commands: String) {
   @FieldEnrich("previousSteps", "commands")
   PREVIOUS_STEP,
 
+  @FieldEnrich("listCars", "commands")
+  LIST_CAR,
+
+  @FieldEnrich("listAutoParts", "commands")
+  LIST_AUTO_PART,
+
   @FieldEnrich("undefined", "commands")
   UNDEFINED;
 

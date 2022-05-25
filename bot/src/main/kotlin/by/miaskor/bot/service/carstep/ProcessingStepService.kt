@@ -33,18 +33,18 @@ class ProcessingStepService(
     return Mono.just(update.chatId)
       .filterWhen { creationCarStepValidation.validate(creatingCarStep, update.text, carBuilder) }
       .resolveLanguage(KeyboardSettings::class)
-      .zipWith(CreatingCarStepMessageResolver.resolve(update, creatingCarStep.next(), true))
+      .zipWith(CreatingCarStepMessageResolver.resolve(update, creatingCarStep.next(),carBuilder, true))
       .map { (keyboardSettings, message) ->
         val functionToEnrich = CarBuilderFieldResolver.resolve(creatingCarStep, carBuilder)
         populateCache.invoke(update, functionToEnrich(update.text).nextStep())
         val keyboard = keyboardBuilder.buildCreatingCarStepKeyboard(creatingCarStep.next(), keyboardSettings)
         telegramBot.sendMessageWithKeyboard(update.chatId, message, keyboard)
-      }.switchIfEmpty(sendInvalidMessage(update, creatingCarStep))
+      }.switchIfEmpty(sendInvalidMessage(update,carBuilder, creatingCarStep))
   }
 
-  private fun sendInvalidMessage(update: Update, creatingCarStep: CreatingCarStep): Mono<Unit> {
+  private fun sendInvalidMessage(update: Update,carBuilder: CarBuilder, creatingCarStep: CreatingCarStep): Mono<Unit> {
     return Mono.just(update.chatId)
-      .zipWith(CreatingCarStepMessageResolver.resolve(update, creatingCarStep, false))
+      .zipWith(CreatingCarStepMessageResolver.resolve(update, creatingCarStep,carBuilder, false))
       .map { (chatId, invalidMessage) ->
         telegramBot.sendMessage(chatId, invalidMessage)
       }.then(Mono.empty())

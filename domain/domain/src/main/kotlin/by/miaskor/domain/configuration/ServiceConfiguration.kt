@@ -1,5 +1,6 @@
 package by.miaskor.domain.configuration
 
+import by.miaskor.cloud.drive.service.ImageDownloader
 import by.miaskor.cloud.drive.service.ImageUploader
 import by.miaskor.domain.service.AutoPartService
 import by.miaskor.domain.service.BrandService
@@ -17,6 +18,7 @@ import org.springframework.context.annotation.Configuration
 open class ServiceConfiguration(
   private val repositoryConfiguration: RepositoryConfiguration,
   private val uploader: ImageUploader,
+  private val imageDownloader: ImageDownloader,
   private val confProvider: ConfigurationProvider,
   private val connectorConfiguration: ConnectorConfiguration
 ) {
@@ -70,7 +72,7 @@ open class ServiceConfiguration(
     return AutoPartService(
       repositoryConfiguration.autoPartRepository(),
       uploader,
-      storeHouseService(),
+      imageDownloader,
       telegramApiService()
     )
   }

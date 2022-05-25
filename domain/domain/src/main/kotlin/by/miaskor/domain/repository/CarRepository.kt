@@ -1,6 +1,8 @@
 package by.miaskor.domain.repository
 
+import by.miaskor.domain.api.domain.CarResponse
 import by.miaskor.domain.tables.pojos.Car
+import by.miaskor.domain.tables.references.BRAND
 import by.miaskor.domain.tables.references.CAR
 import org.jooq.DSLContext
 import reactor.core.publisher.Mono
@@ -8,6 +10,7 @@ import reactor.core.publisher.Mono
 interface CarRepository : CrudRepository<Car> {
   fun create(entity: Car): Mono<Long>
   fun findByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Car>
+  fun findAllByStoreHouseId(storeHouseId: Long): Mono<List<CarResponse>>
 }
 
 class JooqCarRepository(
@@ -41,6 +44,26 @@ class JooqCarRepository(
         .where(CAR.ID.eq(id))
         .and(CAR.STORE_HOUSE_ID.eq(storeHouseId))
         .fetchOneInto(Car::class.java)
+    }
+  }
+
+  override fun findAllByStoreHouseId(storeHouseId: Long): Mono<List<CarResponse>> {
+    return Mono.fromSupplier {
+      dslContext.select(
+        CAR.ID,
+        CAR.BODY,
+        CAR.TRANSMISSION,
+        CAR.ENGINE_CAPACITY,
+        CAR.FUEL_TYPE,
+        CAR.ENGINE_TYPE,
+        CAR.YEAR,
+        BRAND.BRAND_NAME,
+        BRAND.MODEL
+      )
+        .from(CAR)
+        .join(BRAND).on(BRAND.ID.eq(CAR.BRAND_ID))
+        .where(CAR.STORE_HOUSE_ID.eq(storeHouseId))
+        .fetchInto(CarResponse::class.java)
     }
   }
 

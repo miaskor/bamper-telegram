@@ -1,6 +1,7 @@
 package by.miaskor.bot.service.carstep
 
 import by.miaskor.bot.configuration.settings.CreatingCarMessageSettings
+import by.miaskor.bot.domain.CarBuilder
 import by.miaskor.bot.domain.CreatingCarStep
 import by.miaskor.bot.domain.CreatingCarStep.BODY
 import by.miaskor.bot.domain.CreatingCarStep.BRAND_NAME
@@ -17,14 +18,19 @@ import reactor.core.publisher.Mono
 
 object CreatingCarStepMessageResolver {
 
-  fun resolve(update: Update, creatingCarStep: CreatingCarStep, isValid: Boolean): Mono<String> {
+  fun resolve(
+    update: Update,
+    creatingCarStep: CreatingCarStep,
+    carBuilder: CarBuilder,
+    isValid: Boolean
+  ): Mono<String> {
     return Mono.just(update.chatId)
       .resolveLanguage(CreatingCarMessageSettings::class)
       .flatMap { creatingCarMessage ->
         if (isValid)
           resolveMessage(creatingCarStep, creatingCarMessage)
         else
-          resolveInvalidMessage(creatingCarStep, creatingCarMessage)
+          resolveInvalidMessage(creatingCarStep, creatingCarMessage, carBuilder)
       }
   }
 
@@ -48,12 +54,13 @@ object CreatingCarStepMessageResolver {
 
   private fun resolveInvalidMessage(
     creatingCarStep: CreatingCarStep,
-    creatingCarMessage: CreatingCarMessageSettings
+    creatingCarMessage: CreatingCarMessageSettings,
+    carBuilder: CarBuilder
   ): Mono<String> {
     return Mono.fromSupplier {
       when (creatingCarStep) {
         BRAND_NAME -> creatingCarMessage.invalidBrandNameMessage()
-        MODEL -> creatingCarMessage.invalidModelMessage()
+        MODEL -> creatingCarMessage.invalidModelMessage().format(carBuilder.getBrandName())
         YEAR -> creatingCarMessage.invalidYearMessage()
         BODY -> creatingCarMessage.invalidBodyMessage()
         TRANSMISSION -> creatingCarMessage.invalidTransmissionMessage()
