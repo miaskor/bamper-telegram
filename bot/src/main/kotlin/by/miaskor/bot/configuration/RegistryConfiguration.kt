@@ -33,6 +33,7 @@ open class RegistryConfiguration(
   @Bean
   open fun commandHandlerRegistry(): CommandHandlerRegistry {
     return CommandHandlerRegistry(
+      commandHandlerConfiguration.addEmployeeToStoreHouseCommandHandler(),
       commandHandlerConfiguration.changeLanguageCommandHandler(),
       commandHandlerConfiguration.employeesCommandHandler(),
       commandHandlerConfiguration.backCommandHandler(),
