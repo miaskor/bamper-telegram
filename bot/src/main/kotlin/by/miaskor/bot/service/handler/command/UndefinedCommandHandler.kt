@@ -2,6 +2,7 @@ package by.miaskor.bot.service.handler.command
 
 import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE
+import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE_TO_STORE_HOUSE
 import by.miaskor.bot.domain.BotState.CHANGING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CHOOSING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CREATING_STORE_HOUSE
@@ -30,9 +31,9 @@ class UndefinedCommandHandler(
       .map { (messageSettings, telegramClient) ->
         val message = when (telegramClient.currentBotState) {
           CHOOSING_LANGUAGE, CHANGING_LANGUAGE -> messageSettings.chooseLanguageFailMessage()
-          ADDING_EMPLOYEE -> messageSettings.incorrectUsernameFormatMessage()
-          REMOVING_EMPLOYEE -> messageSettings.incorrectUsernameFormatMessage()
+          ADDING_EMPLOYEE, REMOVING_EMPLOYEE -> messageSettings.incorrectUsernameFormatMessage()
           CREATING_STORE_HOUSE -> messageSettings.incorrectStoreHouseNameFormatMessage()
+          ADDING_EMPLOYEE_TO_STORE_HOUSE -> messageSettings.incorrectEmployeeToStoreHouseFormatMessage()
           else -> messageSettings.undefinedCommandMessage()
         }
         telegramBot.sendMessage(update.chatId, message)

@@ -42,17 +42,9 @@ class CloudYandexDriveConnector(
   fun getImage(downloadUrl: String): Flux<DataBuffer> {
     return webClient.get()
       .uri(downloadUrl)
-      .exchangeToFlux { response ->
-        response.toEntity(Any::class.java)
-          .mapNotNull { it.headers.location }
-          .flatMapMany { redirectUrl ->
-            webClient.get()
-              .uri(redirectUrl.toString())
-              .accept(MediaType.APPLICATION_OCTET_STREAM)
-              .retrieve()
-              .bodyToFlux(DataBuffer::class.java)
-          }
-      }
+      .accept(MediaType.APPLICATION_OCTET_STREAM)
+      .retrieve()
+      .bodyToFlux(DataBuffer::class.java)
   }
 
   fun isFolderExists(path: String): Mono<Boolean> {

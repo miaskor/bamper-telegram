@@ -61,11 +61,8 @@ enum class Command(private vararg val commands: String) {
   @FieldEnrich("addEmployeeToStoreHouses", "commands")
   ADD_EMPLOYEE_TO_STORE_HOUSE,
 
-  @FieldEnrich("employee", "commands")
+  @FieldEnrich("employeeToStoreHouse", "commands")
   EMPLOYEE_TO_STORE_HOUSE,
-
-  @FieldEnrich("employeePrivilege", "commands")
-  EMPLOYEE_PRIVILEGE,
 
   @FieldEnrich("undefined", "commands")
   UNDEFINED;

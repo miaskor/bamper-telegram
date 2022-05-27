@@ -9,8 +9,8 @@ import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
 
 class EmployeeCommandHandler(
-  private val removingEmployeeCommandHandler: AbstractEmployeeCommandHandler,
-  private val addingEmployeeCommandHandler: AbstractEmployeeCommandHandler,
+  private val removingEmployeeCommandHandler: RemovingEmployeeCommandHandler,
+  private val addingEmployeeCommandHandler: AddingEmployeeCommandHandler,
   private val telegramClientCache: TelegramClientCache
 ) : CommandHandler {
   override val command = EMPLOYEE

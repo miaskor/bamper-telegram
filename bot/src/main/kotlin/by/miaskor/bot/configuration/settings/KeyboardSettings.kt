@@ -12,6 +12,7 @@ interface KeyboardSettings {
   fun storeHouseMenu(): List<String>
   fun creatingAutoPartMenu(): List<String>
   fun creatingCarMenu(): List<String>
+  fun addingEmployeeToStoreHouseMenu(): List<String>
   fun keyboardForMandatorySteps(): List<String>
   fun keyboardForNotMandatorySteps(): List<String>
 }

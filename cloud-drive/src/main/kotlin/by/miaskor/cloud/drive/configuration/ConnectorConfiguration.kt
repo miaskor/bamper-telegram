@@ -17,7 +17,11 @@ open class ConnectorConfiguration(
   open fun webClient(): WebClient {
     return WebClient.builder()
       .baseUrl(cloudDriveSettings.baseUrl())
-      .clientConnector(ReactorClientHttpConnector(HttpClient.create().compress(true)))
+      .clientConnector(
+        ReactorClientHttpConnector(
+          HttpClient.create().followRedirect(true).compress(true)
+        )
+      )
       .build()
   }
 

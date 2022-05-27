@@ -8,6 +8,7 @@ import by.miaskor.domain.service.CarPartService
 import by.miaskor.domain.service.CarService
 import by.miaskor.domain.service.StoreHouseService
 import by.miaskor.domain.service.TelegramClientService
+import by.miaskor.domain.service.WorkerStoreHouseService
 import by.miaskor.domain.service.WorkerTelegramService
 import by.miaskor.domain.service.telegram.TelegramApiService
 import org.cfg4j.provider.ConfigurationProvider
@@ -74,6 +75,12 @@ open class ServiceConfiguration(
       uploader,
       imageDownloader,
       telegramApiService()
+    )
+  }
+  @Bean
+  open fun workerStoreHouseService(): WorkerStoreHouseService {
+    return WorkerStoreHouseService(
+      repositoryConfiguration.workerStoreHouseRepository()
     )
   }
 }

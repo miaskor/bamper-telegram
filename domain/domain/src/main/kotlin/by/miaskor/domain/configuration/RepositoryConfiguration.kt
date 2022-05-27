@@ -12,9 +12,11 @@ import by.miaskor.domain.repository.JooqCarPartRepository
 import by.miaskor.domain.repository.JooqCarRepository
 import by.miaskor.domain.repository.JooqStoreHouseRepository
 import by.miaskor.domain.repository.JooqTelegramClientRepository
+import by.miaskor.domain.repository.JooqWorkerStoreHouseRepository
 import by.miaskor.domain.repository.JooqWorkerTelegramRepository
 import by.miaskor.domain.repository.StoreHouseRepository
 import by.miaskor.domain.repository.TelegramClientRepository
+import by.miaskor.domain.repository.WorkerStoreHouseRepository
 import by.miaskor.domain.repository.WorkerTelegramRepository
 import org.jooq.DSLContext
 import org.springframework.context.annotation.Bean
@@ -63,5 +65,10 @@ open class RepositoryConfiguration(
   @Bean
   open fun carPartRepository(): CarPartRepository {
     return JooqCarPartRepository(dslContext)
+  }
+
+  @Bean
+  open fun workerStoreHouseRepository(): WorkerStoreHouseRepository {
+    return JooqWorkerStoreHouseRepository(dslContext)
   }
 }
