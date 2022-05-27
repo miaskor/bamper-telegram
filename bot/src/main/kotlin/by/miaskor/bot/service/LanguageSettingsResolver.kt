@@ -20,7 +20,7 @@ object LanguageSettingsResolver {
     val language = this.flatMap {
       Mono.just(it)
         .flatMap(telegramClientCache::getTelegramClient)
-        .flatMap { Language.getByDomain(it.chatLanguage) }
+        .map { Language.getByDomain(it.chatLanguage) }
     }
     if (clazz == KeyboardSettings::class) {
       return language

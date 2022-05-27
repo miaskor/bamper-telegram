@@ -8,11 +8,8 @@ enum class Language(val domain: String, vararg val languages: String) {
   RUSSIAN("RU", "Русский", "Russian");
 
   companion object {
-    fun getByDomain(domain: String): Mono<Language> {
-      return Flux.fromArray(values())
-        .filter { it.domain == domain }
-        .next()
-        .defaultIfEmpty(ENGLISH)
+    fun getByDomain(domain: String): Language {
+      return values().firstOrNull { it.domain == domain } ?: ENGLISH
     }
 
     fun getByFullLanguage(fullLanguage: String): Mono<Language> {

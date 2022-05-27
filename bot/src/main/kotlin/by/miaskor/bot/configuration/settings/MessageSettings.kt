@@ -24,5 +24,6 @@ interface MessageSettings {
   fun addingStoreHouseSuccessMessage(): String
   fun allStoreHousesMessage(): String
   fun listCarMessage(): String
+  fun listAutoPartMessage(): String
   fun storeHouseNotFoundMessage(): String
 }
