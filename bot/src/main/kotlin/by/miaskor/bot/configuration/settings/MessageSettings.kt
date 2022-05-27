@@ -9,6 +9,8 @@ interface MessageSettings {
   fun inputEmployeeMessage(): String
   fun failFoundEmployeeMessage(): String
   fun incorrectStoreHouseNameFormatMessage(): String
+  fun incorrectEmployeeToStoreHouseFormatMessage(): String
+  fun inputEmployeeToStoreHouseMessage(): String
   fun greetingsMessage(): String
   fun mainMenuMessage(): String
   fun employeesMenuMessage(): String
@@ -17,6 +19,7 @@ interface MessageSettings {
   fun removingEmployeeSuccessMessage(): String
   fun employeeIsYourEmployerMessage(): String
   fun employeeIsYouMessage(): String
+  fun notYourEmployeeMessage(): String
   fun storeHouseMessage(): String
   fun creatingAutoPartMessage(): String
   fun creatingCarMessage(): String

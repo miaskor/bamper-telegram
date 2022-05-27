@@ -15,6 +15,7 @@ import by.miaskor.domain.api.domain.AutoPartResponse
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import reactor.kotlin.core.util.function.component1
 import reactor.kotlin.core.util.function.component2
 
@@ -31,10 +32,10 @@ class ListAutoPartCommandHandler(
       .zipWith(telegramClientCache.getTelegramClient(update.chatId))
       .flatMap { (messageSettings, telegramClient) ->
         handle(update, messageSettings, telegramClient)
-      }
+      }.then(Mono.empty())
   }
 
-  private fun handle(update: Update, messageSettings: MessageSettings, telegramClient: TelegramClient): Mono<Unit> {
+  private fun handle(update: Update, messageSettings: MessageSettings, telegramClient: TelegramClient): Mono<Void> {
     return Mono.just(telegramClient.currentStoreHouseId())
       .flatMap(autoPartConnector::getAllByStoreHouseId)
       .flatMapIterable { it }
@@ -48,7 +49,7 @@ class ListAutoPartCommandHandler(
             Language.getByDomain(telegramClient.chatLanguage)
           )
         )
-      }.then(Mono.empty())
+      }.then()
   }
 
   private fun buildAutoPartMessage(message: String, autoPartResponse: AutoPartResponse, language: Language): String {

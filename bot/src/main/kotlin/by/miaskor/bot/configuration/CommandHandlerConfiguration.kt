@@ -2,6 +2,7 @@ package by.miaskor.bot.configuration
 
 import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE
+import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE_TO_STORE_HOUSE
 import by.miaskor.bot.domain.BotState.CHANGING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CREATING_AUTO_PART
 import by.miaskor.bot.domain.BotState.CREATING_CAR
@@ -9,6 +10,7 @@ import by.miaskor.bot.domain.BotState.CREATING_STORE_HOUSE
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
 import by.miaskor.bot.domain.Command.ADD_EMPLOYEE
+import by.miaskor.bot.domain.Command.ADD_EMPLOYEE_TO_STORE_HOUSE
 import by.miaskor.bot.domain.Command.CHANGE_LANGUAGE
 import by.miaskor.bot.domain.Command.CREATE_AUTO_PART
 import by.miaskor.bot.domain.Command.CREATE_CAR
@@ -21,8 +23,11 @@ import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.bot.service.handler.command.UndefinedCommandHandler
 import by.miaskor.bot.service.handler.command.autopart.ListAutoPartCommandHandler
 import by.miaskor.bot.service.handler.command.car.ListCarCommandHandler
+import by.miaskor.bot.service.handler.command.employee.AddingEmployeeCommandHandler
+import by.miaskor.bot.service.handler.command.employee.AddingEmployeeToStoreHouseCommandHandler
 import by.miaskor.bot.service.handler.command.employee.EmployeeCommandHandler
 import by.miaskor.bot.service.handler.command.employee.ListEmployeeCommandHandler
+import by.miaskor.bot.service.handler.command.employee.RemovingEmployeeCommandHandler
 import by.miaskor.bot.service.handler.command.language.LanguageCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.ChooseStoreHouseCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.SelectCertainStoreHouseCommandHandler
@@ -37,6 +42,17 @@ open class CommandHandlerConfiguration(
   private val serviceConfiguration: ServiceConfiguration,
   private val connectorConfiguration: ConnectorConfiguration,
 ) {
+
+  @Bean
+  open fun addEmployeeToStoreHouseCommandHandler(): CommandHandler {
+    return ChangingBotStateCommandHandler(
+      telegramBot,
+      serviceConfiguration.keyboardBuilder(),
+      ADD_EMPLOYEE_TO_STORE_HOUSE,
+      ADDING_EMPLOYEE_TO_STORE_HOUSE,
+      MessageSettings::inputEmployeeToStoreHouseMessage
+    )
+  }
 
   @Bean
   open fun changeLanguageCommandHandler(): CommandHandler {
@@ -71,7 +87,6 @@ open class CommandHandlerConfiguration(
   @Bean
   open fun listEmployeeCommandHandler(): CommandHandler {
     return ListEmployeeCommandHandler(
-      telegramBot,
       connectorConfiguration.telegramClientConnector(),
       serviceConfiguration.telegramClientCache()
     )
@@ -189,20 +204,44 @@ open class CommandHandlerConfiguration(
   @Bean
   open fun languageCommandHandler(): CommandHandler {
     return LanguageCommandHandler(
-      telegramBot,
       connectorConfiguration.telegramClientConnector(),
       serviceConfiguration.telegramClientCache(),
-      serviceConfiguration.keyboardBuilder()
     )
   }
 
   @Bean
   open fun employeeCommandHandler(): CommandHandler {
     return EmployeeCommandHandler(
-      telegramBot,
+      removingEmployeeCommandHandler(),
+      addingEmployeeCommandHandler(),
+      serviceConfiguration.telegramClientCache(),
+    )
+  }
+
+  @Bean
+  open fun addingEmployeeToStoreHouseCommandHandler(): CommandHandler {
+    return AddingEmployeeToStoreHouseCommandHandler(
+      connectorConfiguration.telegramClientConnector(),
+      serviceConfiguration.telegramClientCache(),
+      connectorConfiguration.workerStoreHouseConnector(),
+      connectorConfiguration.workerTelegramConnector()
+    )
+  }
+
+  @Bean
+  open fun addingEmployeeCommandHandler(): AddingEmployeeCommandHandler {
+    return AddingEmployeeCommandHandler(
       connectorConfiguration.telegramClientConnector(),
       connectorConfiguration.workerTelegramConnector(),
-      serviceConfiguration.keyboardBuilder(),
+      serviceConfiguration.telegramClientCache(),
+    )
+  }
+
+  @Bean
+  open fun removingEmployeeCommandHandler(): RemovingEmployeeCommandHandler {
+    return RemovingEmployeeCommandHandler(
+      connectorConfiguration.telegramClientConnector(),
+      connectorConfiguration.workerTelegramConnector(),
       serviceConfiguration.telegramClientCache(),
     )
   }

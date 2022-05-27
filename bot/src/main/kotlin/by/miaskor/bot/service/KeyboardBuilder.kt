@@ -2,6 +2,7 @@ package by.miaskor.bot.service
 
 import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE
+import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE_TO_STORE_HOUSE
 import by.miaskor.bot.domain.BotState.CHANGING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CHOOSING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CHOOSING_STORE_HOUSE
@@ -54,6 +55,7 @@ class KeyboardBuilder(
           STORE_HOUSE_MENU -> buildKeyboard(it.storeHouseMenu())
           CREATING_AUTO_PART -> buildKeyboard(it.creatingAutoPartMenu())
           CREATING_CAR -> buildKeyboard(it.creatingCarMenu())
+          ADDING_EMPLOYEE_TO_STORE_HOUSE -> buildKeyboard(it.addingEmployeeToStoreHouseMenu())
           else -> buildKeyboard(listOf("Something went wrong"))
         }
       }

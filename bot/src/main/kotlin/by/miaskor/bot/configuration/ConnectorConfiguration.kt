@@ -7,6 +7,7 @@ import by.miaskor.domain.api.connector.CarConnector
 import by.miaskor.domain.api.connector.CarPartConnector
 import by.miaskor.domain.api.connector.StoreHouseConnector
 import by.miaskor.domain.api.connector.TelegramClientConnector
+import by.miaskor.domain.api.connector.WorkerStoreHouseConnector
 import by.miaskor.domain.api.connector.WorkerTelegramConnector
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -73,5 +74,10 @@ open class ConnectorConfiguration(
   @Bean
   open fun carPartConnector(): CarPartConnector {
     return CarPartConnector(webClient())
+  }
+
+  @Bean
+  open fun workerStoreHouseConnector(): WorkerStoreHouseConnector {
+    return WorkerStoreHouseConnector(webClient())
   }
 }
