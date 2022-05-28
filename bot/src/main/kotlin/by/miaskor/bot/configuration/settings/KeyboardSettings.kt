@@ -15,4 +15,5 @@ interface KeyboardSettings {
   fun addingEmployeeToStoreHouseMenu(): List<String>
   fun keyboardForMandatorySteps(): List<String>
   fun keyboardForNotMandatorySteps(): List<String>
+  fun keyboardForLists(): List<String>
 }

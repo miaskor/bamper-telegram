@@ -10,7 +10,7 @@ import org.jooq.DSLContext
 import reactor.core.publisher.Mono
 
 interface AutoPartRepository : CrudRepository<AutoPart> {
-  fun findAllByStoreHouseId(storeHouseId: Long): Mono<List<AutoPartVO>>
+  fun findAllByStoreHouseId(storeHouseId: Long, limit: Long, offset: Long): Mono<List<AutoPartVO>>
 }
 
 class JooqAutoPartRepository(
@@ -26,7 +26,7 @@ class JooqAutoPartRepository(
       }
   }
 
-  override fun findAllByStoreHouseId(storeHouseId: Long): Mono<List<AutoPartVO>> {
+  override fun findAllByStoreHouseId(storeHouseId: Long, limit: Long, offset: Long): Mono<List<AutoPartVO>> {
     return Mono.fromSupplier {
       dslContext.select(
         AUTO_PART.DESCRIPTION.`as`("description"),
@@ -45,6 +45,8 @@ class JooqAutoPartRepository(
         .join(BRAND).on(BRAND.ID.eq(CAR.BRAND_ID))
         .join(CAR_PART).on(AUTO_PART.CAR_PART_ID.eq(CAR_PART.ID))
         .where(AUTO_PART.STORE_HOUSE_ID.eq(storeHouseId))
+        .limit(limit)
+        .offset(offset)
         .fetchInto(AutoPartVO::class.java)
     }
   }

@@ -10,4 +10,22 @@ data class CarResponse(
   val year: String = "",
   val model: String = "",
   val brandName: String = ""
-)
+) {
+  companion object {
+    fun disassembly(carResponse: CarResponse): Array<String> {
+      return carResponse.let {
+        arrayOf(
+          it.id.toString(),
+          it.brandName,
+          it.model,
+          it.year,
+          it.body,
+          it.transmission,
+          it.engineCapacity.toString(),
+          it.fuelType,
+          it.engineType
+        )
+      }
+    }
+  }
+}

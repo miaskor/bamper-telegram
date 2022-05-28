@@ -28,6 +28,7 @@ open class Cf4jConfiguration {
         Path(PROPERTY_CREATING_CAR_MESSAGE_PATH),
         Path(PROPERTY_CREATING_AUTO_PART_PATH),
         Path(PROPERTY_CREATING_AUTO_PART_MESSAGE_PATH),
+        Path(PROPERTY_LIST_PATH),
         Path(PROPERTY_CREATING_CAR_PATH)
       )
     }, PropertiesProviderSelector(
@@ -54,5 +55,6 @@ open class Cf4jConfiguration {
     private const val PROPERTY_COMMAND_PATH = "$COMMON_PATH/command.yaml"
     private const val PROPERTY_CREATING_AUTO_PART_PATH = "$COMMON_PATH/creating-auto-part.yaml"
     private const val PROPERTY_CREATING_AUTO_PART_MESSAGE_PATH = "$COMMON_PATH/creating-auto-part-message.yaml"
+    private const val PROPERTY_LIST_PATH = "$COMMON_PATH/list.yaml"
   }
 }

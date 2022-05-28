@@ -6,6 +6,7 @@ import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.Language.ENGLISH
 import by.miaskor.bot.domain.Language.RUSSIAN
+import by.miaskor.bot.service.CallBackQueryHandlerRegistry
 import by.miaskor.bot.service.LanguageSettingsRegistry
 import by.miaskor.bot.service.handler.command.CommandHandlerRegistry
 import by.miaskor.bot.service.handler.state.BotStateHandlerRegistry
@@ -16,7 +17,8 @@ import org.springframework.context.annotation.Configuration
 open class RegistryConfiguration(
   private val settingsConfiguration: SettingsConfiguration,
   private val commandHandlerConfiguration: CommandHandlerConfiguration,
-  private val botStateHandlerConfiguration: BotStateHandlerConfiguration
+  private val botStateHandlerConfiguration: BotStateHandlerConfiguration,
+  private val serviceConfiguration: ServiceConfiguration
 ) {
 
   @Bean
@@ -53,6 +55,11 @@ open class RegistryConfiguration(
       commandHandlerConfiguration.listAutoPartCommandHandler(),
       commandHandlerConfiguration.createCarCommandHandler()
     )
+  }
+
+  @Bean
+  open fun callBackQueryHandlerRegistry(): CallBackQueryHandlerRegistry {
+    return CallBackQueryHandlerRegistry(serviceConfiguration.listEntityHandler())
   }
 
   @Bean

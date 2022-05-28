@@ -13,6 +13,7 @@ import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.MAIN_MENU
 import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
 import by.miaskor.bot.domain.BotState.STORE_HOUSE_MENU
+import by.miaskor.bot.domain.CallbackQuery
 import by.miaskor.bot.domain.CreatingCarStep
 import by.miaskor.bot.domain.CreatingCarStep.BRAND_NAME
 import by.miaskor.bot.domain.CreatingCarStep.MODEL
@@ -20,6 +21,8 @@ import by.miaskor.bot.domain.CreatingCarStep.YEAR
 import by.miaskor.bot.domain.TelegramClient
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.extension.names
+import com.pengrad.telegrambot.model.request.InlineKeyboardButton
+import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup
 import com.pengrad.telegrambot.model.request.Keyboard
 import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup
 import reactor.core.publisher.Mono
@@ -40,39 +43,53 @@ class KeyboardBuilder(
       .resolveLanguage(KeyboardSettings::class)
       .map {
         when (telegramClient.currentBotState) {
-          CHOOSING_LANGUAGE -> buildKeyboard(it.choosingLanguageMenu())
-          MAIN_MENU -> buildKeyboard(it.mainMenu())
-          CHANGING_LANGUAGE -> buildKeyboard(it.changingLanguageMenu())
-          EMPLOYEES_MENU -> buildKeyboard(it.employeeMenu())
-          ADDING_EMPLOYEE -> buildKeyboard(it.addingEmployee())
-          REMOVING_EMPLOYEE -> buildKeyboard(it.removingEmployee())
-          CREATING_STORE_HOUSE -> buildKeyboard(it.creatingStoreHouseMenu())
+          CHOOSING_LANGUAGE -> buildReplyKeyboard(it.choosingLanguageMenu())
+          MAIN_MENU -> buildReplyKeyboard(it.mainMenu())
+          CHANGING_LANGUAGE -> buildReplyKeyboard(it.changingLanguageMenu())
+          EMPLOYEES_MENU -> buildReplyKeyboard(it.employeeMenu())
+          ADDING_EMPLOYEE -> buildReplyKeyboard(it.addingEmployee())
+          REMOVING_EMPLOYEE -> buildReplyKeyboard(it.removingEmployee())
+          CREATING_STORE_HOUSE -> buildReplyKeyboard(it.creatingStoreHouseMenu())
           CHOOSING_STORE_HOUSE -> {
             val buttons = addStoreHousesToKeyboard(telegramClient, it)
-            buildKeyboard(buttons)
+            buildReplyKeyboard(buttons)
           }
 
-          STORE_HOUSE_MENU -> buildKeyboard(it.storeHouseMenu())
-          CREATING_AUTO_PART -> buildKeyboard(it.creatingAutoPartMenu())
-          CREATING_CAR -> buildKeyboard(it.creatingCarMenu())
-          ADDING_EMPLOYEE_TO_STORE_HOUSE -> buildKeyboard(it.addingEmployeeToStoreHouseMenu())
-          else -> buildKeyboard(listOf("Something went wrong"))
+          STORE_HOUSE_MENU -> buildReplyKeyboard(it.storeHouseMenu())
+          CREATING_AUTO_PART -> buildReplyKeyboard(it.creatingAutoPartMenu())
+          CREATING_CAR -> buildReplyKeyboard(it.creatingCarMenu())
+          ADDING_EMPLOYEE_TO_STORE_HOUSE -> buildReplyKeyboard(it.addingEmployeeToStoreHouseMenu())
+          else -> buildReplyKeyboard(listOf("Something went wrong"))
         }
       }
   }
 
   fun buildCreatingCarStepKeyboard(creatingCarStep: CreatingCarStep, keyboardSettings: KeyboardSettings): Keyboard {
     return when (creatingCarStep) {
-      BRAND_NAME, MODEL, YEAR -> buildKeyboard(keyboardSettings.keyboardForMandatorySteps())
-      else -> buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+      BRAND_NAME, MODEL, YEAR -> buildReplyKeyboard(keyboardSettings.keyboardForMandatorySteps())
+      else -> buildReplyKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
     }
   }
 
-  fun buildKeyboard(keyboardButtons: List<String>): Keyboard {
+  fun buildReplyKeyboard(keyboardButtons: List<String>): Keyboard {
     val buttons = keyboardButtons.chunked(2)
       .map { it.toTypedArray() }
       .toTypedArray()
     return ReplyKeyboardMarkup(buttons, true, false, true)
+  }
+
+  fun buildInlineKeyboard(keyboardButtons: List<String>, callbackQuery: List<CallbackQuery>): Keyboard {
+    if (keyboardButtons.size != callbackQuery.size) {
+      throw IllegalArgumentException("Keyboard buttons and callback queries sizes might be the same")
+    }
+
+    val buttons = keyboardButtons
+      .zip(callbackQuery)
+      .map { InlineKeyboardButton(it.first).callbackData(it.second.name) }
+      .chunked(2)
+      .map { it.toTypedArray() }
+      .toTypedArray()
+    return InlineKeyboardMarkup(*buttons)
   }
 
   private fun addStoreHousesToKeyboard(
