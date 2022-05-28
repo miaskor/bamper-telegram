@@ -1,9 +1,13 @@
 package by.miaskor.bot.service
 
+import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.configuration.settings.MessageSettings
+import by.miaskor.bot.domain.CallbackQuery
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.extension.sendMessage
 import by.miaskor.bot.service.extension.sendMessageWithKeyboard
+import by.miaskor.bot.service.extension.sendPhoto
+import by.miaskor.bot.service.extension.sendPhotoWithKeyboard
 import com.pengrad.telegrambot.TelegramBot
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.util.function.component1
@@ -15,11 +19,38 @@ object MessageSender {
   lateinit var keyboardBuilder: KeyboardBuilder
   lateinit var telegramBot: TelegramBot
 
-  fun <T> sendMessage(chatId: Long, messageFunction: KFunction1<MessageSettings, String>): Mono<T> {
+  fun <T> sendPhoto(
+    chatId: Long,
+    photo: ByteArray,
+    messageFunction: KFunction1<MessageSettings, String>,
+    vararg formatValues: String
+  ): Mono<T> {
     return Mono.just(chatId)
       .resolveLanguage(MessageSettings::class)
       .map {
-        telegramBot.sendMessage(chatId, messageFunction.invoke(it))
+        val message = messageFunction.invoke(it)
+        telegramBot.sendPhoto(chatId, photo, message.format(*formatValues))
+      }.then(Mono.empty())
+  }
+
+  fun <T> sendPhotoWithInlineKeyboard(
+    chatId: Long,
+    photo: ByteArray,
+    messageFunction: KFunction1<MessageSettings, String>,
+    keyboardFunction: KFunction1<KeyboardSettings, List<String>>,
+    callbackQuery: List<CallbackQuery>,
+    vararg formatValues: String
+  ): Mono<T> {
+    return Mono.just(chatId)
+      .resolveLanguage(MessageSettings::class)
+      .flatMap { messageSettings ->
+        Mono.just(chatId)
+          .resolveLanguage(KeyboardSettings::class)
+          .map { keyboardBuilder.buildInlineKeyboard(keyboardFunction.invoke(it), callbackQuery) }
+          .map { keyboard ->
+            val message = messageFunction.invoke(messageSettings)
+            telegramBot.sendPhotoWithKeyboard(chatId, photo, message.format(*formatValues), keyboard)
+          }
       }.then(Mono.empty())
   }
 
@@ -36,12 +67,37 @@ object MessageSender {
       }.then(Mono.empty())
   }
 
-  fun <T> sendMessageWithKeyboard(chatId: Long, messageFunction: KFunction1<MessageSettings, String>): Mono<T> {
+  fun <T> sendMessageWithKeyboard(
+    chatId: Long,
+    messageFunction: KFunction1<MessageSettings, String>,
+    vararg formatValues: String
+  ): Mono<T> {
     return Mono.just(chatId)
       .resolveLanguage(MessageSettings::class)
       .zipWith(keyboardBuilder.build(chatId))
       .map { (messageSettings, keyboard) ->
-        telegramBot.sendMessageWithKeyboard(chatId, messageFunction.invoke(messageSettings), keyboard)
+        val message = messageFunction.invoke(messageSettings)
+        telegramBot.sendMessageWithKeyboard(chatId, message.format(*formatValues), keyboard)
+      }.then(Mono.empty())
+  }
+
+  fun <T> sendMessageWithInlineKeyboard(
+    chatId: Long,
+    messageFunction: KFunction1<MessageSettings, String>,
+    keyboardFunction: KFunction1<KeyboardSettings, List<String>>,
+    callbackQuery: List<CallbackQuery>,
+    vararg formatValues: String
+  ): Mono<T> {
+    return Mono.just(chatId)
+      .resolveLanguage(MessageSettings::class)
+      .flatMap { messageSettings ->
+        Mono.just(chatId)
+          .resolveLanguage(KeyboardSettings::class)
+          .map { keyboardBuilder.buildInlineKeyboard(keyboardFunction.invoke(it), callbackQuery) }
+          .map { keyboard ->
+            val message = messageFunction.invoke(messageSettings)
+            telegramBot.sendMessageWithKeyboard(chatId, message.format(*formatValues), keyboard)
+          }
       }.then(Mono.empty())
   }
 }

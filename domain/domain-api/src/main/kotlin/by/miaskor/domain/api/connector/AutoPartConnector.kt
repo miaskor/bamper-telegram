@@ -2,6 +2,8 @@ package by.miaskor.domain.api.connector
 
 import by.miaskor.domain.api.domain.AutoPartDto
 import by.miaskor.domain.api.domain.AutoPartResponse
+import by.miaskor.domain.api.domain.ResponseWithLimit
+import by.miaskor.domain.api.domain.StoreHouseIdRequest
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
@@ -19,9 +21,10 @@ class AutoPartConnector(
       .bodyToMono()
   }
 
-  fun getAllByStoreHouseId(storeHouseId: Long): Mono<List<AutoPartResponse>> {
-    return webClient.get()
-      .uri("/auto-part/$storeHouseId")
+  fun getAllByStoreHouseId(storeHouseIdRequest: StoreHouseIdRequest): Mono<ResponseWithLimit<AutoPartResponse>> {
+    return webClient.post()
+      .uri("/auto-part/list")
+      .body(BodyInserters.fromValue(storeHouseIdRequest))
       .retrieve()
       .bodyToMono()
   }

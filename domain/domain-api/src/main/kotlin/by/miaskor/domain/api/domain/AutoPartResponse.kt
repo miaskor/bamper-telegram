@@ -13,11 +13,22 @@ data class AutoPartResponse(
   val autoPartEN: String,
   val autoPartRU: String
 ) {
-  override fun toString(): String {
-    return "AutoPartResponse(description='$description', price=$price," +
-        " quality=$quality, currency='$currency', partNumber='$partNumber'," +
-        " model='$model', brand='$brand', year='$year'," +
-        " autoPartEN='$autoPartEN', autoPartRU='$autoPartRU')"
+  companion object {
+    fun disassembly(autoPartResponse: AutoPartResponse, language: String): Array<String> {
+      return autoPartResponse.let {
+        arrayOf(
+          if (language == "EN") it.autoPartEN else it.autoPartRU,
+          it.brand,
+          it.model,
+          it.year,
+          it.description,
+          it.partNumber,
+          it.price.toString(),
+          it.currency,
+          it.quality.toString()
+        )
+      }
+    }
   }
 }
 

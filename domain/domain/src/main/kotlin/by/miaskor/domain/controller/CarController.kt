@@ -2,6 +2,8 @@ package by.miaskor.domain.controller
 
 import by.miaskor.domain.api.domain.CarDto
 import by.miaskor.domain.api.domain.CarResponse
+import by.miaskor.domain.api.domain.ResponseWithLimit
+import by.miaskor.domain.api.domain.StoreHouseIdRequest
 import by.miaskor.domain.service.CarService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -30,9 +32,11 @@ class CarController(
       .map { ResponseEntity.ok(it) }
   }
 
-  @GetMapping("/{storeHouseId}")
-  fun getByStoreHouseId(@PathVariable storeHouseId: Long): Mono<ResponseEntity<List<CarResponse>>> {
-    return carService.getByAllStoreHouseId(storeHouseId)
+  @PostMapping("/list")
+  fun getByStoreHouseId(
+    @RequestBody storeHouseIdRequest: StoreHouseIdRequest
+  ): Mono<ResponseEntity<ResponseWithLimit<CarResponse>>> {
+    return carService.getAllByStoreHouseId(storeHouseIdRequest)
       .map { ResponseEntity.ok(it) }
   }
 }

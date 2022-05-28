@@ -124,42 +124,42 @@ class CreatingAutoPartHandler(
       .map { keyboardSettings ->
         when (autoPartBuilder.currentStep()) {
           CAR -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForMandatorySteps())
+            val keyboard = keyboardBuilder.buildReplyKeyboard(keyboardSettings.keyboardForMandatorySteps())
             telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.carMessage(), keyboard)
           }
 
           AUTO_PART -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForMandatorySteps())
+            val keyboard = keyboardBuilder.buildReplyKeyboard(keyboardSettings.keyboardForMandatorySteps())
             telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.autoPartMessage(), keyboard)
           }
 
           PART_NUMBER -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+            val keyboard = keyboardBuilder.buildReplyKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
             telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.partNumberMessage(), keyboard)
           }
 
           DESCRIPTION -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+            val keyboard = keyboardBuilder.buildReplyKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
             telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.descriptionMessage(), keyboard)
           }
 
           PRICE -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+            val keyboard = keyboardBuilder.buildReplyKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
             telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.priceMessage(), keyboard)
           }
 
           CURRENCY -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+            val keyboard = keyboardBuilder.buildReplyKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
             telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.currencyMessage(), keyboard)
           }
 
           QUALITY -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+            val keyboard = keyboardBuilder.buildReplyKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
             telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.qualityMessage(), keyboard)
           }
 
           PHOTO -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+            val keyboard = keyboardBuilder.buildReplyKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
             telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.photoMessage(), keyboard)
           }
         }
@@ -185,7 +185,7 @@ class CreatingAutoPartHandler(
               ).hasElement()
             }
             if (CAR.isAcceptable(update.text) && car.toFuture().get()) {
-              val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForMandatorySteps())
+              val keyboard = keyboardBuilder.buildReplyKeyboard(keyboardSettings.keyboardForMandatorySteps())
               populateCache(update, autoPartBuilder.carId(update.text.toLong()).nextStep())
               telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.autoPartMessage(), keyboard)
             } else {
@@ -201,7 +201,7 @@ class CreatingAutoPartHandler(
             }
             val carPartId: Long? = carPartConnector.getIdByName(update.text).toFuture().get()
             if (carPartId != null) {
-              val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+              val keyboard = keyboardBuilder.buildReplyKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
               populateCache(update, autoPartBuilder.carPartId(carPartId).nextStep())
               telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.partNumberMessage(), keyboard)
             } else {
@@ -212,13 +212,13 @@ class CreatingAutoPartHandler(
           }
 
           PART_NUMBER -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+            val keyboard = keyboardBuilder.buildReplyKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
             populateCache(update, autoPartBuilder.partNumber(update.text).nextStep())
             telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.descriptionMessage(), keyboard)
           }
 
           DESCRIPTION -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+            val keyboard = keyboardBuilder.buildReplyKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
             populateCache(update, autoPartBuilder.description(update.text).nextStep())
             telegramBot.sendMessageWithKeyboard(
               update.chatId,
@@ -228,7 +228,7 @@ class CreatingAutoPartHandler(
           }
 
           PRICE -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+            val keyboard = keyboardBuilder.buildReplyKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
             if (PRICE.isAcceptable(update.text)) {
               populateCache(update, autoPartBuilder.price(update.text).nextStep())
               telegramBot.sendMessageWithKeyboard(
@@ -246,7 +246,7 @@ class CreatingAutoPartHandler(
           }
 
           CURRENCY -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+            val keyboard = keyboardBuilder.buildReplyKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
             if (CURRENCY.isAcceptable(update.text)) {
               populateCache(update, autoPartBuilder.currency(update.text).nextStep())
               telegramBot.sendMessageWithKeyboard(
@@ -264,7 +264,7 @@ class CreatingAutoPartHandler(
           }
 
           QUALITY -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+            val keyboard = keyboardBuilder.buildReplyKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
             if (QUALITY.isAcceptable(update.text)) {
               populateCache(update, autoPartBuilder.quality(update.text).nextStep())
               telegramBot.sendMessageWithKeyboard(update.chatId, creatingAutoPartMessage.photoMessage(), keyboard)
@@ -278,7 +278,7 @@ class CreatingAutoPartHandler(
           }
 
           PHOTO -> {
-            val keyboard = keyboardBuilder.buildKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
+            val keyboard = keyboardBuilder.buildReplyKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
             if (!update.message().photo().isNullOrEmpty()) {
               populateCache(update, autoPartBuilder.photoId(update.photoId).nextStep())
               completeCreatingCar(update, creatingAutoPartMessage, autoPartBuilder).subscribe()

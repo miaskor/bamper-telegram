@@ -6,6 +6,7 @@ import by.miaskor.bot.configuration.settings.ConnectorSettings
 import by.miaskor.bot.configuration.settings.CreatingAutoPartMessageSettings
 import by.miaskor.bot.configuration.settings.CreatingCarMessageSettings
 import by.miaskor.bot.configuration.settings.KeyboardSettings
+import by.miaskor.bot.configuration.settings.ListSettings
 import by.miaskor.bot.configuration.settings.MessageSettings
 import org.cfg4j.provider.ConfigurationProvider
 import org.springframework.context.annotation.Bean
@@ -69,5 +70,10 @@ open class SettingsConfiguration(
   @Bean
   open fun creatingAutoPartMessageSettingsEN(): CreatingAutoPartMessageSettings {
     return confProvider.bind("creating.auto-part.en", CreatingAutoPartMessageSettings::class.java)
+  }
+
+  @Bean
+  open fun listSettings(): ListSettings {
+    return confProvider.bind("list", ListSettings::class.java)
   }
 }

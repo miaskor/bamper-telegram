@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono
 interface CarRepository : CrudRepository<Car> {
   fun create(entity: Car): Mono<Long>
   fun findByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Car>
-  fun findAllByStoreHouseId(storeHouseId: Long): Mono<List<CarResponse>>
+  fun findAllByStoreHouseId(storeHouseId: Long, limit: Long, offset: Long): Mono<List<CarResponse>>
 }
 
 class JooqCarRepository(
@@ -47,7 +47,7 @@ class JooqCarRepository(
     }
   }
 
-  override fun findAllByStoreHouseId(storeHouseId: Long): Mono<List<CarResponse>> {
+  override fun findAllByStoreHouseId(storeHouseId: Long, limit: Long, offset: Long): Mono<List<CarResponse>> {
     return Mono.fromSupplier {
       dslContext.select(
         CAR.ID,
@@ -63,6 +63,8 @@ class JooqCarRepository(
         .from(CAR)
         .join(BRAND).on(BRAND.ID.eq(CAR.BRAND_ID))
         .where(CAR.STORE_HOUSE_ID.eq(storeHouseId))
+        .limit(limit)
+        .offset(offset)
         .fetchInto(CarResponse::class.java)
     }
   }

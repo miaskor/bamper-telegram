@@ -1,7 +1,9 @@
 package by.miaskor.domain.api.connector
 
 import by.miaskor.domain.api.domain.CarDto
+import by.miaskor.domain.api.domain.StoreHouseIdRequest
 import by.miaskor.domain.api.domain.CarResponse
+import by.miaskor.domain.api.domain.ResponseWithLimit
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
@@ -26,9 +28,10 @@ class CarConnector(
       .bodyToMono()
   }
 
-  fun getAllByStoreHouseId(storeHouseId: Long): Mono<List<CarResponse>> {
-    return webClient.get()
-      .uri("/car/$storeHouseId")
+  fun getAllByStoreHouseId(storeHouseIdRequest: StoreHouseIdRequest): Mono<ResponseWithLimit<CarResponse>> {
+    return webClient.post()
+      .uri("/car/list")
+      .body(BodyInserters.fromValue(storeHouseIdRequest))
       .retrieve()
       .bodyToMono()
   }

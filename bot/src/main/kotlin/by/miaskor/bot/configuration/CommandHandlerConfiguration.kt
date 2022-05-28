@@ -95,18 +95,16 @@ open class CommandHandlerConfiguration(
   @Bean
   open fun listCarCommandHandler(): CommandHandler {
     return ListCarCommandHandler(
-      telegramBot,
-      connectorConfiguration.carConnector(),
-      serviceConfiguration.telegramClientCache()
+      serviceConfiguration.listEntityHandler(),
+      serviceConfiguration.listEntityCache()
     )
   }
 
   @Bean
   open fun listAutoPartCommandHandler(): CommandHandler {
     return ListAutoPartCommandHandler(
-      telegramBot,
-      connectorConfiguration.autoPartConnector(),
-      serviceConfiguration.telegramClientCache()
+      serviceConfiguration.listEntityHandler(),
+      serviceConfiguration.listEntityCache()
     )
   }
 

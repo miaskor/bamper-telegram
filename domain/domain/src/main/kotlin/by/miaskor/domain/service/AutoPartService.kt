@@ -6,12 +6,13 @@ import by.miaskor.cloud.drive.service.ImageDownloader
 import by.miaskor.cloud.drive.service.ImageUploader
 import by.miaskor.domain.api.domain.AutoPartDto
 import by.miaskor.domain.api.domain.AutoPartResponse
+import by.miaskor.domain.api.domain.ResponseWithLimit
+import by.miaskor.domain.api.domain.StoreHouseIdRequest
 import by.miaskor.domain.model.AutoPartVO
 import by.miaskor.domain.repository.AutoPartRepository
 import by.miaskor.domain.service.telegram.TelegramApiService
 import by.miaskor.domain.tables.pojos.AutoPart
 import org.springframework.core.io.buffer.DataBufferUtils
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 class AutoPartService(
@@ -47,11 +48,23 @@ class AutoPartService(
       }.flatMap(autoPartRepository::save)
   }
 
-  fun getAllByStoreHouseId(storeHouseId: Long): Mono<List<AutoPartResponse>> {
-    return autoPartRepository.findAllByStoreHouseId(storeHouseId)
+  fun getAllByStoreHouseId(storeHouseIdRequest: StoreHouseIdRequest): Mono<ResponseWithLimit<AutoPartResponse>> {
+    return autoPartRepository.findAllByStoreHouseId(
+      storeHouseIdRequest.storeHouseId,
+      storeHouseIdRequest.limit + 1,
+      storeHouseIdRequest.offset
+    )
       .flatMapIterable { it }
       .flatMap { downloadPhoto(it) }
       .collectList()
+      .map {
+        val isMoreExists = it.size > 10
+        val autoParts = if (isMoreExists) it.dropLast(1) else it
+        ResponseWithLimit(
+          entities = autoParts,
+          isMoreExists = isMoreExists
+        )
+      }
   }
 
   private fun downloadPhoto(autoPartVO: AutoPartVO): Mono<AutoPartResponse> {

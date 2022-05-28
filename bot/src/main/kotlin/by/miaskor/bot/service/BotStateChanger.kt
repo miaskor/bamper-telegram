@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono
 object BotStateChanger {
 
   lateinit var telegramClientCache: TelegramClientCache
+  lateinit var listEntityCache: ListEntityCache
   private val log = LogManager.getLogger()
 
   fun <T : Any> Mono<T>.changeBotState(
@@ -20,6 +21,7 @@ object BotStateChanger {
         .flatMap(telegramClientCache::getTelegramClient)
         .doOnNext { log.info("Change botState for=$it") }
         .doOnNext { telegramClient ->
+          listEntityCache.evict(telegramClient.chatId)
           telegramClientCache.populate(
             telegramClient.chatId,
             telegramClient.copy(currentBotState = botState).apply {

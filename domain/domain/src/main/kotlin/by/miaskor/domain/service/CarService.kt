@@ -2,6 +2,8 @@ package by.miaskor.domain.service
 
 import by.miaskor.domain.api.domain.CarDto
 import by.miaskor.domain.api.domain.CarResponse
+import by.miaskor.domain.api.domain.ResponseWithLimit
+import by.miaskor.domain.api.domain.StoreHouseIdRequest
 import by.miaskor.domain.repository.CarRepository
 import by.miaskor.domain.tables.pojos.Car
 import reactor.core.publisher.Mono
@@ -33,7 +35,19 @@ class CarService(
       }
   }
 
-  fun getByAllStoreHouseId(storeHouseId: Long): Mono<List<CarResponse>> {
-    return carRepository.findAllByStoreHouseId(storeHouseId)
+  fun getAllByStoreHouseId(storeHouseIdRequest: StoreHouseIdRequest): Mono<ResponseWithLimit<CarResponse>> {
+    return carRepository.findAllByStoreHouseId(
+      storeHouseIdRequest.storeHouseId,
+      storeHouseIdRequest.limit + 1,
+      storeHouseIdRequest.offset
+    )
+      .map {
+        val isMoreExists = it.size > 10
+        val cars = if (isMoreExists) it.dropLast(1) else it
+        ResponseWithLimit(
+          entities = cars,
+          isMoreExists = isMoreExists
+        )
+      }
   }
 }

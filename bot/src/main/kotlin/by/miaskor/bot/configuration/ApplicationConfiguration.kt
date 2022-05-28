@@ -23,6 +23,7 @@ open class ApplicationConfiguration(
   @PostConstruct
   fun init() {
     BotStateChanger.telegramClientCache = serviceConfiguration.telegramClientCache()
+    BotStateChanger.listEntityCache = serviceConfiguration.listEntityCache()
     LanguageSettingsResolver.apply {
       messageSettingsRegistry = registryConfiguration.messageSettingsRegistry()
       keyboardSettingsRegistry = registryConfiguration.keyboardSettingsRegistry()
@@ -33,6 +34,7 @@ open class ApplicationConfiguration(
     CommandResolver.apply {
       commandHandlerRegistry = registryConfiguration.commandHandlerRegistry()
       botStateHandlerRegistry = registryConfiguration.botStateHandlerRegistry()
+      callBackQueryHandlerRegistry = registryConfiguration.callBackQueryHandlerRegistry()
     }
     FieldEnricher.apply {
       configurationProvider = confProvider
