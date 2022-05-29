@@ -29,7 +29,7 @@ class RemovingEmployeeCommandHandler(
     return telegramClientCache.getTelegramClient(update.chatId)
       .flatMap {
         if (telegramClientResponse.chatId == update.chatId) {
-          sendMessage(update.chatId, MessageSettings::failFoundEmployeeMessage, update.text)
+          sendMessage(update.chatId, MessageSettings::employeeIsYouMessage, update.text)
         } else {
           deleteEmployee(telegramClientResponse, update)
         }
@@ -46,7 +46,7 @@ class RemovingEmployeeCommandHandler(
       }.flatMap(workerTelegramConnector::remove)
       .then(
         telegramClientCache.getTelegramClient(update.chatId)
-          .map { it.modifiedEmployees() }
+          .map { it.removeEmployee(Pair(telegramClientResponse.username, telegramClientResponse.chatId)) }
       )
       .then(sendMessage(update.chatId, MessageSettings::removingEmployeeSuccessMessage, update.text))
   }

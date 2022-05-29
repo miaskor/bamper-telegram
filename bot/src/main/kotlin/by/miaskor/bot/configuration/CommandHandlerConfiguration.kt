@@ -7,6 +7,8 @@ import by.miaskor.bot.domain.BotState.CHANGING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CREATING_AUTO_PART
 import by.miaskor.bot.domain.BotState.CREATING_CAR
 import by.miaskor.bot.domain.BotState.CREATING_STORE_HOUSE
+import by.miaskor.bot.domain.BotState.DELETING_AUTO_PART
+import by.miaskor.bot.domain.BotState.DELETING_CAR
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
 import by.miaskor.bot.domain.Command.ADD_EMPLOYEE
@@ -15,13 +17,17 @@ import by.miaskor.bot.domain.Command.CHANGE_LANGUAGE
 import by.miaskor.bot.domain.Command.CREATE_AUTO_PART
 import by.miaskor.bot.domain.Command.CREATE_CAR
 import by.miaskor.bot.domain.Command.CREATE_STORE_HOUSE
+import by.miaskor.bot.domain.Command.DELETE_AUTO_PARTS
+import by.miaskor.bot.domain.Command.DELETE_CARS
 import by.miaskor.bot.domain.Command.EMPLOYEES
 import by.miaskor.bot.domain.Command.REMOVE_EMPLOYEE
 import by.miaskor.bot.service.handler.command.BackCommandHandler
 import by.miaskor.bot.service.handler.command.ChangingBotStateCommandHandler
 import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.bot.service.handler.command.UndefinedCommandHandler
+import by.miaskor.bot.service.handler.command.autopart.DeleteAutoPartCommandHandler
 import by.miaskor.bot.service.handler.command.autopart.ListAutoPartCommandHandler
+import by.miaskor.bot.service.handler.command.car.DeleteCarCommandHandler
 import by.miaskor.bot.service.handler.command.car.ListCarCommandHandler
 import by.miaskor.bot.service.handler.command.employee.AddingEmployeeCommandHandler
 import by.miaskor.bot.service.handler.command.employee.AddingEmployeeToStoreHouseCommandHandler
@@ -42,6 +48,28 @@ open class CommandHandlerConfiguration(
   private val serviceConfiguration: ServiceConfiguration,
   private val connectorConfiguration: ConnectorConfiguration,
 ) {
+
+  @Bean
+  open fun deleteAutoPartsCommandHandler(): CommandHandler {
+    return ChangingBotStateCommandHandler(
+      telegramBot,
+      serviceConfiguration.keyboardBuilder(),
+      DELETE_AUTO_PARTS,
+      DELETING_AUTO_PART,
+      MessageSettings::deletingAutoPartMessage
+    )
+  }
+
+  @Bean
+  open fun deleteCarsCommandHandler(): CommandHandler {
+    return ChangingBotStateCommandHandler(
+      telegramBot,
+      serviceConfiguration.keyboardBuilder(),
+      DELETE_CARS,
+      DELETING_CAR,
+      MessageSettings::deletingCarMessage
+    )
+  }
 
   @Bean
   open fun addEmployeeToStoreHouseCommandHandler(): CommandHandler {
@@ -97,6 +125,22 @@ open class CommandHandlerConfiguration(
     return ListCarCommandHandler(
       serviceConfiguration.listEntityHandler(),
       serviceConfiguration.listEntityCache()
+    )
+  }
+
+  @Bean
+  open fun deleteCarCommandHandler(): CommandHandler {
+    return DeleteCarCommandHandler(
+      connectorConfiguration.carConnector(),
+      serviceConfiguration.telegramClientCache()
+    )
+  }
+
+  @Bean
+  open fun deleteAutoPartCommandHandler(): CommandHandler {
+    return DeleteAutoPartCommandHandler(
+      connectorConfiguration.autoPartConnector(),
+      serviceConfiguration.telegramClientCache()
     )
   }
 

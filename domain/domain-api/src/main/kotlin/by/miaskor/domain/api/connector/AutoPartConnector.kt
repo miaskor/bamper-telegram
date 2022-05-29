@@ -21,6 +21,13 @@ class AutoPartConnector(
       .bodyToMono()
   }
 
+  fun deleteByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Boolean> {
+    return webClient.delete()
+      .uri("/auto-part/$storeHouseId/$id")
+      .retrieve()
+      .bodyToMono()
+  }
+
   fun getAllByStoreHouseId(storeHouseIdRequest: StoreHouseIdRequest): Mono<ResponseWithLimit<AutoPartResponse>> {
     return webClient.post()
       .uri("/auto-part/list")

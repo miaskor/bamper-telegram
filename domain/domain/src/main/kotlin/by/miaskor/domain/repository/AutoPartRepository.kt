@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono
 
 interface AutoPartRepository : CrudRepository<AutoPart> {
   fun findAllByStoreHouseId(storeHouseId: Long, limit: Long, offset: Long): Mono<List<AutoPartVO>>
+  fun deleteByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Int>
 }
 
 class JooqAutoPartRepository(
@@ -29,6 +30,7 @@ class JooqAutoPartRepository(
   override fun findAllByStoreHouseId(storeHouseId: Long, limit: Long, offset: Long): Mono<List<AutoPartVO>> {
     return Mono.fromSupplier {
       dslContext.select(
+        AUTO_PART.ID.`as`("id"),
         AUTO_PART.DESCRIPTION.`as`("description"),
         AUTO_PART.PHOTO_PATH.`as`("photoPath"),
         AUTO_PART.PRICE.`as`("price"),
@@ -48,6 +50,15 @@ class JooqAutoPartRepository(
         .limit(limit)
         .offset(offset)
         .fetchInto(AutoPartVO::class.java)
+    }
+  }
+
+  override fun deleteByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Int> {
+    return Mono.fromSupplier {
+      dslContext.deleteFrom(AUTO_PART)
+        .where(AUTO_PART.ID.eq(id))
+        .and(AUTO_PART.STORE_HOUSE_ID.eq(storeHouseId))
+        .execute()
     }
   }
 

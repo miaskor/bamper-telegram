@@ -14,21 +14,21 @@ object CommandResolver {
 
   fun Mono<BotState>.processCommand(update: Update): Mono<Unit> {
     return this.flatMap { t ->
-      Mono.from(t.getCommand(update.text))
-        .flatMap(commandHandlerRegistry::lookup)
+      Mono.just(update)
+        .filter { it.callbackQuery() != null }
         .switchIfEmpty(
-          Mono.just(update)
-            .filter { it.callbackQuery() != null }
+          Mono.from(t.getCommand(update.text))
+            .flatMap(commandHandlerRegistry::lookup)
             .switchIfEmpty(
               Mono.just(t)
                 .flatMap(botStateHandlerRegistry::lookup)
                 .flatMap { it.handle(update) }
                 .then(Mono.empty())
-            )
-            .flatMap(callBackQueryHandlerRegistry::handle)
+            ).flatMap { it.handle(update) }
             .then(Mono.empty())
         )
-        .flatMap { it.handle(update) }
+        .flatMap(callBackQueryHandlerRegistry::handle)
+        .then(Mono.empty())
 
     }
   }

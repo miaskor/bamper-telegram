@@ -22,6 +22,17 @@ class AutoPartService(
   private val telegramApiService: TelegramApiService
 ) {
 
+  fun deleteByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Boolean> {
+    return autoPartRepository.deleteByStoreHouseIdAndId(storeHouseId, id)
+      .flatMap {
+        if (it > 0)
+          Mono.just(true)
+        else
+          Mono.empty()
+      }
+      .onErrorReturn(false)
+  }
+
   fun create(autoPartDto: AutoPartDto): Mono<Unit> {
     val autoPartKey = AutoPartKeyGenerator.generate()
     return telegramApiService.getPhotoPath(autoPartDto.photoId)
@@ -75,6 +86,7 @@ class AutoPartService(
         val byteArrayPhoto = ByteArray(photo.capacity())
         photo.read(byteArrayPhoto)
         AutoPartResponse(
+          id = autoPartVO.id.toString(),
           description = autoPartVO.description,
           photo = byteArrayPhoto,
           price = autoPartVO.price,

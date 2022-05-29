@@ -8,6 +8,10 @@ import by.miaskor.bot.domain.Command.CHOOSE_STORE_HOUSE
 import by.miaskor.bot.domain.Command.CREATE_AUTO_PART
 import by.miaskor.bot.domain.Command.CREATE_CAR
 import by.miaskor.bot.domain.Command.CREATE_STORE_HOUSE
+import by.miaskor.bot.domain.Command.DELETE_AUTO_PART
+import by.miaskor.bot.domain.Command.DELETE_AUTO_PARTS
+import by.miaskor.bot.domain.Command.DELETE_CAR
+import by.miaskor.bot.domain.Command.DELETE_CARS
 import by.miaskor.bot.domain.Command.EMPLOYEE
 import by.miaskor.bot.domain.Command.EMPLOYEES
 import by.miaskor.bot.domain.Command.EMPLOYEE_TO_STORE_HOUSE
@@ -33,12 +37,15 @@ enum class BotState(private vararg val commands: Command) {
   STORE_HOUSE_MENU(
     BACK, CREATE_AUTO_PART, CREATE_CAR,
     LIST_CAR, LIST_AUTO_PART,
-    ADD_EMPLOYEE_TO_STORE_HOUSE
+    DELETE_CARS, DELETE_AUTO_PARTS,
+    ADD_EMPLOYEE_TO_STORE_HOUSE, UNDEFINED
   ),
-  EMPLOYEES_MENU(LIST_EMPLOYEE, ADD_EMPLOYEE, REMOVE_EMPLOYEE, BACK),
+  EMPLOYEES_MENU(LIST_EMPLOYEE, ADD_EMPLOYEE, REMOVE_EMPLOYEE, BACK, UNDEFINED),
   ADDING_EMPLOYEE_TO_STORE_HOUSE(EMPLOYEE_TO_STORE_HOUSE, BACK, UNDEFINED),
   CREATING_AUTO_PART(BACK),
+  DELETING_AUTO_PART(DELETE_AUTO_PART, BACK, UNDEFINED),
   CREATING_CAR(BACK),
+  DELETING_CAR(DELETE_CAR, BACK, UNDEFINED),
   FINDING_PARTS_MENU,
   BAMPER_MENU;
 
@@ -47,7 +54,7 @@ enum class BotState(private vararg val commands: Command) {
       listOf(
         ADDING_EMPLOYEE, REMOVING_EMPLOYEE, MAIN_MENU, CHOOSING_LANGUAGE,
         CHANGING_LANGUAGE, CREATING_STORE_HOUSE, CREATING_CAR, CREATING_AUTO_PART,
-        ADDING_EMPLOYEE_TO_STORE_HOUSE
+        ADDING_EMPLOYEE_TO_STORE_HOUSE, DELETING_CAR, DELETING_AUTO_PART
       )
 
     fun isNotFinalState(botState: BotState): Boolean {

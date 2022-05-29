@@ -1,6 +1,7 @@
 package by.miaskor.domain.model
 
 data class AutoPartVO(
+  val id: Long,
   val description: String,
   val photoPath: String,
   val price: Double,

@@ -1,6 +1,7 @@
 package by.miaskor.domain.api.domain
 
 data class AutoPartResponse(
+  val id: String,
   val description: String,
   val photo: ByteArray,
   val price: Double,
@@ -17,6 +18,7 @@ data class AutoPartResponse(
     fun disassembly(autoPartResponse: AutoPartResponse, language: String): Array<String> {
       return autoPartResponse.let {
         arrayOf(
+          it.id,
           if (language == "EN") it.autoPartEN else it.autoPartRU,
           it.brand,
           it.model,

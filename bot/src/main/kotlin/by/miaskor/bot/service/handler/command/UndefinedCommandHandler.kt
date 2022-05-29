@@ -6,6 +6,8 @@ import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE_TO_STORE_HOUSE
 import by.miaskor.bot.domain.BotState.CHANGING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CHOOSING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CREATING_STORE_HOUSE
+import by.miaskor.bot.domain.BotState.DELETING_AUTO_PART
+import by.miaskor.bot.domain.BotState.DELETING_CAR
 import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
 import by.miaskor.bot.domain.Command.UNDEFINED
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
@@ -34,6 +36,8 @@ class UndefinedCommandHandler(
           ADDING_EMPLOYEE, REMOVING_EMPLOYEE -> messageSettings.incorrectUsernameFormatMessage()
           CREATING_STORE_HOUSE -> messageSettings.incorrectStoreHouseNameFormatMessage()
           ADDING_EMPLOYEE_TO_STORE_HOUSE -> messageSettings.incorrectEmployeeToStoreHouseFormatMessage()
+          DELETING_AUTO_PART -> messageSettings.deletingAutoPartIncorrectMessage()
+          DELETING_CAR -> messageSettings.deletingCarIncorrectMessage()
           else -> messageSettings.undefinedCommandMessage()
         }
         telegramBot.sendMessage(update.chatId, message)

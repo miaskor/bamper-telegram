@@ -28,30 +28,20 @@ class ListEmployeeCommandHandler(
 
   private fun handle(telegramClient: TelegramClient, update: Update): Mono<Unit> {
     return Mono.just(telegramClient)
-      .filter { it.employeeUsernames.isModified }
+      .filter { it.isEmployeesModified() }
       .switchIfEmpty(
-        Flux.fromIterable(telegramClient.employeeUsernames.employees)
-          .map { TelegramClientResponse(username = it) }
-          .collectList()
-          .flatMap { sendEmployees(it, telegramClient, update) }
-          .doOnSuccess { log.info("Cache of employees was used") }
+        Flux.fromIterable(telegramClient.getEmployees())
+          .map { TelegramClientResponse(username = it.first) }
+          .doOnNext { telegramClient.addEmployee(Pair(it.username, it.chatId)) }
+          .flatMap { sendMessage<TelegramClientResponse>(update.chatId, MessageSettings::employeeMessage, it.username) }
+          .doOnComplete { log.info("Cache of employees was used") }
           .then(Mono.empty())
       )
       .flatMap { telegramClientConnector.getAllEmployeesByEmployerChatId(update.chatId) }
-      .flatMap { sendEmployees(it, telegramClient, update) }
-  }
-
-  private fun sendEmployees(
-    employees: List<TelegramClientResponse>,
-    telegramClient: TelegramClient,
-    update: Update
-  ): Mono<Unit> {
-    return Flux.fromIterable(employees)
+      .flatMapIterable { it }
+      .doOnNext { telegramClient.addEmployee(Pair(it.username, it.chatId)) }
       .flatMap { sendMessage<TelegramClientResponse>(update.chatId, MessageSettings::employeeMessage, it.username) }
-      .then(
-        Mono.fromSupplier { employees.map { it.username } }
-          .map { telegramClient.refreshEmployees(it) }
-      )
+      .then(Mono.empty())
   }
 
   companion object {

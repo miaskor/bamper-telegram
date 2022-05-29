@@ -68,7 +68,16 @@ class AddingEmployeeToStoreHouseCommandHandler(
       }
   }
 
-  private fun getPrivilege(update: Update) = update.text.substringAfter(", ")
+  private fun getPrivilege(update: Update): String {
+    val privilege = update.text.substringAfter(", ")
+    return if (privilege.equals("read", true) || privilege.equals("чтение", true)) {
+      "R"
+    } else if (privilege.equals("write", true) || privilege.equals("запись", true)) {
+      "W"
+    } else {
+      "RW"
+    }
+  }
 
   private fun getUsername(update: Update) = update.text
     .replace("@", "")

@@ -19,6 +19,7 @@ interface MessageSettings {
   fun removingEmployeeSuccessMessage(): String
   fun employeeIsYourEmployerMessage(): String
   fun employeeIsYouMessage(): String
+  fun employeeIsExistMessage(): String
   fun notYourEmployeeMessage(): String
   fun storeHouseMessage(): String
   fun creatingAutoPartMessage(): String
@@ -29,4 +30,14 @@ interface MessageSettings {
   fun listCarMessage(): String
   fun listAutoPartMessage(): String
   fun storeHouseNotFoundMessage(): String
+  fun deletingCarMessage(): String
+  fun deletingCarSuccessMessage(): String
+  fun deletingCarNotFoundMessage(): String
+  fun deletingCarIncorrectMessage(): String
+  fun deletingCarFailMessage(): String
+  fun deletingAutoPartMessage(): String
+  fun deletingAutoPartSuccessMessage(): String
+  fun deletingAutoPartFailMessage(): String
+  fun deletingAutoPartNotFoundMessage(): String
+  fun deletingAutoPartIncorrectMessage(): String
 }
