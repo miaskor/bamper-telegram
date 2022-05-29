@@ -11,7 +11,7 @@ data class TelegramClient(
   val bamperClientId: Long? = null,
   val currentBotState: BotState = GREETINGS,
   val previousBotStates: SortedSet<BotState> = sortedSetOf(MAIN_MENU),
-  var employeeUsernames: TelegramClientEmployees = TelegramClientEmployees(),
+  private var employees: TelegramClientEmployees = TelegramClientEmployees(),
   var telegramClientStoreHouses: TelegramClientStoreHouses = TelegramClientStoreHouses()
 ) {
 
@@ -38,17 +38,25 @@ data class TelegramClient(
     )
   }
 
-  fun modifiedEmployees() {
-    employeeUsernames = employeeUsernames.copy(
-      isModified = true,
-      employees = employeeUsernames.employees
+  fun isEmployeesModified(): Boolean{
+    return employees.isModified
+  }
+
+  fun getEmployees(): Set<Pair<String, Long>> {
+    return employees.employees
+  }
+
+  fun addEmployee(employee: Pair<String, Long>) {
+    employees = employees.copy(
+      employees = getEmployees().plus(employee),
+      isModified = true
     )
   }
 
-  fun refreshEmployees(usernames: List<String>) {
-    employeeUsernames = employeeUsernames.copy(
-      isModified = false,
-      employees = sortedSetOf<String>().plus(usernames)
+  fun removeEmployee(employee: Pair<String, Long>) {
+    employees = employees.copy(
+      employees = getEmployees().minus(employee),
+      isModified = true
     )
   }
 }

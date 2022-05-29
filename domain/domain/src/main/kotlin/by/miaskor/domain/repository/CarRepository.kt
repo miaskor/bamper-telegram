@@ -11,6 +11,7 @@ interface CarRepository : CrudRepository<Car> {
   fun create(entity: Car): Mono<Long>
   fun findByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Car>
   fun findAllByStoreHouseId(storeHouseId: Long, limit: Long, offset: Long): Mono<List<CarResponse>>
+  fun deleteByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Int>
 }
 
 class JooqCarRepository(
@@ -69,6 +70,15 @@ class JooqCarRepository(
     }
   }
 
+  override fun deleteByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Int> {
+    return Mono.fromSupplier {
+      dslContext.deleteFrom(CAR)
+        .where(CAR.ID.eq(id))
+        .and(CAR.STORE_HOUSE_ID.eq(storeHouseId))
+        .execute()
+    }
+  }
+
   override fun findById(id: Long): Mono<Car> {
     return Mono.fromSupplier {
       dslContext.selectFrom(CAR)
@@ -81,7 +91,7 @@ class JooqCarRepository(
     return Mono.fromSupplier {
       dslContext.deleteFrom(CAR)
         .where(CAR.ID.eq(id))
-        .executeAsync()
+        .execute()
     }
   }
 

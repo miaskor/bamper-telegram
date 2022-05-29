@@ -16,4 +16,6 @@ interface KeyboardSettings {
   fun keyboardForMandatorySteps(): List<String>
   fun keyboardForNotMandatorySteps(): List<String>
   fun keyboardForLists(): List<String>
+  fun deletingCarMenu(): List<String>
+  fun deletingAutoPartMenu(): List<String>
 }

@@ -6,6 +6,7 @@ import by.miaskor.domain.api.domain.ResponseWithLimit
 import by.miaskor.domain.api.domain.StoreHouseIdRequest
 import by.miaskor.domain.service.CarService
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -37,6 +38,12 @@ class CarController(
     @RequestBody storeHouseIdRequest: StoreHouseIdRequest
   ): Mono<ResponseEntity<ResponseWithLimit<CarResponse>>> {
     return carService.getAllByStoreHouseId(storeHouseIdRequest)
+      .map { ResponseEntity.ok(it) }
+  }
+
+  @DeleteMapping("/{storeHouseId}/{id}")
+  fun deleteById(@PathVariable storeHouseId: Long, @PathVariable id: Long): Mono<ResponseEntity<Boolean>> {
+    return carService.deleteByStoreHouseIdAndId(storeHouseId, id)
       .map { ResponseEntity.ok(it) }
   }
 }

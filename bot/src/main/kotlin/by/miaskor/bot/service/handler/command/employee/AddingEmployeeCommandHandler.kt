@@ -43,10 +43,14 @@ class AddingEmployeeCommandHandler(
           employerChatId = update.chatId,
           employeeChatId = it
         )
-      }.flatMap { createEmployee(it, update) }
+      }.flatMap { createEmployee(it, update, telegramClientResponse) }
   }
 
-  private fun createEmployee(workerTelegramDto: WorkerTelegramDto, update: Update): Mono<Unit> {
+  private fun createEmployee(
+    workerTelegramDto: WorkerTelegramDto,
+    update: Update,
+    telegramClientResponse: TelegramClientResponse
+  ): Mono<Unit> {
     return Mono.fromSupplier {
       WorkerTelegramDto(
         employerChatId = workerTelegramDto.employeeChatId,
@@ -57,7 +61,7 @@ class AddingEmployeeCommandHandler(
         workerTelegramConnector.create(workerTelegramDto)
           .then(
             telegramClientCache.getTelegramClient(update.chatId)
-              .map { it.modifiedEmployees() }
+              .map { it.addEmployee(Pair(telegramClientResponse.username, telegramClientResponse.chatId)) }
           )
           .then(sendMessage(update.chatId, MessageSettings::addingEmployeeSuccessMessage))
       )

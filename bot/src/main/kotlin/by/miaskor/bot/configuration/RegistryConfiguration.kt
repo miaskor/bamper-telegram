@@ -52,7 +52,11 @@ open class RegistryConfiguration(
       commandHandlerConfiguration.selectCertainStoreHouseCommandHandler(),
       commandHandlerConfiguration.createAutoPartCommandHandler(),
       commandHandlerConfiguration.listCarCommandHandler(),
+      commandHandlerConfiguration.deleteAutoPartCommandHandler(),
+      commandHandlerConfiguration.deleteCarCommandHandler(),
       commandHandlerConfiguration.listAutoPartCommandHandler(),
+      commandHandlerConfiguration.deleteCarsCommandHandler(),
+      commandHandlerConfiguration.deleteAutoPartsCommandHandler(),
       commandHandlerConfiguration.createCarCommandHandler()
     )
   }

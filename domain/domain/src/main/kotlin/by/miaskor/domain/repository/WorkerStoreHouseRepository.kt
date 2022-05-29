@@ -16,7 +16,8 @@ class JooqWorkerStoreHouseRepository(
       .map { workerStoreHouseRecord ->
         dslContext.insertInto(WORKER_STORE_HOUSE)
           .set(workerStoreHouseRecord)
-          .onDuplicateKeyIgnore()
+          .onDuplicateKeyUpdate()
+          .set(WORKER_STORE_HOUSE.WORKER_PRIVILEGE, entity.workerPrivilege)
           .execute()
       }
   }

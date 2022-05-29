@@ -49,7 +49,7 @@ open class ServiceConfiguration(
 
   @Bean
   open fun carService(): CarService {
-    return CarService(repositoryConfiguration.carRepository(), storeHouseService())
+    return CarService(repositoryConfiguration.carRepository())
   }
 
   @Bean

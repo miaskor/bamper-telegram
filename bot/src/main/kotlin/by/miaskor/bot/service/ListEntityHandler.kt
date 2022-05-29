@@ -10,6 +10,7 @@ import by.miaskor.bot.domain.CallbackQuery.CARS_NEXT
 import by.miaskor.bot.domain.CallbackQuery.CARS_PREV
 import by.miaskor.bot.domain.CallbackQuery.Companion.listAutoParts
 import by.miaskor.bot.domain.CallbackQuery.Companion.listCars
+import by.miaskor.bot.domain.TelegramClient
 import by.miaskor.bot.service.MessageSender.sendMessage
 import by.miaskor.bot.service.MessageSender.sendMessageWithInlineKeyboard
 import by.miaskor.bot.service.MessageSender.sendPhoto
@@ -36,67 +37,68 @@ class ListEntityHandler(
   fun handle(update: Update, callbackQuery: CallbackQuery): Mono<Unit> {
     return Mono.just(update.chatId)
       .filter { !listEntityCache.isExists(it) }
-      .map { listEntityCache.populate(it) }
+      .doOnNext { listEntityCache.populate(update.chatId) }
       .then(
         Mono.just(update.chatId)
           .flatMap(telegramClientCache::getTelegramClient)
           .flatMap { telegramClient ->
             when (callbackQuery) {
-              CARS_NEXT, CARS_PREV -> {
-                Mono.just(update.chatId)
-                  .doOnNext {
-                    if (callbackQuery == CARS_NEXT) {
-                      listEntityCache.nextCars(update.chatId)
-                    } else {
-                      listEntityCache.prevCars(update.chatId)
-                    }
-                  }.map {
-                    StoreHouseIdRequest(
-                      storeHouseId = telegramClient.currentStoreHouseId(),
-                      limit = listSettings.limit(),
-                      offset = listEntityCache.getCarOffset(update.chatId)
-                    )
-                  }
-                  .flatMap {
-                    carConnector.getAllByStoreHouseId(it)
-                  }
-                  .flatMap { responseWithLimit ->
-                    sendEntities(
-                      update,
-                      responseWithLimit,
-                      MessageSettings::listCarMessage,
-                      CarResponse::disassembly
-                    )
-                  }
-              }
-
-              AUTO_PARTS_NEXT, AUTO_PARTS_PREV -> {
-                Mono.just(update.chatId)
-                  .doOnNext {
-                    if (callbackQuery == AUTO_PARTS_NEXT) {
-                      listEntityCache.nextAutoParts(update.chatId)
-                    } else {
-                      listEntityCache.prevAutoParts(update.chatId)
-                    }
-                  }.map {
-                    StoreHouseIdRequest(
-                      storeHouseId = telegramClient.currentStoreHouseId(),
-                      limit = listSettings.limit(),
-                      offset = listEntityCache.getAutoPartOffset(update.chatId)
-                    )
-                  }
-                  .flatMap { autoPartConnector.getAllByStoreHouseId(it) }
-                  .flatMap { responseWithLimit ->
-                    sendEntities(
-                      update,
-                      responseWithLimit,
-                      MessageSettings::listAutoPartMessage
-                    ) { AutoPartResponse.disassembly(it, telegramClient.chatLanguage) }
-                  }
-              }
+              CARS_NEXT, CARS_PREV -> sendCars(update, callbackQuery, telegramClient)
+              AUTO_PARTS_NEXT, AUTO_PARTS_PREV -> sendAutoParts(update, callbackQuery, telegramClient)
             }
           }
       )
+  }
+
+  private fun sendCars(update: Update, callbackQuery: CallbackQuery, telegramClient: TelegramClient): Mono<Unit> {
+    return Mono.just(update.chatId)
+      .doOnNext {
+        if (callbackQuery == CARS_NEXT) {
+          listEntityCache.nextCars(it)
+        } else {
+          listEntityCache.prevCars(it)
+        }
+      }.map { chatId ->
+        StoreHouseIdRequest(
+          storeHouseId = telegramClient.currentStoreHouseId(),
+          limit = listSettings.limit(),
+          offset = listEntityCache.getCarOffset(chatId)
+        )
+      }
+      .flatMap(carConnector::getAllByStoreHouseId)
+      .flatMap { responseWithLimit ->
+        sendEntities(
+          update,
+          responseWithLimit,
+          MessageSettings::listCarMessage,
+          CarResponse::disassembly
+        )
+      }
+  }
+
+  private fun sendAutoParts(update: Update, callbackQuery: CallbackQuery, telegramClient: TelegramClient): Mono<Unit> {
+    return Mono.just(update.chatId)
+      .doOnNext {
+        if (callbackQuery == AUTO_PARTS_NEXT) {
+          listEntityCache.nextAutoParts(it)
+        } else {
+          listEntityCache.prevAutoParts(it)
+        }
+      }.map { chatId ->
+        StoreHouseIdRequest(
+          storeHouseId = telegramClient.currentStoreHouseId(),
+          limit = listSettings.limit(),
+          offset = listEntityCache.getAutoPartOffset(chatId)
+        )
+      }
+      .flatMap(autoPartConnector::getAllByStoreHouseId)
+      .flatMap { responseWithLimit ->
+        sendEntities(
+          update,
+          responseWithLimit,
+          MessageSettings::listAutoPartMessage
+        ) { AutoPartResponse.disassembly(it, telegramClient.chatLanguage) }
+      }
   }
 
   private fun <T> sendEntities(
@@ -105,17 +107,13 @@ class ListEntityHandler(
     messageFunction: KFunction1<MessageSettings, String>,
     componentsDisassembler: (T) -> Array<String>
   ): Mono<Unit> {
-    return Mono.just(responseWithLimit)
-      .flatMap {
-        Flux.fromIterable(responseWithLimit.entities)
-          .skipLast(1)
-          .flatMap {
-            sendMessage<T>(update.chatId, it, messageFunction, componentsDisassembler)
-          }.then(
-            Mono.justOrEmpty(responseWithLimit.entities.lastOrNull())
-              .flatMap { sendLast(it, update.chatId, componentsDisassembler, messageFunction) }
-          )
-      }
+    return Flux.fromIterable(responseWithLimit.entities)
+      .skipLast(1)
+      .flatMap { sendMessage<T>(update.chatId, it, messageFunction, componentsDisassembler) }
+      .then(
+        Mono.justOrEmpty(responseWithLimit.entities.lastOrNull())
+          .flatMap { sendLast(it, update.chatId, componentsDisassembler, messageFunction) }
+      )
   }
 
   private fun <T> sendMessage(

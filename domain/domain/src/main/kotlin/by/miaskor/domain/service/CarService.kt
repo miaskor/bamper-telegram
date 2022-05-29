@@ -9,8 +9,7 @@ import by.miaskor.domain.tables.pojos.Car
 import reactor.core.publisher.Mono
 
 class CarService(
-  private val carRepository: CarRepository,
-  private val storeHouseService: StoreHouseService
+  private val carRepository: CarRepository
 ) {
 
   fun create(carDto: CarDto): Mono<Long> {
@@ -49,5 +48,16 @@ class CarService(
           isMoreExists = isMoreExists
         )
       }
+  }
+
+  fun deleteByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Boolean> {
+    return carRepository.deleteByStoreHouseIdAndId(storeHouseId, id)
+      .flatMap {
+        if (it > 0)
+          Mono.just(true)
+        else
+          Mono.empty()
+      }
+      .onErrorReturn(false)
   }
 }
