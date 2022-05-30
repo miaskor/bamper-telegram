@@ -1,12 +1,15 @@
 package by.miaskor.domain.service
 
 import by.miaskor.domain.api.domain.StoreHouseDto
+import by.miaskor.domain.model.WorkerStoreHouseVO
 import by.miaskor.domain.repository.StoreHouseRepository
 import by.miaskor.domain.tables.pojos.StoreHouse
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 class StoreHouseService(
-  private val storeHouseRepository: StoreHouseRepository
+  private val storeHouseRepository: StoreHouseRepository,
+  private val workerStoreHouseService: WorkerStoreHouseService
 ) {
 
   fun getByNameAndTelegramChatId(storeHouseDto: StoreHouseDto): Mono<StoreHouseDto> {
@@ -29,7 +32,26 @@ class StoreHouseService(
           chatId = it.telegramChatId ?: -1,
           name = it.storeHouseName ?: ""
         )
-      }.collectList()
+      }
+      .mergeWith(
+        workerStoreHouseService.getStoreHousesByChatId(chatId)
+          .flatMapMany { getWorkerStoreHouses(it) }
+      ).collectList()
+  }
+
+  private fun getWorkerStoreHouses(workerStoreHouses: List<WorkerStoreHouseVO>): Flux<StoreHouseDto> {
+    return Mono.fromSupplier { workerStoreHouses.map { it.storeHouseId } }
+      .flatMap { storeHouseRepository.findAllByIds(it) }
+      .flatMapIterable { it }
+      .zipWithIterable(workerStoreHouses)
+      .map {
+        StoreHouseDto(
+          id = it.t1.id ?: -1,
+          chatId = it.t1.telegramChatId ?: -1,
+          name = it.t1.storeHouseName ?: "",
+          modifiable = it.t2.privilege == "M"
+        )
+      }
   }
 
   fun create(storeHouseDto: StoreHouseDto): Mono<Unit> {

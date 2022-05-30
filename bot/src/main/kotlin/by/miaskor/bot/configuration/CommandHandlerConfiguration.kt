@@ -219,9 +219,7 @@ open class CommandHandlerConfiguration(
   @Bean
   open fun chooseStoreHouseCommandHandler(): CommandHandler {
     return ChooseStoreHouseCommandHandler(
-      serviceConfiguration.keyboardBuilder(),
       connectorConfiguration.storeHouseConnector(),
-      telegramBot,
       serviceConfiguration.telegramClientCache()
     )
   }
@@ -237,10 +235,7 @@ open class CommandHandlerConfiguration(
 
   @Bean
   open fun storeHouseCommandHandler(): CommandHandler {
-    return StoreHouseCommandHandler(
-      telegramBot,
-      connectorConfiguration.storeHouseConnector()
-    )
+    return StoreHouseCommandHandler(connectorConfiguration.storeHouseConnector())
   }
 
   @Bean

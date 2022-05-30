@@ -3,5 +3,6 @@ package by.miaskor.domain.api.domain
 data class StoreHouseDto(
   val id: Long = -1,
   val name: String,
-  val chatId: Long
+  val chatId: Long = -1,
+  val modifiable: Boolean = true
 )

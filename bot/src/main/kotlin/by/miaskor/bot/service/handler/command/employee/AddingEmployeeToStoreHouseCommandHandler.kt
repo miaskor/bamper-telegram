@@ -70,12 +70,13 @@ class AddingEmployeeToStoreHouseCommandHandler(
 
   private fun getPrivilege(update: Update): String {
     val privilege = update.text.substringAfter(", ")
-    return if (privilege.equals("read", true) || privilege.equals("чтение", true)) {
-      "R"
-    } else if (privilege.equals("write", true) || privilege.equals("запись", true)) {
-      "W"
+    return if (
+      privilege.equals("modification", true)
+      || privilege.equals("модификация", true)
+    ) {
+      "M"
     } else {
-      "RW"
+      "R"
     }
   }
 

@@ -34,12 +34,18 @@ open class ServiceConfiguration(
 
   @Bean
   open fun workerTelegramService(): WorkerTelegramService {
-    return WorkerTelegramService(repositoryConfiguration.workerTelegramRepository())
+    return WorkerTelegramService(
+      repositoryConfiguration.workerTelegramRepository(),
+      workerStoreHouseService()
+    )
   }
 
   @Bean
   open fun storeHouseService(): StoreHouseService {
-    return StoreHouseService(repositoryConfiguration.storeHouseRepository())
+    return StoreHouseService(
+      repositoryConfiguration.storeHouseRepository(),
+      workerStoreHouseService()
+    )
   }
 
   @Bean

@@ -9,7 +9,8 @@ interface KeyboardSettings {
   fun removingEmployee(): List<String>
   fun creatingStoreHouseMenu(): List<String>
   fun choosingStoreHouseMenu(): List<String>
-  fun storeHouseMenu(): List<String>
+  fun modificationStoreHouseMenu(): List<String>
+  fun readStoreHouseMenu(): List<String>
   fun creatingAutoPartMenu(): List<String>
   fun creatingCarMenu(): List<String>
   fun addingEmployeeToStoreHouseMenu(): List<String>
