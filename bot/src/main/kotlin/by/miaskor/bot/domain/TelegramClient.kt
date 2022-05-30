@@ -3,7 +3,6 @@ package by.miaskor.bot.domain
 import by.miaskor.bot.domain.BotState.GREETINGS
 import by.miaskor.bot.domain.BotState.MAIN_MENU
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 
 data class TelegramClient(
   val chatId: Long,
@@ -12,25 +11,33 @@ data class TelegramClient(
   val currentBotState: BotState = GREETINGS,
   val previousBotStates: SortedSet<BotState> = sortedSetOf(MAIN_MENU),
   private var employees: TelegramClientEmployees = TelegramClientEmployees(),
-  var telegramClientStoreHouses: TelegramClientStoreHouses = TelegramClientStoreHouses()
+  private var telegramClientStoreHouses: TelegramClientStoreHouses = TelegramClientStoreHouses()
 ) {
 
   fun currentStoreHouseName(): String {
-    return telegramClientStoreHouses.currentStoreHouse.first
+    return telegramClientStoreHouses.currentStoreHouse.name
+  }
+
+  fun storeHouses(): Set<StoreHouse> {
+    return setOf<StoreHouse>().plus(telegramClientStoreHouses.storeHouses)
   }
 
   fun currentStoreHouseId(): Long {
-    return telegramClientStoreHouses.currentStoreHouse.second
+    return telegramClientStoreHouses.currentStoreHouse.id
   }
 
-  fun refreshStoreHouses(mapStoreHouses: Map<String, Long>) {
+  fun isModifiableStoreHouse(): Boolean {
+    return telegramClientStoreHouses.currentStoreHouse.modifiable
+  }
+
+  fun refreshStoreHouses(storeHouses: Set<StoreHouse>) {
     telegramClientStoreHouses = telegramClientStoreHouses.copy(
       isModified = false,
-      storeHouses = ConcurrentHashMap(mapStoreHouses),
+      storeHouses = setOf<StoreHouse>().plus(storeHouses),
     )
   }
 
-  fun refreshCurrentStoreHouse(currentStoreHouse: Pair<String, Long>) {
+  fun refreshCurrentStoreHouse(currentStoreHouse: StoreHouse) {
     telegramClientStoreHouses = telegramClientStoreHouses.copy(
       isModified = false,
       storeHouses = telegramClientStoreHouses.storeHouses.plus(currentStoreHouse),
@@ -38,7 +45,7 @@ data class TelegramClient(
     )
   }
 
-  fun isEmployeesModified(): Boolean{
+  fun isEmployeesModified(): Boolean {
     return employees.isModified
   }
 

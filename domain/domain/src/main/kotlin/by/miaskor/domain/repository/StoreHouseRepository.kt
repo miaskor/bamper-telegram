@@ -8,6 +8,7 @@ import reactor.core.publisher.Mono
 interface StoreHouseRepository : CrudRepository<StoreHouse> {
   fun findByNameAndTelegramChatId(name: String, chatId: Long): Mono<StoreHouse>
   fun findAllByChatId(chatId: Long): Mono<List<StoreHouse>>
+  fun findAllByIds(ids: List<Long>): Mono<List<StoreHouse>>
 }
 
 class JooqStoreHouseRepository(
@@ -26,6 +27,15 @@ class JooqStoreHouseRepository(
     return Mono.fromSupplier {
       dslContext.selectFrom(STORE_HOUSE)
         .where(STORE_HOUSE.TELEGRAM_CHAT_ID.eq(chatId))
+        .fetchInto(StoreHouse::class.java)
+    }
+  }
+
+  override fun findAllByIds(ids: List<Long>): Mono<List<StoreHouse>> {
+    return Mono.fromSupplier {
+      dslContext.select()
+        .from(STORE_HOUSE)
+        .where(STORE_HOUSE.ID.`in`(ids))
         .fetchInto(StoreHouse::class.java)
     }
   }

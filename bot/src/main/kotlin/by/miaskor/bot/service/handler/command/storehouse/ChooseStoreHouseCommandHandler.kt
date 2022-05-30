@@ -3,24 +3,20 @@ package by.miaskor.bot.service.handler.command.storehouse
 import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.BotState.CHOOSING_STORE_HOUSE
 import by.miaskor.bot.domain.Command.CHOOSE_STORE_HOUSE
+import by.miaskor.bot.domain.StoreHouse
 import by.miaskor.bot.service.BotStateChanger.changeBotState
-import by.miaskor.bot.service.KeyboardBuilder
-import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
+import by.miaskor.bot.service.MessageSender.sendMessageWithKeyboard
 import by.miaskor.bot.service.TelegramClientCache
 import by.miaskor.bot.service.chatId
-import by.miaskor.bot.service.extension.sendMessageWithKeyboard
 import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.domain.api.connector.StoreHouseConnector
 import by.miaskor.domain.api.domain.StoreHouseDto
-import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
-import com.pengrad.telegrambot.model.request.Keyboard
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 class ChooseStoreHouseCommandHandler(
-  private val keyboardBuilder: KeyboardBuilder,
   private val storeHouseConnector: StoreHouseConnector,
-  private val telegramBot: TelegramBot,
   private val telegramClientCache: TelegramClientCache
 ) : CommandHandler {
   override val command = CHOOSE_STORE_HOUSE
@@ -32,19 +28,19 @@ class ChooseStoreHouseCommandHandler(
       .flatMap { handle(it, update) }
   }
 
-  private fun handle(storeHouses: List<StoreHouseDto>, update: Update): Mono<Unit> {
-    return Mono.fromSupplier { storeHouses.associateBy({ it.name }, { it.id }) }
-      .flatMap { mapStoreHouses ->
+  private fun handle(storeHouseDtos: List<StoreHouseDto>, update: Update): Mono<Unit> {
+    return Flux.fromIterable(storeHouseDtos)
+      .map {
+        StoreHouse(
+          name = it.name,
+          id = it.id,
+          modifiable = it.modifiable
+        )
+      }.collectList()
+      .flatMap { storeHouses ->
         telegramClientCache.getTelegramClient(update.chatId)
-          .map { it.refreshStoreHouses(mapStoreHouses) }
+          .map { it.refreshStoreHouses(storeHouses.toSet()) }
       }
-      .then(keyboardBuilder.build(update.chatId))
-      .flatMap { handle(it, update.chatId) }
-  }
-
-  private fun handle(keyboard: Keyboard, chatId: Long): Mono<Unit> {
-    return Mono.just(chatId)
-      .resolveLanguage(MessageSettings::class)
-      .map { telegramBot.sendMessageWithKeyboard(chatId, it.allStoreHousesMessage(), keyboard) }
+      .then(sendMessageWithKeyboard(update.chatId, MessageSettings::allStoreHousesMessage))
   }
 }

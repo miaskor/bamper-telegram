@@ -13,8 +13,9 @@ import by.miaskor.bot.domain.BotState.DELETING_AUTO_PART
 import by.miaskor.bot.domain.BotState.DELETING_CAR
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.MAIN_MENU
+import by.miaskor.bot.domain.BotState.MODIFICATION_STORE_HOUSE_MENU
+import by.miaskor.bot.domain.BotState.READ_ONLY_STORE_HOUSE_MENU
 import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
-import by.miaskor.bot.domain.BotState.STORE_HOUSE_MENU
 import by.miaskor.bot.domain.CallbackQuery
 import by.miaskor.bot.domain.CreatingCarStep
 import by.miaskor.bot.domain.CreatingCarStep.BRAND_NAME
@@ -22,7 +23,6 @@ import by.miaskor.bot.domain.CreatingCarStep.MODEL
 import by.miaskor.bot.domain.CreatingCarStep.YEAR
 import by.miaskor.bot.domain.TelegramClient
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
-import by.miaskor.bot.service.extension.names
 import com.pengrad.telegrambot.model.request.InlineKeyboardButton
 import com.pengrad.telegrambot.model.request.InlineKeyboardMarkup
 import com.pengrad.telegrambot.model.request.Keyboard
@@ -39,7 +39,6 @@ class KeyboardBuilder(
       .flatMap(::build)
   }
 
-  @Suppress("UNCHECKED_CAST")
   private fun build(telegramClient: TelegramClient): Mono<Keyboard> {
     return Mono.just(telegramClient.chatId)
       .resolveLanguage(KeyboardSettings::class)
@@ -57,7 +56,8 @@ class KeyboardBuilder(
             buildReplyKeyboard(buttons)
           }
 
-          STORE_HOUSE_MENU -> buildReplyKeyboard(it.storeHouseMenu())
+          MODIFICATION_STORE_HOUSE_MENU -> buildReplyKeyboard(it.modificationStoreHouseMenu())
+          READ_ONLY_STORE_HOUSE_MENU -> buildReplyKeyboard(it.readStoreHouseMenu())
           CREATING_AUTO_PART -> buildReplyKeyboard(it.creatingAutoPartMenu())
           CREATING_CAR -> buildReplyKeyboard(it.creatingCarMenu())
           DELETING_CAR -> buildReplyKeyboard(it.deletingCarMenu())
@@ -100,10 +100,7 @@ class KeyboardBuilder(
     telegramClient: TelegramClient,
     keyboardSettings: KeyboardSettings
   ): List<String> {
-    val storeHouses = telegramClient.telegramClientStoreHouses
-      .storeHouses
-      .names()
-      .toList()
+    val storeHouses = telegramClient.storeHouses().map { it.name }
     val storeHouseMenuKeyboards = keyboardSettings.choosingStoreHouseMenu()
     return storeHouses.plus(storeHouseMenuKeyboards)
   }

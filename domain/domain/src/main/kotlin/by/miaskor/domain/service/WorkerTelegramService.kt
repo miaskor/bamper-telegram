@@ -6,7 +6,8 @@ import by.miaskor.domain.tables.pojos.WorkerTelegram
 import reactor.core.publisher.Mono
 
 class WorkerTelegramService(
-  private val workerTelegramRepository: WorkerTelegramRepository
+  private val workerTelegramRepository: WorkerTelegramRepository,
+  private val workerStoreHouseService: WorkerStoreHouseService
 ) {
 
   fun get(workerTelegramDto: WorkerTelegramDto): Mono<WorkerTelegramDto> {
@@ -21,6 +22,7 @@ class WorkerTelegramService(
 
   fun remove(workerTelegramDto: WorkerTelegramDto): Mono<Unit> {
     return workerTelegramRepository.remove(workerTelegramDto)
+      .then(workerStoreHouseService.removeByChatId(workerTelegramDto.employeeChatId))
   }
 
   fun getAllWorkerChatIdByEmployerChatId(employerChatId: Long): Mono<List<Long>> {
