@@ -9,7 +9,7 @@ import by.miaskor.bot.service.BotStateChanger.changeBotState
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.MessageSender.sendMessage
 import by.miaskor.bot.service.MessageSender.sendMessageWithKeyboard
-import by.miaskor.bot.service.TelegramClientCache
+import by.miaskor.bot.service.cache.TelegramClientCache
 import by.miaskor.bot.service.chatId
 import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.bot.service.text

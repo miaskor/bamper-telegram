@@ -1,7 +1,7 @@
 package by.miaskor.bot.telegram
 
 import by.miaskor.bot.service.CommandResolver.processCommand
-import by.miaskor.bot.service.TelegramClientCache
+import by.miaskor.bot.service.cache.TelegramClientCache
 import by.miaskor.bot.service.chatId
 import by.miaskor.bot.service.info
 import com.pengrad.telegrambot.TelegramBot

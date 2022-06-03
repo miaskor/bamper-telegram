@@ -1,9 +1,12 @@
 package by.miaskor.bot.configuration
 
+import by.miaskor.bot.domain.ListEntityType.AUTO_PART
+import by.miaskor.bot.domain.ListEntityType.CAR
 import by.miaskor.bot.service.KeyboardBuilder
-import by.miaskor.bot.service.ListEntityCache
 import by.miaskor.bot.service.ListEntityHandler
-import by.miaskor.bot.service.TelegramClientCache
+import by.miaskor.bot.service.cache.AbstractListCache
+import by.miaskor.bot.service.cache.ListEntityCacheRegistry
+import by.miaskor.bot.service.cache.TelegramClientCache
 import by.miaskor.bot.service.carstep.CreationCarStepValidation
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -23,22 +26,42 @@ open class ServiceConfiguration(
   }
 
   @Bean
-  open fun listEntityCache(): ListEntityCache {
-    return ListEntityCache(
-      settingsConfiguration.cacheSettings(),
-      settingsConfiguration.listSettings()
-    )
-  }
-
-  @Bean
   open fun listEntityHandler(): ListEntityHandler {
     return ListEntityHandler(
-      listEntityCache(),
+      listEntityCacheRegistry(),
       settingsConfiguration.listSettings(),
       connectorConfiguration.carConnector(),
       connectorConfiguration.autoPartConnector(),
       telegramClientCache()
     )
+  }
+
+  @Bean
+  open fun listEntityCacheRegistry(): ListEntityCacheRegistry {
+    return ListEntityCacheRegistry(
+      carListEntityCache(),
+      autoPartListEntityCache(),
+    )
+  }
+
+  @Bean
+  open fun carListEntityCache(): AbstractListCache {
+    return object : AbstractListCache(
+      settingsConfiguration.cacheSettings(),
+      settingsConfiguration.listSettings()
+    ) {
+      override fun listEntityType() = CAR
+    }
+  }
+
+  @Bean
+  open fun autoPartListEntityCache(): AbstractListCache {
+    return object : AbstractListCache(
+      settingsConfiguration.cacheSettings(),
+      settingsConfiguration.listSettings()
+    ) {
+      override fun listEntityType() = AUTO_PART
+    }
   }
 
   @Bean

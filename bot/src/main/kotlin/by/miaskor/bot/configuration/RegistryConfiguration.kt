@@ -18,6 +18,7 @@ open class RegistryConfiguration(
   private val settingsConfiguration: SettingsConfiguration,
   private val commandHandlerConfiguration: CommandHandlerConfiguration,
   private val botStateHandlerConfiguration: BotStateHandlerConfiguration,
+  private val connectorConfiguration: ConnectorConfiguration,
   private val serviceConfiguration: ServiceConfiguration
 ) {
 

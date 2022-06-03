@@ -19,7 +19,7 @@ import by.miaskor.bot.domain.TelegramClient
 import by.miaskor.bot.service.BotStateChanger.changeBotState
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
-import by.miaskor.bot.service.TelegramClientCache
+import by.miaskor.bot.service.cache.TelegramClientCache
 import by.miaskor.bot.service.chatId
 import by.miaskor.bot.service.extension.sendMessage
 import by.miaskor.bot.service.extension.sendMessageWithKeyboard

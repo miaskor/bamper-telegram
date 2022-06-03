@@ -46,7 +46,7 @@ import org.springframework.context.annotation.Configuration
 open class CommandHandlerConfiguration(
   private val telegramBot: TelegramBot,
   private val serviceConfiguration: ServiceConfiguration,
-  private val connectorConfiguration: ConnectorConfiguration,
+  private val connectorConfiguration: ConnectorConfiguration
 ) {
 
   @Bean
@@ -124,7 +124,7 @@ open class CommandHandlerConfiguration(
   open fun listCarCommandHandler(): CommandHandler {
     return ListCarCommandHandler(
       serviceConfiguration.listEntityHandler(),
-      serviceConfiguration.listEntityCache()
+      serviceConfiguration.carListEntityCache()
     )
   }
 
@@ -148,7 +148,7 @@ open class CommandHandlerConfiguration(
   open fun listAutoPartCommandHandler(): CommandHandler {
     return ListAutoPartCommandHandler(
       serviceConfiguration.listEntityHandler(),
-      serviceConfiguration.listEntityCache()
+      serviceConfiguration.autoPartListEntityCache()
     )
   }
 

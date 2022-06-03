@@ -2,13 +2,15 @@ package by.miaskor.bot.service
 
 import by.miaskor.bot.domain.BotState
 import by.miaskor.bot.domain.BotState.Companion.isNotFinalState
+import by.miaskor.bot.service.cache.ListEntityCacheRegistry
+import by.miaskor.bot.service.cache.TelegramClientCache
 import org.apache.logging.log4j.LogManager
 import reactor.core.publisher.Mono
 
 object BotStateChanger {
 
   lateinit var telegramClientCache: TelegramClientCache
-  lateinit var listEntityCache: ListEntityCache
+  lateinit var listEntityCacheRegistry: ListEntityCacheRegistry
   private val log = LogManager.getLogger()
 
   fun <T : Any> Mono<T>.changeBotState(
@@ -21,7 +23,7 @@ object BotStateChanger {
         .flatMap(telegramClientCache::getTelegramClient)
         .doOnNext { log.info("Change botState for=$it") }
         .doOnNext { telegramClient ->
-          listEntityCache.evict(telegramClient.chatId)
+          listEntityCacheRegistry.evictAll(telegramClient.chatId)
           telegramClientCache.populate(
             telegramClient.chatId,
             telegramClient.copy(currentBotState = botState).apply {

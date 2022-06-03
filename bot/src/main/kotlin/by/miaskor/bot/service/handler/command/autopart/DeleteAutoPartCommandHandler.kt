@@ -3,7 +3,7 @@ package by.miaskor.bot.service.handler.command.autopart
 import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.Command.DELETE_AUTO_PART
 import by.miaskor.bot.service.MessageSender.sendMessage
-import by.miaskor.bot.service.TelegramClientCache
+import by.miaskor.bot.service.cache.TelegramClientCache
 import by.miaskor.bot.service.chatId
 import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.bot.service.text

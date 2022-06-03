@@ -17,12 +17,14 @@ class CallBackQueryHandlerRegistry(
     return Mono.just(update.chatId)
       .resolveLanguage(KeyboardSettings::class)
       .flatMap {
-        when (update.callbackQuery().data()) {
-          CARS_PREV.name -> listEntityHandler.handle(update, CARS_PREV)
-          CARS_NEXT.name -> listEntityHandler.handle(update, CARS_NEXT)
-          AUTO_PARTS_PREV.name -> listEntityHandler.handle(update, AUTO_PARTS_PREV)
-          AUTO_PARTS_NEXT.name -> listEntityHandler.handle(update, AUTO_PARTS_NEXT)
-          else -> Mono.empty()
+        listEntityHandler.let {
+          when (update.callbackQuery().data()) {
+            CARS_PREV.name -> it.handle(update, CARS_PREV)
+            CARS_NEXT.name -> it.handle(update, CARS_NEXT)
+            AUTO_PARTS_PREV.name -> it.handle(update, AUTO_PARTS_PREV)
+            AUTO_PARTS_NEXT.name -> it.handle(update, AUTO_PARTS_NEXT)
+            else -> Mono.empty()
+          }
         }
       }
   }
