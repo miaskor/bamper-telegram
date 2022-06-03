@@ -9,7 +9,6 @@ import org.cfg4j.source.context.propertiesprovider.PropertyBasedPropertiesProvid
 import org.cfg4j.source.files.FilesConfigurationSource
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import java.util.*
 import kotlin.io.path.Path
 
 @Configuration
@@ -44,7 +43,7 @@ open class Cf4jConfiguration {
   }
 
   private companion object {
-    private const val COMMON_PATH = "/home/mikhailskorohododv/Documents/pet-projects/bamper-telegram-properties"
+    private const val COMMON_PATH = "/home/miaskor/Documents/pet-projects/bamper-telegram-properties"
     private const val PROPERTY_BOT_PATH = "$COMMON_PATH/bot.yaml"
     private const val PROPERTY_KEYBOARD_PATH = "$COMMON_PATH/keyboard.yaml"
     private const val PROPERTY_CONNECTOR_PATH = "$COMMON_PATH/connector.properties"

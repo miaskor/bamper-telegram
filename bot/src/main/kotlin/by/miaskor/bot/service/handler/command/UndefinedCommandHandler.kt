@@ -11,7 +11,7 @@ import by.miaskor.bot.domain.BotState.DELETING_CAR
 import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
 import by.miaskor.bot.domain.Command.UNDEFINED
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
-import by.miaskor.bot.service.TelegramClientCache
+import by.miaskor.bot.service.cache.TelegramClientCache
 import by.miaskor.bot.service.chatId
 import by.miaskor.bot.service.extension.sendMessage
 import com.pengrad.telegrambot.TelegramBot

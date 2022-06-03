@@ -3,7 +3,7 @@ package by.miaskor.bot.service.handler.command.car
 import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.Command.DELETE_CAR
 import by.miaskor.bot.service.MessageSender.sendMessage
-import by.miaskor.bot.service.TelegramClientCache
+import by.miaskor.bot.service.cache.TelegramClientCache
 import by.miaskor.bot.service.chatId
 import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.bot.service.text

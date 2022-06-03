@@ -2,7 +2,7 @@ package by.miaskor.bot.service.handler.command.employee
 
 import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.service.MessageSender.sendMessage
-import by.miaskor.bot.service.TelegramClientCache
+import by.miaskor.bot.service.cache.TelegramClientCache
 import by.miaskor.bot.service.chatId
 import by.miaskor.bot.service.text
 import by.miaskor.domain.api.connector.TelegramClientConnector

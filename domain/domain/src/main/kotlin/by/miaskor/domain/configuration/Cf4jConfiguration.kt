@@ -30,10 +30,10 @@ open class Cf4jConfiguration {
 
   private companion object {
     private const val DOMAIN_PROPERTY_PATH =
-      "/home/mikhailskorohododv/Documents/pet-projects/bamper-telegram-properties/domain.properties"
+      "/home/miaskor/Documents/pet-projects/bamper-telegram-properties/domain.properties"
     private const val CLOUD_DRIVE_PROPERTY_PATH =
-      "/home/mikhailskorohododv/Documents/pet-projects/bamper-telegram-properties/cloud-drive.yaml"
+      "/home/miaskor/Documents/pet-projects/bamper-telegram-properties/cloud-drive.yaml"
     private const val TELEGRAM_PROPERTY_PATH =
-      "/home/mikhailskorohododv/Documents/pet-projects/bamper-telegram-properties/bot.yaml"
+      "/home/miaskor/Documents/pet-projects/bamper-telegram-properties/bot.yaml"
   }
 }
