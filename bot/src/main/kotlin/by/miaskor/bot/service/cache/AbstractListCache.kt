@@ -2,7 +2,7 @@ package by.miaskor.bot.service.cache
 
 import by.miaskor.bot.configuration.settings.CacheSettings
 import by.miaskor.bot.configuration.settings.ListSettings
-import by.miaskor.bot.domain.CallbackQuery
+import by.miaskor.bot.domain.CallbackCommand
 import by.miaskor.bot.domain.ListEntity
 import by.miaskor.bot.domain.ListEntityType
 
@@ -15,8 +15,8 @@ abstract class AbstractListCache(
     return cache.getIfPresent(chatId)?.offset ?: listSettings.offset()
   }
 
-  fun movePointer(chatId: Long, callbackQuery: CallbackQuery) {
-    if (listEntityType().next() == callbackQuery) {
+  fun moveOffset(chatId: Long, callbackCommand: CallbackCommand) {
+    if (listEntityType().next() == callbackCommand) {
       nextEntities(chatId)
     } else {
       prevEntities(chatId)

@@ -1,76 +1,98 @@
 package by.miaskor.bot.configuration
 
-import by.miaskor.bot.domain.ListEntityType.AUTO_PART
-import by.miaskor.bot.domain.ListEntityType.CAR
+import by.miaskor.bot.domain.CreatingAutoPartStep
+import by.miaskor.bot.domain.CreatingCarStep
 import by.miaskor.bot.service.KeyboardBuilder
-import by.miaskor.bot.service.ListEntityHandler
-import by.miaskor.bot.service.cache.AbstractListCache
-import by.miaskor.bot.service.cache.ListEntityCacheRegistry
-import by.miaskor.bot.service.cache.TelegramClientCache
-import by.miaskor.bot.service.carstep.CreationCarStepValidation
+import by.miaskor.bot.service.step.ProcessingStepService
+import by.miaskor.bot.service.step.autopart.AutoPartBuilderFieldEnricher
+import by.miaskor.bot.service.step.autopart.CreatingAutoPartStepKeyboardBuilder
+import by.miaskor.bot.service.step.autopart.CreatingAutoPartStepMessageResolver
+import by.miaskor.bot.service.step.autopart.CreatingAutoPartValidator
+import by.miaskor.bot.service.step.car.CarBuilderFieldEnricher
+import by.miaskor.bot.service.step.car.CreatingCarStepKeyboardBuilder
+import by.miaskor.bot.service.step.car.CreatingCarStepMessageResolver
+import by.miaskor.bot.service.step.car.CreationCarStepValidation
+import com.pengrad.telegrambot.TelegramBot
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 open class ServiceConfiguration(
+  private val telegramBot: TelegramBot,
   private val connectorConfiguration: ConnectorConfiguration,
-  private val settingsConfiguration: SettingsConfiguration,
+  private val cacheConfiguration: CacheConfiguration
 ) {
 
   @Bean
-  open fun telegramClientCache(): TelegramClientCache {
-    return TelegramClientCache(
-      connectorConfiguration.telegramClientConnector(),
-      settingsConfiguration.cacheSettings()
+  open fun processingCarStepService(): ProcessingStepService<CreatingCarStep> {
+    return ProcessingStepService(
+      creationCarStepValidation(),
+      creatingCarStepMessageResolver(),
+      carBuilderFieldEnricher(),
+      creatingCarStepKeyboardBuilder(),
+      cacheConfiguration.carBuilderCache(),
+      telegramBot
     )
   }
 
   @Bean
-  open fun listEntityHandler(): ListEntityHandler {
-    return ListEntityHandler(
-      listEntityCacheRegistry(),
-      settingsConfiguration.listSettings(),
-      connectorConfiguration.carConnector(),
-      connectorConfiguration.autoPartConnector(),
-      telegramClientCache()
+  open fun processingAutoPartStepService(): ProcessingStepService<CreatingAutoPartStep> {
+    return ProcessingStepService(
+      creatingAutoPartValidator(),
+      creatingAutoPartStepMessageResolver(),
+      autoPartBuilderFieldEnricher(),
+      creatingAutoPartStepKeyboardBuilder(),
+      cacheConfiguration.autoPartBuilderCache(),
+      telegramBot
     )
   }
 
   @Bean
-  open fun listEntityCacheRegistry(): ListEntityCacheRegistry {
-    return ListEntityCacheRegistry(
-      carListEntityCache(),
-      autoPartListEntityCache(),
-    )
+  open fun creatingCarStepKeyboardBuilder(): CreatingCarStepKeyboardBuilder {
+    return CreatingCarStepKeyboardBuilder(keyboardBuilder())
   }
 
   @Bean
-  open fun carListEntityCache(): AbstractListCache {
-    return object : AbstractListCache(
-      settingsConfiguration.cacheSettings(),
-      settingsConfiguration.listSettings()
-    ) {
-      override fun listEntityType() = CAR
-    }
+  open fun creatingCarStepMessageResolver(): CreatingCarStepMessageResolver {
+    return CreatingCarStepMessageResolver()
   }
 
   @Bean
-  open fun autoPartListEntityCache(): AbstractListCache {
-    return object : AbstractListCache(
-      settingsConfiguration.cacheSettings(),
-      settingsConfiguration.listSettings()
-    ) {
-      override fun listEntityType() = AUTO_PART
-    }
-  }
-
-  @Bean
-  open fun keyboardBuilder(): KeyboardBuilder {
-    return KeyboardBuilder(telegramClientCache())
+  open fun carBuilderFieldEnricher(): CarBuilderFieldEnricher {
+    return CarBuilderFieldEnricher()
   }
 
   @Bean
   open fun creationCarStepValidation(): CreationCarStepValidation {
     return CreationCarStepValidation(connectorConfiguration.brandConnector())
+  }
+
+  @Bean
+  open fun creatingAutoPartStepKeyboardBuilder(): CreatingAutoPartStepKeyboardBuilder {
+    return CreatingAutoPartStepKeyboardBuilder(keyboardBuilder())
+  }
+
+  @Bean
+  open fun creatingAutoPartStepMessageResolver(): CreatingAutoPartStepMessageResolver {
+    return CreatingAutoPartStepMessageResolver()
+  }
+
+  @Bean
+  open fun autoPartBuilderFieldEnricher(): AutoPartBuilderFieldEnricher {
+    return AutoPartBuilderFieldEnricher()
+  }
+
+  @Bean
+  open fun creatingAutoPartValidator(): CreatingAutoPartValidator {
+    return CreatingAutoPartValidator(
+      connectorConfiguration.carConnector(),
+      connectorConfiguration.carPartConnector(),
+      cacheConfiguration.telegramClientCache()
+    )
+  }
+
+  @Bean
+  open fun keyboardBuilder(): KeyboardBuilder {
+    return KeyboardBuilder(cacheConfiguration.telegramClientCache())
   }
 }

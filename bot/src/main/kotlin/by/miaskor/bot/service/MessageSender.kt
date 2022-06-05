@@ -2,7 +2,7 @@ package by.miaskor.bot.service
 
 import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.configuration.settings.MessageSettings
-import by.miaskor.bot.domain.CallbackQuery
+import by.miaskor.bot.domain.CallbackCommand
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.extension.sendMessage
 import by.miaskor.bot.service.extension.sendMessageWithKeyboard
@@ -38,7 +38,7 @@ object MessageSender {
     photo: ByteArray,
     messageFunction: KFunction1<MessageSettings, String>,
     keyboardFunction: KFunction1<KeyboardSettings, List<String>>,
-    callbackQuery: List<CallbackQuery>,
+    callbackCommand: List<CallbackCommand>,
     vararg formatValues: String
   ): Mono<T> {
     return Mono.just(chatId)
@@ -46,7 +46,7 @@ object MessageSender {
       .flatMap { messageSettings ->
         Mono.just(chatId)
           .resolveLanguage(KeyboardSettings::class)
-          .map { keyboardBuilder.buildInlineKeyboard(keyboardFunction.invoke(it), callbackQuery) }
+          .map { keyboardBuilder.buildInlineKeyboard(keyboardFunction.invoke(it), callbackCommand) }
           .map { keyboard ->
             val message = messageFunction.invoke(messageSettings)
             telegramBot.sendPhotoWithKeyboard(chatId, photo, message.format(*formatValues), keyboard)
@@ -85,7 +85,7 @@ object MessageSender {
     chatId: Long,
     messageFunction: KFunction1<MessageSettings, String>,
     keyboardFunction: KFunction1<KeyboardSettings, List<String>>,
-    callbackQuery: List<CallbackQuery>,
+    callbackCommand: List<CallbackCommand>,
     vararg formatValues: String
   ): Mono<T> {
     return Mono.just(chatId)
@@ -93,7 +93,7 @@ object MessageSender {
       .flatMap { messageSettings ->
         Mono.just(chatId)
           .resolveLanguage(KeyboardSettings::class)
-          .map { keyboardBuilder.buildInlineKeyboard(keyboardFunction.invoke(it), callbackQuery) }
+          .map { keyboardBuilder.buildInlineKeyboard(keyboardFunction.invoke(it), callbackCommand) }
           .map { keyboard ->
             val message = messageFunction.invoke(messageSettings)
             telegramBot.sendMessageWithKeyboard(chatId, message.format(*formatValues), keyboard)

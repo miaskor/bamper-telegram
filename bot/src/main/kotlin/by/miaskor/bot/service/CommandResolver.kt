@@ -10,7 +10,7 @@ object CommandResolver {
 
   lateinit var commandHandlerRegistry: CommandHandlerRegistry
   lateinit var botStateHandlerRegistry: BotStateHandlerRegistry
-  lateinit var callBackQueryHandlerRegistry: CallBackQueryHandlerRegistry
+  lateinit var callBackCommandHandler: CallBackCommandHandler
 
   fun Mono<BotState>.processCommand(update: Update): Mono<Unit> {
     return this.flatMap { t ->
@@ -27,7 +27,7 @@ object CommandResolver {
             ).flatMap { it.handle(update) }
             .then(Mono.empty())
         )
-        .flatMap(callBackQueryHandlerRegistry::handle)
+        .flatMap(callBackCommandHandler::handle)
         .then(Mono.empty())
 
     }

@@ -46,23 +46,31 @@ enum class CreatingAutoPartStep(private vararg val values: String) : AbstractSte
     override fun previous() = PRICE
   },
 
-  PHOTO {
-    override fun next() = PHOTO
+  PHOTO("") {
+    override fun next() = COMPLETE
     override fun previous() = QUALITY
+  },
+
+  COMPLETE {
+    override fun next() = COMPLETE
+    override fun previous() = COMPLETE
   };
+
+  override fun isFinalStep() = this == COMPLETE
+
+  override fun isStepNotMandatory() = stepsWithMovementForward.contains(this)
 
   fun isAcceptable(value: String): Boolean {
     return this.values.firstOrNull { value.matches(Regex(it, RegexOption.IGNORE_CASE)) } != null
   }
 
-  companion object {
-    val stepsWithMovementForward = listOf(
+  private companion object {
+    private val stepsWithMovementForward = listOf(
       PART_NUMBER,
       DESCRIPTION,
       PRICE,
       QUALITY,
-      CURRENCY,
-      PHOTO
+      CURRENCY
     )
   }
 }

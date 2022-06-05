@@ -47,21 +47,27 @@ enum class CreatingCarStep(private vararg val values: String) : AbstractStep<Cre
 
   @FieldEnrich("engine-type")
   ENGINE_TYPE {
-    override fun next(): CreatingCarStep {
-      isComplete = true
-      return ENGINE_TYPE
-    }
+    override fun next() = COMPLETE
 
     override fun previous() = FUEL_TYPE
+  },
+
+  COMPLETE {
+    override fun next() = COMPLETE
+    override fun previous() = COMPLETE
   };
 
-  var isComplete = false
+  override fun isFinalStep() = this == COMPLETE
 
   fun isAcceptable(value: String): Boolean {
     return this.values.firstOrNull { value.matches(Regex(it, RegexOption.IGNORE_CASE)) } != null
   }
 
-  companion object {
+  override fun isStepNotMandatory(): Boolean {
+    return stepsWithMovementForward.contains(this)
+  }
+
+  private companion object {
     val stepsWithMovementForward = listOf(
       BODY, TRANSMISSION, ENGINE_CAPACITY, FUEL_TYPE, ENGINE_TYPE
     )

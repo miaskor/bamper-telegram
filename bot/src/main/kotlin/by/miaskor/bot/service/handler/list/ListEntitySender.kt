@@ -1,8 +1,10 @@
-package by.miaskor.bot.service
+package by.miaskor.bot.service.handler.list
 
 import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.configuration.settings.MessageSettings
-import by.miaskor.bot.domain.CallbackQuery
+import by.miaskor.bot.domain.CallbackCommand
+import by.miaskor.bot.service.MessageSender
+import by.miaskor.bot.service.chatId
 import by.miaskor.domain.api.domain.AutoPartResponse
 import by.miaskor.domain.api.domain.CarResponse
 import by.miaskor.domain.api.domain.ResponseWithLimit
@@ -17,14 +19,14 @@ object ListEntitySender {
     update: Update,
     responseWithLimit: ResponseWithLimit<T>,
     messageFunction: KFunction1<MessageSettings, String>,
-    componentsDisassembler: (T) -> Array<String>
+    entityDisassembler: (T) -> Array<String>
   ): Mono<Unit> {
     return Flux.fromIterable(responseWithLimit.entities)
       .skipLast(1)
-      .flatMap { sendMessage<T>(update.chatId, it, messageFunction, componentsDisassembler) }
+      .flatMap { sendMessage<T>(update.chatId, it, messageFunction, entityDisassembler) }
       .then(
         Mono.justOrEmpty(responseWithLimit.entities.lastOrNull())
-          .flatMap { sendLast(it, update.chatId, componentsDisassembler, messageFunction) }
+          .flatMap { sendLast(it, update.chatId, entityDisassembler, messageFunction) }
       )
   }
 
@@ -32,15 +34,15 @@ object ListEntitySender {
     chatId: Long,
     entity: T,
     messageFunction: KFunction1<MessageSettings, String>,
-    componentsDisassembler: (T) -> Array<String>
+    entityDisassembler: (T) -> Array<String>
   ): Mono<T> {
     return when (entity) {
-      is CarResponse -> MessageSender.sendMessage(chatId, messageFunction, *componentsDisassembler.invoke(entity))
+      is CarResponse -> MessageSender.sendMessage(chatId, messageFunction, *entityDisassembler.invoke(entity))
       is AutoPartResponse -> MessageSender.sendPhoto(
         chatId,
         entity.photo,
         messageFunction,
-        *componentsDisassembler.invoke(entity)
+        *entityDisassembler.invoke(entity)
       )
 
       else -> Mono.empty()
@@ -50,7 +52,7 @@ object ListEntitySender {
   private fun <T> sendLast(
     entity: T,
     chatId: Long,
-    componentsDisassembler: (T) -> Array<String>,
+    entityDisassembler: (T) -> Array<String>,
     messageFunction: KFunction1<MessageSettings, String>
   ): Mono<Unit> {
     return when (entity) {
@@ -58,8 +60,8 @@ object ListEntitySender {
         chatId,
         messageFunction,
         KeyboardSettings::keyboardForLists,
-        CallbackQuery.listCars,
-        *componentsDisassembler.invoke(entity)
+        CallbackCommand.listCars,
+        *entityDisassembler.invoke(entity)
       )
 
       is AutoPartResponse -> MessageSender.sendPhotoWithInlineKeyboard(
@@ -67,8 +69,8 @@ object ListEntitySender {
         entity.photo,
         messageFunction,
         KeyboardSettings::keyboardForLists,
-        CallbackQuery.listAutoParts,
-        *componentsDisassembler.invoke(entity)
+        CallbackCommand.listAutoParts,
+        *entityDisassembler.invoke(entity)
       )
 
       else -> Mono.empty()

@@ -1,10 +1,12 @@
-package by.miaskor.bot.service.carstep
+package by.miaskor.bot.service.step.car
 
 import by.miaskor.bot.configuration.settings.CreatingCarMessageSettings
+import by.miaskor.bot.domain.AbstractStepBuilder
 import by.miaskor.bot.domain.CarBuilder
 import by.miaskor.bot.domain.CreatingCarStep
 import by.miaskor.bot.domain.CreatingCarStep.BODY
 import by.miaskor.bot.domain.CreatingCarStep.BRAND_NAME
+import by.miaskor.bot.domain.CreatingCarStep.COMPLETE
 import by.miaskor.bot.domain.CreatingCarStep.ENGINE_CAPACITY
 import by.miaskor.bot.domain.CreatingCarStep.ENGINE_TYPE
 import by.miaskor.bot.domain.CreatingCarStep.FUEL_TYPE
@@ -13,24 +15,25 @@ import by.miaskor.bot.domain.CreatingCarStep.TRANSMISSION
 import by.miaskor.bot.domain.CreatingCarStep.YEAR
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.step.StepMessageResolver
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
 
-object CreatingCarStepMessageResolver {
+class CreatingCarStepMessageResolver : StepMessageResolver<CreatingCarStep> {
 
-  fun resolve(
+  override fun resolve(
     update: Update,
-    creatingCarStep: CreatingCarStep,
-    carBuilder: CarBuilder,
+    step: CreatingCarStep,
+    stepBuilder: AbstractStepBuilder<CreatingCarStep>,
     isValid: Boolean
   ): Mono<String> {
     return Mono.just(update.chatId)
       .resolveLanguage(CreatingCarMessageSettings::class)
       .flatMap { creatingCarMessage ->
         if (isValid)
-          resolveMessage(creatingCarStep, creatingCarMessage)
+          resolveMessage(step, creatingCarMessage)
         else
-          resolveInvalidMessage(creatingCarStep, creatingCarMessage, carBuilder)
+          resolveInvalidMessage(step, creatingCarMessage, stepBuilder as CarBuilder)
       }
   }
 
@@ -48,6 +51,7 @@ object CreatingCarStepMessageResolver {
         ENGINE_CAPACITY -> creatingCarMessage.engineCapacityMessage()
         FUEL_TYPE -> creatingCarMessage.fuelTypeMessage()
         ENGINE_TYPE -> creatingCarMessage.engineTypeMessage()
+        COMPLETE -> ""
       }
     }
   }
@@ -67,6 +71,7 @@ object CreatingCarStepMessageResolver {
         ENGINE_CAPACITY -> creatingCarMessage.invalidEngineCapacityMessage()
         FUEL_TYPE -> creatingCarMessage.invalidFuelTypeMessage()
         ENGINE_TYPE -> creatingCarMessage.invalidEngineTypeMessage()
+        COMPLETE -> ""
       }
     }
   }

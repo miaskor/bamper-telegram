@@ -16,11 +16,7 @@ import by.miaskor.bot.domain.BotState.MAIN_MENU
 import by.miaskor.bot.domain.BotState.MODIFICATION_STORE_HOUSE_MENU
 import by.miaskor.bot.domain.BotState.READ_ONLY_STORE_HOUSE_MENU
 import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
-import by.miaskor.bot.domain.CallbackQuery
-import by.miaskor.bot.domain.CreatingCarStep
-import by.miaskor.bot.domain.CreatingCarStep.BRAND_NAME
-import by.miaskor.bot.domain.CreatingCarStep.MODEL
-import by.miaskor.bot.domain.CreatingCarStep.YEAR
+import by.miaskor.bot.domain.CallbackCommand
 import by.miaskor.bot.domain.TelegramClient
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.cache.TelegramClientCache
@@ -69,13 +65,6 @@ class KeyboardBuilder(
       }
   }
 
-  fun buildCreatingCarStepKeyboard(creatingCarStep: CreatingCarStep, keyboardSettings: KeyboardSettings): Keyboard {
-    return when (creatingCarStep) {
-      BRAND_NAME, MODEL, YEAR -> buildReplyKeyboard(keyboardSettings.keyboardForMandatorySteps())
-      else -> buildReplyKeyboard(keyboardSettings.keyboardForNotMandatorySteps())
-    }
-  }
-
   fun buildReplyKeyboard(keyboardButtons: List<String>): Keyboard {
     val buttons = keyboardButtons.chunked(2)
       .map { it.toTypedArray() }
@@ -83,13 +72,13 @@ class KeyboardBuilder(
     return ReplyKeyboardMarkup(buttons, true, false, true)
   }
 
-  fun buildInlineKeyboard(keyboardButtons: List<String>, callbackQuery: List<CallbackQuery>): Keyboard {
-    if (keyboardButtons.size != callbackQuery.size) {
+  fun buildInlineKeyboard(keyboardButtons: List<String>, callbackCommand: List<CallbackCommand>): Keyboard {
+    if (keyboardButtons.size != callbackCommand.size) {
       throw IllegalArgumentException("Keyboard buttons and callback queries sizes might be the same")
     }
 
     val buttons = keyboardButtons
-      .zip(callbackQuery)
+      .zip(callbackCommand)
       .map { InlineKeyboardButton(it.first).callbackData(it.second.name) }
       .chunked(2)
       .map { it.toTypedArray() }
