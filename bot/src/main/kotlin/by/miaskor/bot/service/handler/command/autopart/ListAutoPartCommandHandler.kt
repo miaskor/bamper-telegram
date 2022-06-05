@@ -1,11 +1,11 @@
 package by.miaskor.bot.service.handler.command.autopart
 
-import by.miaskor.bot.domain.CallbackQuery
+import by.miaskor.bot.domain.CallbackCommand
 import by.miaskor.bot.domain.Command
-import by.miaskor.bot.service.ListEntityHandler
 import by.miaskor.bot.service.cache.AbstractListCache
 import by.miaskor.bot.service.chatId
 import by.miaskor.bot.service.handler.command.CommandHandler
+import by.miaskor.bot.service.handler.list.ListEntityHandler
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
 
@@ -18,6 +18,6 @@ class ListAutoPartCommandHandler(
   override fun handle(update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
       .doOnNext { autoPartListCache.evict(it) }
-      .flatMap { listEntityHandler.handle(update, CallbackQuery.AUTO_PARTS_PREV) }
+      .flatMap { listEntityHandler.handle(update, CallbackCommand.AUTO_PARTS_PREV) }
   }
 }

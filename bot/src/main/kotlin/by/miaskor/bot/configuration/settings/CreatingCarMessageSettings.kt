@@ -17,5 +17,4 @@ interface CreatingCarMessageSettings {
   fun invalidFuelTypeMessage(): String
   fun engineTypeMessage(): String
   fun invalidEngineTypeMessage(): String
-  fun completeCreatingMessage(): String
 }

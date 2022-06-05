@@ -16,25 +16,29 @@ import javax.annotation.PostConstruct
 open class ApplicationConfiguration(
   private val serviceConfiguration: ServiceConfiguration,
   private val registryConfiguration: RegistryConfiguration,
+  private val commandHandlerConfiguration: CommandHandlerConfiguration,
+  private val botStateHandlerConfiguration: BotStateHandlerConfiguration,
   private val confProvider: ConfigurationProvider,
+  private val cacheConfiguration: CacheConfiguration,
   private val botConfiguration: BotConfiguration
 ) {
 
   @PostConstruct
   fun init() {
-    BotStateChanger.telegramClientCache = serviceConfiguration.telegramClientCache()
-    BotStateChanger.listEntityCacheRegistry = serviceConfiguration.listEntityCacheRegistry()
+    BotStateChanger.telegramClientCache = cacheConfiguration.telegramClientCache()
+    BotStateChanger.listEntityCacheRegistry = cacheConfiguration.listEntityCacheRegistry()
+    BotStateChanger.carBuilderCache = cacheConfiguration.carBuilderCache()
     LanguageSettingsResolver.apply {
       messageSettingsRegistry = registryConfiguration.messageSettingsRegistry()
       keyboardSettingsRegistry = registryConfiguration.keyboardSettingsRegistry()
-      telegramClientCache = serviceConfiguration.telegramClientCache()
+      telegramClientCache = cacheConfiguration.telegramClientCache()
       creatingCarMessageSettingsRegistry = registryConfiguration.creatingCarMessageSettingsRegistry()
       creatingAutoPartMessageSettingsRegistry = registryConfiguration.creatingAutoPartMessageSettingsRegistry()
     }
     CommandResolver.apply {
-      commandHandlerRegistry = registryConfiguration.commandHandlerRegistry()
-      botStateHandlerRegistry = registryConfiguration.botStateHandlerRegistry()
-      callBackQueryHandlerRegistry = registryConfiguration.callBackQueryHandlerRegistry()
+      commandHandlerRegistry = commandHandlerConfiguration.commandHandlerRegistry()
+      botStateHandlerRegistry = botStateHandlerConfiguration.botStateHandlerRegistry()
+      callBackCommandHandler = commandHandlerConfiguration.callBackCommandHandler()
     }
     FieldEnricher.apply {
       configurationProvider = confProvider

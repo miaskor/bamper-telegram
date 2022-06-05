@@ -76,6 +76,9 @@ enum class Command(private vararg val commands: String) {
   @FieldEnrich("entityIds", "commands")
   DELETE_AUTO_PART,
 
+  @FieldEnrich("findAutoParts", "commands")
+  FIND_AUTO_PART,
+
   @FieldEnrich("undefined", "commands")
   UNDEFINED;
 

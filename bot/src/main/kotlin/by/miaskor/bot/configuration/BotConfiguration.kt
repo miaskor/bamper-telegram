@@ -1,6 +1,5 @@
 package by.miaskor.bot.configuration
 
-import by.miaskor.bot.service.carstep.ProcessingStepService
 import by.miaskor.bot.telegram.Bot
 import com.pengrad.telegrambot.TelegramBot
 import okhttp3.OkHttpClient
@@ -10,7 +9,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 open class BotConfiguration(
   private val settingsConfiguration: SettingsConfiguration,
-  private val serviceConfiguration: ServiceConfiguration
+  private val cacheConfiguration: CacheConfiguration
 ) {
 
   @Bean
@@ -25,16 +24,7 @@ open class BotConfiguration(
   open fun bot(): Bot {
     return Bot(
       telegramBot(),
-      serviceConfiguration.telegramClientCache()
-    )
-  }
-
-  @Bean
-  open fun processingStepService(): ProcessingStepService {
-    return ProcessingStepService(
-      serviceConfiguration.creationCarStepValidation(),
-      serviceConfiguration.keyboardBuilder(),
-      telegramBot()
+      cacheConfiguration.telegramClientCache()
     )
   }
 }

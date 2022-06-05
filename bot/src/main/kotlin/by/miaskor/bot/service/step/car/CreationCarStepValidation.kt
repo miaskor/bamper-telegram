@@ -1,24 +1,32 @@
-package by.miaskor.bot.service.carstep
+package by.miaskor.bot.service.step.car
 
+import by.miaskor.bot.domain.AbstractStepBuilder
 import by.miaskor.bot.domain.CarBuilder
 import by.miaskor.bot.domain.CreatingCarStep
 import by.miaskor.bot.domain.CreatingCarStep.BRAND_NAME
 import by.miaskor.bot.domain.CreatingCarStep.MODEL
+import by.miaskor.bot.service.step.StepValidator
+import by.miaskor.bot.service.text
 import by.miaskor.domain.api.connector.BrandConnector
 import by.miaskor.domain.api.domain.BrandDto
+import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
 
 class CreationCarStepValidation(
   private val brandConnector: BrandConnector
-) {
-
-  fun validate(creatingCarStep: CreatingCarStep, message: String, carBuilder: CarBuilder): Mono<Boolean> {
-    return Mono.just(message)
-      .filter(creatingCarStep::isAcceptable)
+) : StepValidator<CreatingCarStep> {
+  override fun validate(
+    step: CreatingCarStep,
+    update: Update,
+    stepBuilder: AbstractStepBuilder<CreatingCarStep>
+  ): Mono<Boolean> {
+    val carBuilder = stepBuilder as CarBuilder
+    return Mono.just(update.text)
+      .filter(step::isAcceptable)
       .flatMap {
-        when (creatingCarStep) {
+        when (step) {
           BRAND_NAME -> {
-            Mono.just(message)
+            Mono.just(update.text)
               .flatMap(brandConnector::getByBrandName)
               .hasElement()
           }
@@ -27,7 +35,7 @@ class CreationCarStepValidation(
             Mono.fromSupplier {
               BrandDto(
                 brandName = carBuilder.getBrandName(),
-                model = message
+                model = update.text
               )
             }.flatMap(brandConnector::getByBrandNameAndModel)
               .doOnNext { carBuilder.brandId(it.id) }

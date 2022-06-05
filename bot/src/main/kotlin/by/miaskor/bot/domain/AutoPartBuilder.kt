@@ -2,7 +2,9 @@ package by.miaskor.bot.domain
 
 import by.miaskor.domain.api.domain.AutoPartDto
 
-class AutoPartBuilder {
+class AutoPartBuilder(
+  override var step: CreatingAutoPartStep = CreatingAutoPartStep.CAR
+) : AbstractStepBuilder<CreatingAutoPartStep>() {
   private lateinit var carIdValue: String
   private lateinit var carPartIdValue: String
   private lateinit var descriptionValue: String
@@ -11,8 +13,6 @@ class AutoPartBuilder {
   private lateinit var currencyValue: String
   private lateinit var partNumberValue: String
   private lateinit var photoIdValue: String
-
-  private var autoPartStep: CreatingAutoPartStep = CreatingAutoPartStep.CAR
 
   fun carId(carId: Long): AutoPartBuilder {
     this.carIdValue = carId.toString()
@@ -51,20 +51,6 @@ class AutoPartBuilder {
 
   fun photoId(photoId: String): AutoPartBuilder {
     this.photoIdValue = photoId
-    return this
-  }
-
-  fun nextStep(): AutoPartBuilder {
-    this.autoPartStep = autoPartStep.next()
-    return this
-  }
-
-  fun currentStep(): CreatingAutoPartStep {
-    return this.autoPartStep
-  }
-
-  fun previousStep(): AutoPartBuilder {
-    this.autoPartStep = autoPartStep.previous()
     return this
   }
 

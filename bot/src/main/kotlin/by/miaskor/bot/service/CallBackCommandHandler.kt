@@ -1,21 +1,19 @@
 package by.miaskor.bot.service
 
-import by.miaskor.bot.configuration.settings.KeyboardSettings
-import by.miaskor.bot.domain.CallbackQuery.AUTO_PARTS_NEXT
-import by.miaskor.bot.domain.CallbackQuery.AUTO_PARTS_PREV
-import by.miaskor.bot.domain.CallbackQuery.CARS_NEXT
-import by.miaskor.bot.domain.CallbackQuery.CARS_PREV
-import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
+import by.miaskor.bot.domain.CallbackCommand.AUTO_PARTS_NEXT
+import by.miaskor.bot.domain.CallbackCommand.AUTO_PARTS_PREV
+import by.miaskor.bot.domain.CallbackCommand.CARS_NEXT
+import by.miaskor.bot.domain.CallbackCommand.CARS_PREV
+import by.miaskor.bot.service.handler.list.ListEntityHandler
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
 
-class CallBackQueryHandlerRegistry(
+class CallBackCommandHandler(
   private val listEntityHandler: ListEntityHandler
 ) {
 
   fun handle(update: Update): Mono<Unit> {
     return Mono.just(update.chatId)
-      .resolveLanguage(KeyboardSettings::class)
       .flatMap {
         listEntityHandler.let {
           when (update.callbackQuery().data()) {

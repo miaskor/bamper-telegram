@@ -15,5 +15,4 @@ interface CreatingAutoPartMessageSettings {
   fun qualityInvalidMessage(): String
   fun photoMessage(): String
   fun photoInvalidMessage(): String
-  fun completeMessage(): String
 }

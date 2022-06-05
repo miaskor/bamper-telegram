@@ -1,6 +1,6 @@
 package by.miaskor.bot.domain
 
-enum class CallbackQuery {
+enum class CallbackCommand {
   CARS_NEXT,
   CARS_PREV,
   AUTO_PARTS_NEXT,

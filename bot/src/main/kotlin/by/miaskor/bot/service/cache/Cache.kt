@@ -5,7 +5,7 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.Caffeine
 import java.time.Duration
 
-abstract class Cache<K, V>(
+open class Cache<K, V>(
   cacheSettings: CacheSettings
 ) {
 
@@ -14,8 +14,13 @@ abstract class Cache<K, V>(
     .maximumSize(cacheSettings.size())
     .build()
 
-  open fun populate(key: K, value: V) {
+  open fun populate(key: K, value: V): V {
     cache.put(key, value)
+    return value
+  }
+
+  open fun getOrPopulate(key: K, defValue: V): V {
+    return cache.getIfPresent(key) ?: populate(key, defValue)
   }
 
   open fun isExists(key: K): Boolean {

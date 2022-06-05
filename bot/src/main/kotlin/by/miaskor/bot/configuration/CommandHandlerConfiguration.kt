@@ -10,6 +10,7 @@ import by.miaskor.bot.domain.BotState.CREATING_STORE_HOUSE
 import by.miaskor.bot.domain.BotState.DELETING_AUTO_PART
 import by.miaskor.bot.domain.BotState.DELETING_CAR
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
+import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART
 import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
 import by.miaskor.bot.domain.Command.ADD_EMPLOYEE
 import by.miaskor.bot.domain.Command.ADD_EMPLOYEE_TO_STORE_HOUSE
@@ -20,10 +21,13 @@ import by.miaskor.bot.domain.Command.CREATE_STORE_HOUSE
 import by.miaskor.bot.domain.Command.DELETE_AUTO_PARTS
 import by.miaskor.bot.domain.Command.DELETE_CARS
 import by.miaskor.bot.domain.Command.EMPLOYEES
+import by.miaskor.bot.domain.Command.FIND_AUTO_PART
 import by.miaskor.bot.domain.Command.REMOVE_EMPLOYEE
+import by.miaskor.bot.service.CallBackCommandHandler
 import by.miaskor.bot.service.handler.command.BackCommandHandler
 import by.miaskor.bot.service.handler.command.ChangingBotStateCommandHandler
 import by.miaskor.bot.service.handler.command.CommandHandler
+import by.miaskor.bot.service.handler.command.CommandHandlerRegistry
 import by.miaskor.bot.service.handler.command.UndefinedCommandHandler
 import by.miaskor.bot.service.handler.command.autopart.DeleteAutoPartCommandHandler
 import by.miaskor.bot.service.handler.command.autopart.ListAutoPartCommandHandler
@@ -38,6 +42,11 @@ import by.miaskor.bot.service.handler.command.language.LanguageCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.ChooseStoreHouseCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.SelectCertainStoreHouseCommandHandler
 import by.miaskor.bot.service.handler.command.storehouse.StoreHouseCommandHandler
+import by.miaskor.bot.service.handler.list.ListAutoPartHandler
+import by.miaskor.bot.service.handler.list.ListCarHandler
+import by.miaskor.bot.service.handler.list.ListEntityHandler
+import by.miaskor.bot.service.handler.list.ListEntityHandlerRegistry
+import by.miaskor.bot.service.handler.list.ListHandler
 import com.pengrad.telegrambot.TelegramBot
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -46,8 +55,61 @@ import org.springframework.context.annotation.Configuration
 open class CommandHandlerConfiguration(
   private val telegramBot: TelegramBot,
   private val serviceConfiguration: ServiceConfiguration,
+  private val cacheConfiguration: CacheConfiguration,
+  private val settingsConfiguration: SettingsConfiguration,
   private val connectorConfiguration: ConnectorConfiguration
 ) {
+
+  @Bean
+  open fun listEntityHandler(): ListEntityHandler {
+    return ListEntityHandler(
+      cacheConfiguration.listEntityCacheRegistry(),
+      listEntityHandlerRegistry()
+    )
+  }
+
+  @Bean
+  open fun callBackCommandHandler(): CallBackCommandHandler {
+    return CallBackCommandHandler(listEntityHandler())
+  }
+
+  @Bean
+  open fun commandHandlerRegistry(): CommandHandlerRegistry {
+    return CommandHandlerRegistry(
+      addEmployeeToStoreHouseCommandHandler(),
+      changeLanguageCommandHandler(),
+      employeesCommandHandler(),
+      backCommandHandler(),
+      undefinedCommandHandler(),
+      addEmployeeCommandHandler(),
+      listEmployeeCommandHandler(),
+      languageCommandHandler(),
+      employeeCommandHandler(),
+      addingEmployeeToStoreHouseCommandHandler(),
+      removeEmployeeCommandHandler(),
+      createStoreHouseCommandHandler(),
+      storeHouseCommandHandler(),
+      chooseStoreHouseCommandHandler(),
+      selectCertainStoreHouseCommandHandler(),
+      createAutoPartCommandHandler(),
+      listCarCommandHandler(),
+      deleteAutoPartCommandHandler(),
+      deleteCarCommandHandler(),
+      listAutoPartCommandHandler(),
+      deleteCarsCommandHandler(),
+      deleteAutoPartsCommandHandler(),
+      findAutoPartsCommandHandler(),
+      createCarCommandHandler()
+    )
+  }
+
+  @Bean
+  open fun listEntityHandlerRegistry(): ListEntityHandlerRegistry {
+    return ListEntityHandlerRegistry(
+      listCarHandler(),
+      listAutoPartHandler()
+    )
+  }
 
   @Bean
   open fun deleteAutoPartsCommandHandler(): CommandHandler {
@@ -56,6 +118,17 @@ open class CommandHandlerConfiguration(
       serviceConfiguration.keyboardBuilder(),
       DELETE_AUTO_PARTS,
       DELETING_AUTO_PART,
+      MessageSettings::deletingAutoPartMessage
+    )
+  }
+
+  @Bean
+  open fun findAutoPartsCommandHandler(): CommandHandler {
+    return ChangingBotStateCommandHandler(
+      telegramBot,
+      serviceConfiguration.keyboardBuilder(),
+      FIND_AUTO_PART,
+      FINDING_AUTO_PART,
       MessageSettings::deletingAutoPartMessage
     )
   }
@@ -97,7 +170,7 @@ open class CommandHandlerConfiguration(
   open fun undefinedCommandHandler(): CommandHandler {
     return UndefinedCommandHandler(
       telegramBot,
-      serviceConfiguration.telegramClientCache()
+      cacheConfiguration.telegramClientCache()
     )
   }
 
@@ -116,15 +189,15 @@ open class CommandHandlerConfiguration(
   open fun listEmployeeCommandHandler(): CommandHandler {
     return ListEmployeeCommandHandler(
       connectorConfiguration.telegramClientConnector(),
-      serviceConfiguration.telegramClientCache()
+      cacheConfiguration.telegramClientCache()
     )
   }
 
   @Bean
   open fun listCarCommandHandler(): CommandHandler {
     return ListCarCommandHandler(
-      serviceConfiguration.listEntityHandler(),
-      serviceConfiguration.carListEntityCache()
+      listEntityHandler(),
+      cacheConfiguration.carListEntityCache()
     )
   }
 
@@ -132,7 +205,7 @@ open class CommandHandlerConfiguration(
   open fun deleteCarCommandHandler(): CommandHandler {
     return DeleteCarCommandHandler(
       connectorConfiguration.carConnector(),
-      serviceConfiguration.telegramClientCache()
+      cacheConfiguration.telegramClientCache()
     )
   }
 
@@ -140,15 +213,15 @@ open class CommandHandlerConfiguration(
   open fun deleteAutoPartCommandHandler(): CommandHandler {
     return DeleteAutoPartCommandHandler(
       connectorConfiguration.autoPartConnector(),
-      serviceConfiguration.telegramClientCache()
+      cacheConfiguration.telegramClientCache()
     )
   }
 
   @Bean
   open fun listAutoPartCommandHandler(): CommandHandler {
     return ListAutoPartCommandHandler(
-      serviceConfiguration.listEntityHandler(),
-      serviceConfiguration.autoPartListEntityCache()
+      listEntityHandler(),
+      cacheConfiguration.autoPartListEntityCache()
     )
   }
 
@@ -166,7 +239,7 @@ open class CommandHandlerConfiguration(
   @Bean
   open fun backCommandHandler(): CommandHandler {
     return BackCommandHandler(
-      serviceConfiguration.telegramClientCache(),
+      cacheConfiguration.telegramClientCache(),
       telegramBot,
       serviceConfiguration.keyboardBuilder()
     )
@@ -220,7 +293,7 @@ open class CommandHandlerConfiguration(
   open fun chooseStoreHouseCommandHandler(): CommandHandler {
     return ChooseStoreHouseCommandHandler(
       connectorConfiguration.storeHouseConnector(),
-      serviceConfiguration.telegramClientCache()
+      cacheConfiguration.telegramClientCache()
     )
   }
 
@@ -228,7 +301,7 @@ open class CommandHandlerConfiguration(
   open fun selectCertainStoreHouseCommandHandler(): CommandHandler {
     return SelectCertainStoreHouseCommandHandler(
       serviceConfiguration.keyboardBuilder(),
-      serviceConfiguration.telegramClientCache(),
+      cacheConfiguration.telegramClientCache(),
       telegramBot
     )
   }
@@ -242,7 +315,7 @@ open class CommandHandlerConfiguration(
   open fun languageCommandHandler(): CommandHandler {
     return LanguageCommandHandler(
       connectorConfiguration.telegramClientConnector(),
-      serviceConfiguration.telegramClientCache(),
+      cacheConfiguration.telegramClientCache(),
     )
   }
 
@@ -251,7 +324,7 @@ open class CommandHandlerConfiguration(
     return EmployeeCommandHandler(
       removingEmployeeCommandHandler(),
       addingEmployeeCommandHandler(),
-      serviceConfiguration.telegramClientCache(),
+      cacheConfiguration.telegramClientCache(),
     )
   }
 
@@ -259,7 +332,7 @@ open class CommandHandlerConfiguration(
   open fun addingEmployeeToStoreHouseCommandHandler(): CommandHandler {
     return AddingEmployeeToStoreHouseCommandHandler(
       connectorConfiguration.telegramClientConnector(),
-      serviceConfiguration.telegramClientCache(),
+      cacheConfiguration.telegramClientCache(),
       connectorConfiguration.workerStoreHouseConnector(),
       connectorConfiguration.workerTelegramConnector()
     )
@@ -270,7 +343,7 @@ open class CommandHandlerConfiguration(
     return AddingEmployeeCommandHandler(
       connectorConfiguration.telegramClientConnector(),
       connectorConfiguration.workerTelegramConnector(),
-      serviceConfiguration.telegramClientCache(),
+      cacheConfiguration.telegramClientCache(),
     )
   }
 
@@ -279,7 +352,25 @@ open class CommandHandlerConfiguration(
     return RemovingEmployeeCommandHandler(
       connectorConfiguration.telegramClientConnector(),
       connectorConfiguration.workerTelegramConnector(),
-      serviceConfiguration.telegramClientCache(),
+      cacheConfiguration.telegramClientCache(),
+    )
+  }
+
+  @Bean
+  open fun listCarHandler(): ListHandler {
+    return ListCarHandler(
+      connectorConfiguration.carConnector(),
+      settingsConfiguration.listSettings(),
+      cacheConfiguration.telegramClientCache()
+    )
+  }
+
+  @Bean
+  open fun listAutoPartHandler(): ListHandler {
+    return ListAutoPartHandler(
+      settingsConfiguration.listSettings(),
+      connectorConfiguration.autoPartConnector(),
+      cacheConfiguration.telegramClientCache()
     )
   }
 }

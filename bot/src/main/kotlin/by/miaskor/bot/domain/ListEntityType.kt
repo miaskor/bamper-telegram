@@ -1,11 +1,11 @@
 package by.miaskor.bot.domain
 
-import by.miaskor.bot.domain.CallbackQuery.AUTO_PARTS_NEXT
-import by.miaskor.bot.domain.CallbackQuery.AUTO_PARTS_PREV
-import by.miaskor.bot.domain.CallbackQuery.CARS_NEXT
-import by.miaskor.bot.domain.CallbackQuery.CARS_PREV
+import by.miaskor.bot.domain.CallbackCommand.AUTO_PARTS_NEXT
+import by.miaskor.bot.domain.CallbackCommand.AUTO_PARTS_PREV
+import by.miaskor.bot.domain.CallbackCommand.CARS_NEXT
+import by.miaskor.bot.domain.CallbackCommand.CARS_PREV
 
-enum class ListEntityType(private vararg val callbackQuery: CallbackQuery) {
+enum class ListEntityType(private vararg val callbackCommand: CallbackCommand) {
 
   AUTO_PART(AUTO_PARTS_PREV, AUTO_PARTS_NEXT) {
     override fun next() = AUTO_PARTS_NEXT
@@ -16,12 +16,12 @@ enum class ListEntityType(private vararg val callbackQuery: CallbackQuery) {
     override fun prev() = CARS_PREV
   };
 
-  abstract fun next(): CallbackQuery
-  abstract fun prev(): CallbackQuery
+  abstract fun next(): CallbackCommand
+  abstract fun prev(): CallbackCommand
 
   companion object {
-    fun getByCallbackQuery(callbackQuery: CallbackQuery): ListEntityType {
-      return values().first { it.callbackQuery.contains(callbackQuery) }
+    fun getByCallbackCommand(callbackCommand: CallbackCommand): ListEntityType {
+      return values().first { it.callbackCommand.contains(callbackCommand) }
     }
   }
 }

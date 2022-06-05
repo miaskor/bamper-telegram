@@ -2,7 +2,9 @@ package by.miaskor.bot.domain
 
 import by.miaskor.domain.api.domain.CarDto
 
-class CarBuilder {
+class CarBuilder(
+  override var step: CreatingCarStep = CreatingCarStep.BRAND_NAME
+) : AbstractStepBuilder<CreatingCarStep>() {
   private lateinit var brandIdValue: String
   private lateinit var brandNameValue: String
   private lateinit var modelValue: String
@@ -12,7 +14,6 @@ class CarBuilder {
   private lateinit var engineCapacityValue: String
   private lateinit var fuelTypeValue: String
   private lateinit var engineTypeValue: String
-  private var carStep: CreatingCarStep = CreatingCarStep.BRAND_NAME
 
   fun brandId(brandId: Long): CarBuilder {
     this.brandIdValue = brandId.toString()
@@ -56,20 +57,6 @@ class CarBuilder {
 
   fun engineType(engineType: String): CarBuilder {
     this.engineTypeValue = engineType
-    return this
-  }
-
-  fun nextStep(): CarBuilder {
-    this.carStep = carStep.next()
-    return this
-  }
-
-  fun currentStep(): CreatingCarStep {
-    return this.carStep
-  }
-
-  fun previousStep(): CarBuilder {
-    this.carStep = carStep.previous()
     return this
   }
 

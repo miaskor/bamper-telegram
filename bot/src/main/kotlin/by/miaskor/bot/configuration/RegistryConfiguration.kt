@@ -6,66 +6,14 @@ import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.Language.ENGLISH
 import by.miaskor.bot.domain.Language.RUSSIAN
-import by.miaskor.bot.service.CallBackQueryHandlerRegistry
 import by.miaskor.bot.service.LanguageSettingsRegistry
-import by.miaskor.bot.service.handler.command.CommandHandlerRegistry
-import by.miaskor.bot.service.handler.state.BotStateHandlerRegistry
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 open class RegistryConfiguration(
-  private val settingsConfiguration: SettingsConfiguration,
-  private val commandHandlerConfiguration: CommandHandlerConfiguration,
-  private val botStateHandlerConfiguration: BotStateHandlerConfiguration,
-  private val connectorConfiguration: ConnectorConfiguration,
-  private val serviceConfiguration: ServiceConfiguration
+  private val settingsConfiguration: SettingsConfiguration
 ) {
-
-  @Bean
-  open fun botStateHandlerRegistry(): BotStateHandlerRegistry {
-    return BotStateHandlerRegistry(
-      botStateHandlerConfiguration.mainMenuHandler(),
-      botStateHandlerConfiguration.greetingsHandler(),
-      botStateHandlerConfiguration.employeesMenuHandler(),
-      botStateHandlerConfiguration.creatingCarHandler(),
-      botStateHandlerConfiguration.creatingAutoPartHandler()
-    )
-  }
-
-  @Bean
-  open fun commandHandlerRegistry(): CommandHandlerRegistry {
-    return CommandHandlerRegistry(
-      commandHandlerConfiguration.addEmployeeToStoreHouseCommandHandler(),
-      commandHandlerConfiguration.changeLanguageCommandHandler(),
-      commandHandlerConfiguration.employeesCommandHandler(),
-      commandHandlerConfiguration.backCommandHandler(),
-      commandHandlerConfiguration.undefinedCommandHandler(),
-      commandHandlerConfiguration.addEmployeeCommandHandler(),
-      commandHandlerConfiguration.listEmployeeCommandHandler(),
-      commandHandlerConfiguration.languageCommandHandler(),
-      commandHandlerConfiguration.employeeCommandHandler(),
-      commandHandlerConfiguration.addingEmployeeToStoreHouseCommandHandler(),
-      commandHandlerConfiguration.removeEmployeeCommandHandler(),
-      commandHandlerConfiguration.createStoreHouseCommandHandler(),
-      commandHandlerConfiguration.storeHouseCommandHandler(),
-      commandHandlerConfiguration.chooseStoreHouseCommandHandler(),
-      commandHandlerConfiguration.selectCertainStoreHouseCommandHandler(),
-      commandHandlerConfiguration.createAutoPartCommandHandler(),
-      commandHandlerConfiguration.listCarCommandHandler(),
-      commandHandlerConfiguration.deleteAutoPartCommandHandler(),
-      commandHandlerConfiguration.deleteCarCommandHandler(),
-      commandHandlerConfiguration.listAutoPartCommandHandler(),
-      commandHandlerConfiguration.deleteCarsCommandHandler(),
-      commandHandlerConfiguration.deleteAutoPartsCommandHandler(),
-      commandHandlerConfiguration.createCarCommandHandler()
-    )
-  }
-
-  @Bean
-  open fun callBackQueryHandlerRegistry(): CallBackQueryHandlerRegistry {
-    return CallBackQueryHandlerRegistry(serviceConfiguration.listEntityHandler())
-  }
 
   @Bean
   open fun keyboardSettingsRegistry(): LanguageSettingsRegistry<KeyboardSettings> {
