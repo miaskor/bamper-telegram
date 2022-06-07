@@ -5,8 +5,8 @@ import by.miaskor.bot.domain.CarBuilder
 import by.miaskor.bot.domain.CreatingCarStep
 import by.miaskor.bot.domain.CreatingCarStep.BRAND_NAME
 import by.miaskor.bot.domain.CreatingCarStep.MODEL
+import by.miaskor.bot.service.extension.text
 import by.miaskor.bot.service.step.StepValidator
-import by.miaskor.bot.service.text
 import by.miaskor.domain.api.connector.BrandConnector
 import by.miaskor.domain.api.domain.BrandDto
 import com.pengrad.telegrambot.model.Update

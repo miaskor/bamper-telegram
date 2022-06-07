@@ -5,6 +5,6 @@ data class FindAutoPartDto(
   val model: String = "",
   val brand: String = "",
   val year: String = "",
-  val autoPart: String = "",
+  val autoPartId: String = "",
   val storeHouseId: Long
 )

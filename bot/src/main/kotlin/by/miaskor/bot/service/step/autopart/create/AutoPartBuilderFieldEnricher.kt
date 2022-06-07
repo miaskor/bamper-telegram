@@ -1,4 +1,4 @@
-package by.miaskor.bot.service.step.autopart
+package by.miaskor.bot.service.step.autopart.create
 
 import by.miaskor.bot.domain.AbstractStepBuilder
 import by.miaskor.bot.domain.AutoPartBuilder
@@ -10,9 +10,9 @@ import by.miaskor.bot.domain.CreatingAutoPartStep.PART_NUMBER
 import by.miaskor.bot.domain.CreatingAutoPartStep.PHOTO
 import by.miaskor.bot.domain.CreatingAutoPartStep.PRICE
 import by.miaskor.bot.domain.CreatingAutoPartStep.QUALITY
-import by.miaskor.bot.service.photoId
+import by.miaskor.bot.service.extension.photoId
+import by.miaskor.bot.service.extension.text
 import by.miaskor.bot.service.step.StepBuilderFieldEnricher
-import by.miaskor.bot.service.text
 import com.pengrad.telegrambot.model.Update
 
 class AutoPartBuilderFieldEnricher : StepBuilderFieldEnricher<CreatingAutoPartStep> {

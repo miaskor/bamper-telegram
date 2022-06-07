@@ -4,6 +4,7 @@ import by.miaskor.bot.domain.CallbackCommand.AUTO_PARTS_NEXT
 import by.miaskor.bot.domain.CallbackCommand.AUTO_PARTS_PREV
 import by.miaskor.bot.domain.CallbackCommand.CARS_NEXT
 import by.miaskor.bot.domain.CallbackCommand.CARS_PREV
+import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.handler.list.ListEntityHandler
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono

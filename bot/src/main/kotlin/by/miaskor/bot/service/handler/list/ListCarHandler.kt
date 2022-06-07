@@ -5,7 +5,7 @@ import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.ListEntityType.CAR
 import by.miaskor.bot.service.cache.AbstractListCache
 import by.miaskor.bot.service.cache.TelegramClientCache
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.handler.list.ListEntitySender.sendEntities
 import by.miaskor.domain.api.connector.CarConnector
 import by.miaskor.domain.api.domain.CarResponse

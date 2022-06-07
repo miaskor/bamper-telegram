@@ -7,10 +7,12 @@ object FieldEnricher {
 
   lateinit var configurationProvider: ConfigurationProvider
 
-  fun enrich(clazz: Class<*>) {
-    clazz.declaredFields.forEach { field ->
-      if (field.isEnumConstant) {
-        enrichField(field, clazz)
+  fun enrich(vararg classes: Class<*>) {
+    classes.forEach { clazz ->
+      clazz.declaredFields.forEach { field ->
+        if (field.isEnumConstant) {
+          enrichField(field, clazz)
+        }
       }
     }
   }

@@ -5,9 +5,9 @@ import by.miaskor.bot.domain.Command.EMPLOYEE_TO_STORE_HOUSE
 import by.miaskor.bot.domain.TelegramClient
 import by.miaskor.bot.service.MessageSender.sendMessage
 import by.miaskor.bot.service.cache.TelegramClientCache
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
+import by.miaskor.bot.service.extension.text
 import by.miaskor.bot.service.handler.command.CommandHandler
-import by.miaskor.bot.service.text
 import by.miaskor.domain.api.connector.TelegramClientConnector
 import by.miaskor.domain.api.connector.WorkerStoreHouseConnector
 import by.miaskor.domain.api.connector.WorkerTelegramConnector

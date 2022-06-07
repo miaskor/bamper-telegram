@@ -3,12 +3,11 @@ package by.miaskor.bot.service.handler.command.storehouse
 import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.Command.STORE_HOUSE
 import by.miaskor.bot.service.MessageSender.sendMessage
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
+import by.miaskor.bot.service.extension.text
 import by.miaskor.bot.service.handler.command.CommandHandler
-import by.miaskor.bot.service.text
 import by.miaskor.domain.api.connector.StoreHouseConnector
 import by.miaskor.domain.api.domain.StoreHouseDto
-import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
 

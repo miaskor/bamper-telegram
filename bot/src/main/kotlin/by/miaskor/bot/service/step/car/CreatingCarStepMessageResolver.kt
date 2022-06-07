@@ -14,7 +14,7 @@ import by.miaskor.bot.domain.CreatingCarStep.MODEL
 import by.miaskor.bot.domain.CreatingCarStep.TRANSMISSION
 import by.miaskor.bot.domain.CreatingCarStep.YEAR
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.step.StepMessageResolver
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono

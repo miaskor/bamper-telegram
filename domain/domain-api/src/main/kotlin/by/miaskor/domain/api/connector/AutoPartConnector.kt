@@ -2,6 +2,7 @@ package by.miaskor.domain.api.connector
 
 import by.miaskor.domain.api.domain.AutoPartDto
 import by.miaskor.domain.api.domain.AutoPartResponse
+import by.miaskor.domain.api.domain.FindAutoPartDto
 import by.miaskor.domain.api.domain.ResponseWithLimit
 import by.miaskor.domain.api.domain.StoreHouseIdRequest
 import org.springframework.web.reactive.function.BodyInserters
@@ -17,6 +18,14 @@ class AutoPartConnector(
     return webClient.post()
       .uri("/auto-part")
       .body(BodyInserters.fromValue(autoPartDto))
+      .retrieve()
+      .bodyToMono()
+  }
+
+  fun isExistsByProperties(findAutoPartDto: FindAutoPartDto): Mono<Boolean> {
+    return webClient.post()
+      .uri("/auto-part/find")
+      .body(BodyInserters.fromValue(findAutoPartDto))
       .retrieve()
       .bodyToMono()
   }

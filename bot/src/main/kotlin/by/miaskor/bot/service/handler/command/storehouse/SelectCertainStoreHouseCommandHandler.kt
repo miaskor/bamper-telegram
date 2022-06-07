@@ -10,9 +10,9 @@ import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.MessageSender.sendMessage
 import by.miaskor.bot.service.MessageSender.sendMessageWithKeyboard
 import by.miaskor.bot.service.cache.TelegramClientCache
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
+import by.miaskor.bot.service.extension.text
 import by.miaskor.bot.service.handler.command.CommandHandler
-import by.miaskor.bot.service.text
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono

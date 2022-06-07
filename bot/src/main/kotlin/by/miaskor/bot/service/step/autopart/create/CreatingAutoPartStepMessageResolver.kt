@@ -1,10 +1,10 @@
-package by.miaskor.bot.service.step.autopart
+package by.miaskor.bot.service.step.autopart.create
 
 import by.miaskor.bot.configuration.settings.CreatingAutoPartMessageSettings
 import by.miaskor.bot.domain.AbstractStepBuilder
 import by.miaskor.bot.domain.CreatingAutoPartStep
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.step.StepMessageResolver
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono

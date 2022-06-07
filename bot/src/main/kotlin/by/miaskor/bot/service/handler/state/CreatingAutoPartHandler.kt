@@ -1,6 +1,5 @@
 package by.miaskor.bot.service.handler.state
 
-import by.miaskor.bot.configuration.settings.CreatingAutoPartMessageSettings
 import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.AbstractStepBuilder
 import by.miaskor.bot.domain.AutoPartBuilder
@@ -8,15 +7,14 @@ import by.miaskor.bot.domain.BotState
 import by.miaskor.bot.domain.CreatingAutoPartStep
 import by.miaskor.bot.domain.TelegramClient
 import by.miaskor.bot.service.BotStateChanger.changeBotState
-import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.MessageSender.sendMessageWithKeyboard
 import by.miaskor.bot.service.cache.Cache
 import by.miaskor.bot.service.cache.TelegramClientCache
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.pollLast
 import by.miaskor.bot.service.step.ProcessingStepService
-import by.miaskor.bot.service.step.autopart.CreatingAutoPartStepKeyboardBuilder
-import by.miaskor.bot.service.step.autopart.CreatingAutoPartStepMessageResolver
+import by.miaskor.bot.service.step.autopart.create.CreatingAutoPartStepKeyboardBuilder
+import by.miaskor.bot.service.step.autopart.create.CreatingAutoPartStepMessageResolver
 import by.miaskor.domain.api.connector.AutoPartConnector
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
@@ -30,7 +28,7 @@ class CreatingAutoPartHandler(
   processingStepService: ProcessingStepService<CreatingAutoPartStep>,
   private val telegramClientCache: TelegramClientCache,
   private val autoPartConnector: AutoPartConnector,
-) : BotStateHandler, CreatingEntityHandler<CreatingAutoPartStep>(
+) : BotStateHandler, StepHandler<CreatingAutoPartStep>(
   creatingCarStepCache,
   processingStepService,
   creatingAutoPartStepKeyboardBuilder,
@@ -40,12 +38,10 @@ class CreatingAutoPartHandler(
   override val state = BotState.CREATING_AUTO_PART
 
   override fun handle(update: Update): Mono<Unit> {
-    return Mono.just(update.chatId)
-      .resolveLanguage(CreatingAutoPartMessageSettings::class)
-      .flatMap { handle(update, AutoPartBuilder()) }
+    return handle(update, AutoPartBuilder())
   }
 
-  override fun completeCreatingEntity(
+  override fun completeStep(
     update: Update,
     stepBuilder: AbstractStepBuilder<CreatingAutoPartStep>
   ): Mono<Unit> {

@@ -2,18 +2,33 @@ package by.miaskor.bot.configuration
 
 import by.miaskor.bot.configuration.settings.CreatingAutoPartMessageSettings
 import by.miaskor.bot.configuration.settings.CreatingCarMessageSettings
+import by.miaskor.bot.configuration.settings.FindingAutoPartMessageSettings
 import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.Language.ENGLISH
 import by.miaskor.bot.domain.Language.RUSSIAN
 import by.miaskor.bot.service.LanguageSettingsRegistry
+import by.miaskor.bot.service.Registry
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import kotlin.reflect.KClass
 
 @Configuration
 open class RegistryConfiguration(
   private val settingsConfiguration: SettingsConfiguration
 ) {
+
+  open fun compositeMessageSettingsRegistry(): Registry<KClass<*>, LanguageSettingsRegistry<*>> {
+    return Registry(
+      mapOf(
+        KeyboardSettings::class to keyboardSettingsRegistry(),
+        MessageSettings::class to messageSettingsRegistry(),
+        CreatingCarMessageSettings::class to creatingCarMessageSettingsRegistry(),
+        FindingAutoPartMessageSettings::class to findingAutoPartSettings(),
+        CreatingAutoPartMessageSettings::class to creatingAutoPartMessageSettingsRegistry(),
+      )
+    )
+  }
 
   @Bean
   open fun keyboardSettingsRegistry(): LanguageSettingsRegistry<KeyboardSettings> {
@@ -41,6 +56,16 @@ open class RegistryConfiguration(
       mapOf(
         ENGLISH to settingsConfiguration.creatingCarMessageSettingsEN(),
         RUSSIAN to settingsConfiguration.creatingCarMessageSettingsRU()
+      )
+    )
+  }
+
+  @Bean
+  open fun findingAutoPartSettings(): LanguageSettingsRegistry<FindingAutoPartMessageSettings> {
+    return LanguageSettingsRegistry(
+      mapOf(
+        ENGLISH to settingsConfiguration.findingAutoPartSettingsRU(),
+        RUSSIAN to settingsConfiguration.findingAutoPartSettingsEN()
       )
     )
   }

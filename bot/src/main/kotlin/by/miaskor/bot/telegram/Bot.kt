@@ -2,8 +2,8 @@ package by.miaskor.bot.telegram
 
 import by.miaskor.bot.service.CommandResolver.processCommand
 import by.miaskor.bot.service.cache.TelegramClientCache
-import by.miaskor.bot.service.chatId
-import by.miaskor.bot.service.info
+import by.miaskor.bot.service.extension.chatId
+import by.miaskor.bot.service.extension.info
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.UpdatesListener.CONFIRMED_UPDATES_ALL
 import com.pengrad.telegrambot.model.Update

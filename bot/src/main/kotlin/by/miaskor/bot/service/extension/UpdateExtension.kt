@@ -1,4 +1,4 @@
-package by.miaskor.bot.service
+package by.miaskor.bot.service.extension
 
 import com.pengrad.telegrambot.model.Update
 

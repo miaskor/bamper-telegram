@@ -3,7 +3,7 @@ package by.miaskor.bot.service.handler.command.employee
 import by.miaskor.bot.domain.BotState
 import by.miaskor.bot.domain.Command.EMPLOYEE
 import by.miaskor.bot.service.cache.TelegramClientCache
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.handler.command.CommandHandler
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono

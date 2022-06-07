@@ -3,7 +3,7 @@ package by.miaskor.bot.service.handler.command.autopart
 import by.miaskor.bot.domain.CallbackCommand
 import by.miaskor.bot.domain.Command
 import by.miaskor.bot.service.cache.AbstractListCache
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.bot.service.handler.list.ListEntityHandler
 import com.pengrad.telegrambot.model.Update

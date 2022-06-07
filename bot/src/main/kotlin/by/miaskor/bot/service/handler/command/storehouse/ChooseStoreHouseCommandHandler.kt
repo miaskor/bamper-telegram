@@ -7,7 +7,7 @@ import by.miaskor.bot.domain.StoreHouse
 import by.miaskor.bot.service.BotStateChanger.changeBotState
 import by.miaskor.bot.service.MessageSender.sendMessageWithKeyboard
 import by.miaskor.bot.service.cache.TelegramClientCache
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.domain.api.connector.StoreHouseConnector
 import by.miaskor.domain.api.domain.StoreHouseDto

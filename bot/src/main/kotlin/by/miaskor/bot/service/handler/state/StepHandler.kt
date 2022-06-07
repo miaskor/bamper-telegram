@@ -7,19 +7,19 @@ import by.miaskor.bot.domain.Command
 import by.miaskor.bot.domain.Command.NEXT_STEP
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.cache.Cache
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.extension.sendMessageWithKeyboard
+import by.miaskor.bot.service.extension.text
 import by.miaskor.bot.service.step.ProcessingStepService
 import by.miaskor.bot.service.step.StepKeyboardBuilder
 import by.miaskor.bot.service.step.StepMessageResolver
-import by.miaskor.bot.service.text
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.util.function.component1
 import reactor.kotlin.core.util.function.component2
 
-abstract class CreatingEntityHandler<T>(
+abstract class StepHandler<T>(
   private val cache: Cache<Long, AbstractStepBuilder<T>>,
   private val processingStepService: ProcessingStepService<T>,
   private val stepKeyboardBuilder: StepKeyboardBuilder<T>,
@@ -36,7 +36,7 @@ abstract class CreatingEntityHandler<T>(
           cache.populate(update.chatId, nextStep)
           sendMessage(nextStep, update)
             .filter { currentStep.next().isFinalStep() }
-            .flatMap { completeCreatingEntity(update, stepBuilder) }
+            .flatMap { completeStep(update, stepBuilder) }
         } else if (NEXT_STEP isCommand update.text && !currentStep.isStepNotMandatory()) {
           sendMessage(stepBuilder, update)
         } else if (Command.PREVIOUS_STEP isCommand update.text) {
@@ -46,7 +46,7 @@ abstract class CreatingEntityHandler<T>(
         } else {
           processingStepService.process(update, currentStep, stepBuilder)
             .filter { it && stepBuilder.currentStep().isFinalStep() }
-            .flatMap { completeCreatingEntity(update, stepBuilder) }
+            .flatMap { completeStep(update, stepBuilder) }
         }
       }
   }
@@ -64,7 +64,7 @@ abstract class CreatingEntityHandler<T>(
       }
   }
 
-  protected abstract fun completeCreatingEntity(
+  protected abstract fun completeStep(
     update: Update,
     stepBuilder: AbstractStepBuilder<T>
   ): Mono<Unit>

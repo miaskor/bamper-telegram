@@ -6,7 +6,7 @@ import by.miaskor.bot.domain.ListEntityType.AUTO_PART
 import by.miaskor.bot.domain.TelegramClient
 import by.miaskor.bot.service.cache.AbstractListCache
 import by.miaskor.bot.service.cache.TelegramClientCache
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
 import by.miaskor.domain.api.connector.AutoPartConnector
 import by.miaskor.domain.api.domain.AutoPartResponse
 import by.miaskor.domain.api.domain.StoreHouseIdRequest
