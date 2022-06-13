@@ -5,11 +5,12 @@ import by.miaskor.bot.configuration.settings.ListSettings
 import by.miaskor.bot.domain.CallbackCommand
 import by.miaskor.bot.domain.ListEntity
 import by.miaskor.bot.domain.ListEntityType
+import com.pengrad.telegrambot.model.Update
 
-abstract class AbstractListCache(
+abstract class AbstractListCache<T : ListEntity>(
   cacheSettings: CacheSettings,
   private val listSettings: ListSettings
-) : Cache<Long, ListEntity>(cacheSettings) {
+) : Cache<Long, T>(cacheSettings) {
 
   fun getOffset(chatId: Long): Long {
     return cache.getIfPresent(chatId)?.offset ?: listSettings.offset()
@@ -23,29 +24,29 @@ abstract class AbstractListCache(
     }
   }
 
-  fun populateIsNotExists(chatId: Long) {
-    if (!isExists(chatId))
-      populate(chatId, ListEntity())
-  }
-
   private fun nextEntities(chatId: Long) {
     val listEntity = cache.getIfPresent(chatId)
-    if (listEntity?.reachLimit == true) return
+    if (listEntity?.reachLimit == true || listEntity == null) return
+    val calculatedOffset = listEntity.offset + listSettings.offset()
     populate(
       chatId,
-      listEntity?.copy(offset = listEntity.offset + listSettings.limit()) ?: ListEntity()
+      copyEntity(listEntity, calculatedOffset, listEntity.reachLimit)
     )
   }
 
   private fun prevEntities(chatId: Long) {
-    val listEntity = cache.getIfPresent(chatId)
-    val carOffset = (listEntity?.offset ?: 0) - listSettings.limit()
-    val calculatedCarOffset = if (carOffset < 1) 0 else carOffset
+    val listEntity = cache.getIfPresent(chatId) ?: return
+    val offset = listEntity.offset - listSettings.limit()
+    val calculatedOffset = if (offset < 1) 0 else offset
     populate(
       chatId,
-      listEntity?.copy(offset = calculatedCarOffset, reachLimit = false) ?: ListEntity()
+      copyEntity(listEntity, calculatedOffset, false)
     )
   }
+
+  abstract fun populateIsNotExists(update: Update)
+
+  protected abstract fun copyEntity(listEntity: T, offset: Long, reachLimit: Boolean): T
 
   abstract fun listEntityType(): ListEntityType
 }

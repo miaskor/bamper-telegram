@@ -2,6 +2,7 @@ package by.miaskor.bot.service.handler.list
 
 import by.miaskor.bot.configuration.settings.ListSettings
 import by.miaskor.bot.configuration.settings.MessageSettings
+import by.miaskor.bot.domain.ListEntity
 import by.miaskor.bot.domain.ListEntityType.AUTO_PART
 import by.miaskor.bot.domain.TelegramClient
 import by.miaskor.bot.service.cache.AbstractListCache
@@ -17,11 +18,11 @@ class ListAutoPartHandler(
   private val listSettings: ListSettings,
   private val autoPartConnector: AutoPartConnector,
   private val telegramClientCache: TelegramClientCache
-) : ListHandler {
+) : ListHandler<ListEntity> {
 
   override val listEntityType = AUTO_PART
 
-  override fun handle(update: Update, listEntityCache: AbstractListCache): Mono<Unit> {
+  override fun handle(update: Update, listEntityCache: AbstractListCache<ListEntity>): Mono<Unit> {
     return Mono.just(update.chatId)
       .flatMap(telegramClientCache::getTelegramClient)
       .flatMap { telegramClient ->

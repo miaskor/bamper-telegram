@@ -2,7 +2,6 @@ package by.miaskor.bot.configuration
 
 import by.miaskor.bot.configuration.settings.CreatingAutoPartMessageSettings
 import by.miaskor.bot.configuration.settings.CreatingCarMessageSettings
-import by.miaskor.bot.configuration.settings.FindingAutoPartMessageSettings
 import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.Language.ENGLISH
@@ -24,7 +23,6 @@ open class RegistryConfiguration(
         KeyboardSettings::class to keyboardSettingsRegistry(),
         MessageSettings::class to messageSettingsRegistry(),
         CreatingCarMessageSettings::class to creatingCarMessageSettingsRegistry(),
-        FindingAutoPartMessageSettings::class to findingAutoPartSettings(),
         CreatingAutoPartMessageSettings::class to creatingAutoPartMessageSettingsRegistry(),
       )
     )
@@ -56,16 +54,6 @@ open class RegistryConfiguration(
       mapOf(
         ENGLISH to settingsConfiguration.creatingCarMessageSettingsEN(),
         RUSSIAN to settingsConfiguration.creatingCarMessageSettingsRU()
-      )
-    )
-  }
-
-  @Bean
-  open fun findingAutoPartSettings(): LanguageSettingsRegistry<FindingAutoPartMessageSettings> {
-    return LanguageSettingsRegistry(
-      mapOf(
-        ENGLISH to settingsConfiguration.findingAutoPartSettingsRU(),
-        RUSSIAN to settingsConfiguration.findingAutoPartSettingsEN()
       )
     )
   }

@@ -28,7 +28,7 @@ abstract class StepHandler<T>(
 ) where T : Enum<T>, T : AbstractStep<T> {
 
   fun handle(update: Update, defValue: AbstractStepBuilder<T>): Mono<Unit> {
-    return Mono.fromSupplier { cache.getOrPopulate(update.chatId, defValue) }
+    return Mono.fromSupplier { cache.get(update.chatId, defValue) }
       .flatMap { stepBuilder ->
         val currentStep = stepBuilder.currentStep()
         if (NEXT_STEP isCommand update.text && currentStep.isStepNotMandatory()) {

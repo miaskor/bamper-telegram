@@ -19,4 +19,6 @@ interface KeyboardSettings {
   fun keyboardForLists(): List<String>
   fun deletingCarMenu(): List<String>
   fun deletingAutoPartMenu(): List<String>
+  fun findAutoPartMenu(): List<String>
+  fun defaultMenu(): List<String>
 }

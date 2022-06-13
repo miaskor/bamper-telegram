@@ -12,6 +12,8 @@ import by.miaskor.bot.domain.BotState.CREATING_STORE_HOUSE
 import by.miaskor.bot.domain.BotState.DELETING_AUTO_PART
 import by.miaskor.bot.domain.BotState.DELETING_CAR
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
+import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART
+import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_PART_NUMBER
 import by.miaskor.bot.domain.BotState.MAIN_MENU
 import by.miaskor.bot.domain.BotState.MODIFICATION_STORE_HOUSE_MENU
 import by.miaskor.bot.domain.BotState.READ_ONLY_STORE_HOUSE_MENU
@@ -60,6 +62,8 @@ class KeyboardBuilder(
           DELETING_CAR -> buildReplyKeyboard(it.deletingCarMenu())
           DELETING_AUTO_PART -> buildReplyKeyboard(it.deletingAutoPartMenu())
           ADDING_EMPLOYEE_TO_STORE_HOUSE -> buildReplyKeyboard(it.addingEmployeeToStoreHouseMenu())
+          FINDING_AUTO_PART -> buildReplyKeyboard(it.findAutoPartMenu())
+          FINDING_AUTO_PART_BY_PART_NUMBER -> buildReplyKeyboard(it.defaultMenu())
           else -> buildReplyKeyboard(listOf("Something went wrong"))
         }
       }

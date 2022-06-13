@@ -5,7 +5,6 @@ import by.miaskor.bot.configuration.settings.CacheSettings
 import by.miaskor.bot.configuration.settings.ConnectorSettings
 import by.miaskor.bot.configuration.settings.CreatingAutoPartMessageSettings
 import by.miaskor.bot.configuration.settings.CreatingCarMessageSettings
-import by.miaskor.bot.configuration.settings.FindingAutoPartMessageSettings
 import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.configuration.settings.ListSettings
 import by.miaskor.bot.configuration.settings.MessageSettings
@@ -71,16 +70,6 @@ open class SettingsConfiguration(
   @Bean
   open fun creatingAutoPartMessageSettingsEN(): CreatingAutoPartMessageSettings {
     return confProvider.bind("creating.auto-part.en", CreatingAutoPartMessageSettings::class.java)
-  }
-
-  @Bean
-  open fun findingAutoPartSettingsRU(): FindingAutoPartMessageSettings {
-    return confProvider.bind("finding.auto-part.ru", FindingAutoPartMessageSettings::class.java)
-  }
-
-  @Bean
-  open fun findingAutoPartSettingsEN(): FindingAutoPartMessageSettings {
-    return confProvider.bind("finding.auto-part.en", FindingAutoPartMessageSettings::class.java)
   }
 
   @Bean

@@ -11,6 +11,13 @@ import reactor.core.publisher.Mono
 
 interface AutoPartRepository : CrudRepository<AutoPart> {
   fun findAllByStoreHouseId(storeHouseId: Long, limit: Long, offset: Long): Mono<List<AutoPartVO>>
+  fun findAllByStoreHouseIdAndPartNumber(
+    partNumber: String,
+    storeHouseId: Long,
+    limit: Long,
+    offset: Long
+  ): Mono<List<AutoPartVO>>
+
   fun deleteByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Int>
 }
 
@@ -29,24 +36,32 @@ class JooqAutoPartRepository(
 
   override fun findAllByStoreHouseId(storeHouseId: Long, limit: Long, offset: Long): Mono<List<AutoPartVO>> {
     return Mono.fromSupplier {
-      dslContext.select(
-        AUTO_PART.ID.`as`("id"),
-        AUTO_PART.DESCRIPTION.`as`("description"),
-        AUTO_PART.PHOTO_PATH.`as`("photoPath"),
-        AUTO_PART.PRICE.`as`("price"),
-        AUTO_PART.QUALITY.`as`("quality"),
-        AUTO_PART.CURRENCY.`as`("currency"),
-        AUTO_PART.PART_NUMBER.`as`("partNumber"),
-        BRAND.MODEL.`as`("model"),
-        BRAND.BRAND_NAME.`as`("brandName"),
-        CAR.YEAR.`as`("year"),
-        CAR_PART.NAME_EN.`as`("autoPartEN"),
-        CAR_PART.NAME_RU.`as`("autoPartRU"),
-      ).from(AUTO_PART)
+      dslContext.select(autoPartColumns)
+        .from(AUTO_PART)
         .join(CAR).on(AUTO_PART.CAR_ID.eq(CAR.ID))
         .join(BRAND).on(BRAND.ID.eq(CAR.BRAND_ID))
         .join(CAR_PART).on(AUTO_PART.CAR_PART_ID.eq(CAR_PART.ID))
         .where(AUTO_PART.STORE_HOUSE_ID.eq(storeHouseId))
+        .limit(limit)
+        .offset(offset)
+        .fetchInto(AutoPartVO::class.java)
+    }
+  }
+
+  override fun findAllByStoreHouseIdAndPartNumber(
+    partNumber: String,
+    storeHouseId: Long,
+    limit: Long,
+    offset: Long
+  ): Mono<List<AutoPartVO>> {
+    return Mono.fromSupplier {
+      dslContext.select(autoPartColumns)
+        .from(AUTO_PART)
+        .join(CAR).on(AUTO_PART.CAR_ID.eq(CAR.ID))
+        .join(BRAND).on(BRAND.ID.eq(CAR.BRAND_ID))
+        .join(CAR_PART).on(AUTO_PART.CAR_PART_ID.eq(CAR_PART.ID))
+        .where(AUTO_PART.STORE_HOUSE_ID.eq(storeHouseId))
+        .and(AUTO_PART.PART_NUMBER.eq(partNumber))
         .limit(limit)
         .offset(offset)
         .fetchInto(AutoPartVO::class.java)
@@ -72,5 +87,22 @@ class JooqAutoPartRepository(
 
   override fun update(entity: AutoPart): Mono<Unit> {
     TODO("Not yet implemented")
+  }
+
+  private companion object {
+    private val autoPartColumns = listOf(
+      AUTO_PART.ID.`as`("id"),
+      AUTO_PART.DESCRIPTION.`as`("description"),
+      AUTO_PART.PHOTO_PATH.`as`("photoPath"),
+      AUTO_PART.PRICE.`as`("price"),
+      AUTO_PART.QUALITY.`as`("quality"),
+      AUTO_PART.CURRENCY.`as`("currency"),
+      AUTO_PART.PART_NUMBER.`as`("partNumber"),
+      BRAND.MODEL.`as`("model"),
+      BRAND.BRAND_NAME.`as`("brandName"),
+      CAR.YEAR.`as`("year"),
+      CAR_PART.NAME_EN.`as`("autoPartEN"),
+      CAR_PART.NAME_RU.`as`("autoPartRU")
+    )
   }
 }

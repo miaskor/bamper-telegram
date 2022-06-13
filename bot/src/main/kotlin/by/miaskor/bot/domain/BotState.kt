@@ -16,6 +16,8 @@ import by.miaskor.bot.domain.Command.EMPLOYEE
 import by.miaskor.bot.domain.Command.EMPLOYEES
 import by.miaskor.bot.domain.Command.EMPLOYEE_TO_STORE_HOUSE
 import by.miaskor.bot.domain.Command.FIND_AUTO_PART
+import by.miaskor.bot.domain.Command.FIND_AUTO_PART_BY_PART_NUMBER
+import by.miaskor.bot.domain.Command.FIND_AUTO_PART_BY_PART_NUMBER_ENTITY
 import by.miaskor.bot.domain.Command.LANGUAGE
 import by.miaskor.bot.domain.Command.LIST_AUTO_PART
 import by.miaskor.bot.domain.Command.LIST_CAR
@@ -50,8 +52,8 @@ enum class BotState(private vararg val commands: Command) {
   DELETING_AUTO_PART(DELETE_AUTO_PART, BACK, UNDEFINED),
   CREATING_CAR(BACK),
   DELETING_CAR(DELETE_CAR, BACK, UNDEFINED),
-  FINDING_AUTO_PART(BACK, UNDEFINED),
-  FINDING_PARTS_MENU,
+  FINDING_AUTO_PART(FIND_AUTO_PART_BY_PART_NUMBER, BACK),
+  FINDING_AUTO_PART_BY_PART_NUMBER(BACK, FIND_AUTO_PART_BY_PART_NUMBER_ENTITY),
   BAMPER_MENU;
 
   companion object {
@@ -59,7 +61,7 @@ enum class BotState(private vararg val commands: Command) {
       listOf(
         GREETINGS, ADDING_EMPLOYEE, REMOVING_EMPLOYEE, MAIN_MENU, CHOOSING_LANGUAGE,
         CHANGING_LANGUAGE, CREATING_STORE_HOUSE, CREATING_CAR, CREATING_AUTO_PART,
-        ADDING_EMPLOYEE_TO_STORE_HOUSE, DELETING_CAR, DELETING_AUTO_PART
+        ADDING_EMPLOYEE_TO_STORE_HOUSE, DELETING_CAR, DELETING_AUTO_PART, FINDING_AUTO_PART_BY_PART_NUMBER
       )
 
     fun isNotFinalState(botState: BotState): Boolean {

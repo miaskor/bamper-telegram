@@ -58,6 +58,11 @@ enum class Command(private vararg val commands: String) {
   @FieldEnrich("listAutoParts", "commands")
   LIST_AUTO_PART,
 
+  @FieldEnrich("findAutoPartByPartNumbers", "commands")
+  FIND_AUTO_PART_BY_PART_NUMBER,
+
+  FIND_AUTO_PART_BY_PART_NUMBER_ENTITY(".*"),
+
   @FieldEnrich("addEmployeeToStoreHouses", "commands")
   ADD_EMPLOYEE_TO_STORE_HOUSE,
 
