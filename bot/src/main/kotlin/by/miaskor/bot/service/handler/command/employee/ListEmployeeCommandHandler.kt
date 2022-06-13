@@ -5,7 +5,7 @@ import by.miaskor.bot.domain.Command.LIST_EMPLOYEE
 import by.miaskor.bot.domain.TelegramClient
 import by.miaskor.bot.service.MessageSender.sendMessage
 import by.miaskor.bot.service.cache.TelegramClientCache
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.domain.api.connector.TelegramClientConnector
 import by.miaskor.domain.api.domain.TelegramClientResponse

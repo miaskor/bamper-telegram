@@ -6,7 +6,7 @@ import by.miaskor.bot.domain.Command
 import by.miaskor.bot.service.BotStateChanger.changeBotState
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.extension.sendMessageWithKeyboard
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update

@@ -1,4 +1,4 @@
-package by.miaskor.bot.service.step.autopart
+package by.miaskor.bot.service.step.autopart.create
 
 import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.domain.CreatingAutoPartStep

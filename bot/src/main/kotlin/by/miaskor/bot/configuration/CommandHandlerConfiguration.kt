@@ -11,6 +11,7 @@ import by.miaskor.bot.domain.BotState.DELETING_AUTO_PART
 import by.miaskor.bot.domain.BotState.DELETING_CAR
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART
+import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_PART_NUMBER
 import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
 import by.miaskor.bot.domain.Command.ADD_EMPLOYEE
 import by.miaskor.bot.domain.Command.ADD_EMPLOYEE_TO_STORE_HOUSE
@@ -22,7 +23,10 @@ import by.miaskor.bot.domain.Command.DELETE_AUTO_PARTS
 import by.miaskor.bot.domain.Command.DELETE_CARS
 import by.miaskor.bot.domain.Command.EMPLOYEES
 import by.miaskor.bot.domain.Command.FIND_AUTO_PART
+import by.miaskor.bot.domain.Command.FIND_AUTO_PART_BY_PART_NUMBER
 import by.miaskor.bot.domain.Command.REMOVE_EMPLOYEE
+import by.miaskor.bot.domain.ConstraintAutoPartListEntity
+import by.miaskor.bot.domain.ListEntity
 import by.miaskor.bot.service.CallBackCommandHandler
 import by.miaskor.bot.service.handler.command.BackCommandHandler
 import by.miaskor.bot.service.handler.command.ChangingBotStateCommandHandler
@@ -31,6 +35,7 @@ import by.miaskor.bot.service.handler.command.CommandHandlerRegistry
 import by.miaskor.bot.service.handler.command.UndefinedCommandHandler
 import by.miaskor.bot.service.handler.command.autopart.DeleteAutoPartCommandHandler
 import by.miaskor.bot.service.handler.command.autopart.ListAutoPartCommandHandler
+import by.miaskor.bot.service.handler.command.autopart.ListFindAutoPartCommandHandler
 import by.miaskor.bot.service.handler.command.car.DeleteCarCommandHandler
 import by.miaskor.bot.service.handler.command.car.ListCarCommandHandler
 import by.miaskor.bot.service.handler.command.employee.AddingEmployeeCommandHandler
@@ -46,6 +51,7 @@ import by.miaskor.bot.service.handler.list.ListAutoPartHandler
 import by.miaskor.bot.service.handler.list.ListCarHandler
 import by.miaskor.bot.service.handler.list.ListEntityHandler
 import by.miaskor.bot.service.handler.list.ListEntityHandlerRegistry
+import by.miaskor.bot.service.handler.list.ListFindAutoPartHandler
 import by.miaskor.bot.service.handler.list.ListHandler
 import com.pengrad.telegrambot.TelegramBot
 import org.springframework.context.annotation.Bean
@@ -96,18 +102,22 @@ open class CommandHandlerConfiguration(
       deleteAutoPartCommandHandler(),
       deleteCarCommandHandler(),
       listAutoPartCommandHandler(),
+      listFindAutoPartCommandHandler(),
       deleteCarsCommandHandler(),
       deleteAutoPartsCommandHandler(),
       findAutoPartsCommandHandler(),
+      findAutoPartsByPartNumberCommandHandler(),
       createCarCommandHandler()
     )
   }
 
   @Bean
+  @Suppress("UNCHECKED_CAST")
   open fun listEntityHandlerRegistry(): ListEntityHandlerRegistry {
     return ListEntityHandlerRegistry(
       listCarHandler(),
-      listAutoPartHandler()
+      listAutoPartHandler(),
+      listFindAutoPartHandler() as ListHandler<ListEntity>
     )
   }
 
@@ -129,7 +139,18 @@ open class CommandHandlerConfiguration(
       serviceConfiguration.keyboardBuilder(),
       FIND_AUTO_PART,
       FINDING_AUTO_PART,
-      MessageSettings::deletingAutoPartMessage
+      MessageSettings::findAutoPartMenuMessage
+    )
+  }
+
+  @Bean
+  open fun findAutoPartsByPartNumberCommandHandler(): CommandHandler {
+    return ChangingBotStateCommandHandler(
+      telegramBot,
+      serviceConfiguration.keyboardBuilder(),
+      FIND_AUTO_PART_BY_PART_NUMBER,
+      FINDING_AUTO_PART_BY_PART_NUMBER,
+      MessageSettings::findAutoPartByPartNumberMessage
     )
   }
 
@@ -222,6 +243,14 @@ open class CommandHandlerConfiguration(
     return ListAutoPartCommandHandler(
       listEntityHandler(),
       cacheConfiguration.autoPartListEntityCache()
+    )
+  }
+
+  @Bean
+  open fun listFindAutoPartCommandHandler(): CommandHandler {
+    return ListFindAutoPartCommandHandler(
+      listEntityHandler(),
+      cacheConfiguration.autoPartByPartNumberListCache()
     )
   }
 
@@ -357,7 +386,7 @@ open class CommandHandlerConfiguration(
   }
 
   @Bean
-  open fun listCarHandler(): ListHandler {
+  open fun listCarHandler(): ListHandler<ListEntity> {
     return ListCarHandler(
       connectorConfiguration.carConnector(),
       settingsConfiguration.listSettings(),
@@ -366,7 +395,16 @@ open class CommandHandlerConfiguration(
   }
 
   @Bean
-  open fun listAutoPartHandler(): ListHandler {
+  open fun listFindAutoPartHandler(): ListHandler<ConstraintAutoPartListEntity> {
+    return ListFindAutoPartHandler(
+      settingsConfiguration.listSettings(),
+      connectorConfiguration.autoPartConnector(),
+      cacheConfiguration.telegramClientCache()
+    )
+  }
+
+  @Bean
+  open fun listAutoPartHandler(): ListHandler<ListEntity> {
     return ListAutoPartHandler(
       settingsConfiguration.listSettings(),
       connectorConfiguration.autoPartConnector(),

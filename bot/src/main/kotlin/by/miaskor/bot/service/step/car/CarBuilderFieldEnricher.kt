@@ -10,8 +10,8 @@ import by.miaskor.bot.domain.CreatingCarStep.ENGINE_TYPE
 import by.miaskor.bot.domain.CreatingCarStep.FUEL_TYPE
 import by.miaskor.bot.domain.CreatingCarStep.TRANSMISSION
 import by.miaskor.bot.domain.CreatingCarStep.YEAR
+import by.miaskor.bot.service.extension.text
 import by.miaskor.bot.service.step.StepBuilderFieldEnricher
-import by.miaskor.bot.service.text
 import com.pengrad.telegrambot.model.Update
 
 class CarBuilderFieldEnricher : StepBuilderFieldEnricher<CreatingCarStep> {

@@ -4,7 +4,7 @@ import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.CallbackCommand
 import by.miaskor.bot.service.MessageSender
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
 import by.miaskor.domain.api.domain.AutoPartResponse
 import by.miaskor.domain.api.domain.CarResponse
 import by.miaskor.domain.api.domain.ResponseWithLimit

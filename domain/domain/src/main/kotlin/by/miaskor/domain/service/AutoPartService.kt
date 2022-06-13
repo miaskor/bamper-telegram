@@ -8,11 +8,13 @@ import by.miaskor.domain.api.domain.AutoPartDto
 import by.miaskor.domain.api.domain.AutoPartResponse
 import by.miaskor.domain.api.domain.ResponseWithLimit
 import by.miaskor.domain.api.domain.StoreHouseIdRequest
+import by.miaskor.domain.api.domain.StoreHouseRequestWithConstraint
 import by.miaskor.domain.model.AutoPartVO
 import by.miaskor.domain.repository.AutoPartRepository
 import by.miaskor.domain.service.telegram.TelegramApiService
 import by.miaskor.domain.tables.pojos.AutoPart
 import org.springframework.core.io.buffer.DataBufferUtils
+import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 class AutoPartService(
@@ -64,8 +66,22 @@ class AutoPartService(
       storeHouseIdRequest.storeHouseId,
       storeHouseIdRequest.limit + 1,
       storeHouseIdRequest.offset
-    )
-      .flatMapIterable { it }
+    ).flatMap(::processAutoParts)
+  }
+
+  fun getAllByStoreHouseIdAndPartNumber(
+    storeHouseIdRequest: StoreHouseRequestWithConstraint
+  ): Mono<ResponseWithLimit<AutoPartResponse>> {
+    return autoPartRepository.findAllByStoreHouseIdAndPartNumber(
+      storeHouseIdRequest.constraint,
+      storeHouseIdRequest.storeHouseId,
+      storeHouseIdRequest.limit + 1,
+      storeHouseIdRequest.offset
+    ).flatMap(::processAutoParts)
+  }
+
+  private fun processAutoParts(list: List<AutoPartVO>): Mono<ResponseWithLimit<AutoPartResponse>> {
+    return Flux.fromIterable(list)
       .flatMap { downloadPhoto(it) }
       .collectList()
       .map {

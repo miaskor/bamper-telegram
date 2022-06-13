@@ -10,7 +10,7 @@ import by.miaskor.bot.service.BotStateChanger.changeBotState
 import by.miaskor.bot.service.MessageSender.sendMessageWithKeyboard
 import by.miaskor.bot.service.cache.Cache
 import by.miaskor.bot.service.cache.TelegramClientCache
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.pollLast
 import by.miaskor.bot.service.step.ProcessingStepService
 import by.miaskor.bot.service.step.car.CreatingCarStepKeyboardBuilder
@@ -28,7 +28,7 @@ class CreatingCarHandler(
   processingStepService: ProcessingStepService<CreatingCarStep>,
   private val telegramClientCache: TelegramClientCache,
   private val carConnector: CarConnector
-) : BotStateHandler, CreatingEntityHandler<CreatingCarStep>(
+) : BotStateHandler, StepHandler<CreatingCarStep>(
   creatingCarStepCache,
   processingStepService,
   creatingCarStepKeyboardBuilder,
@@ -41,7 +41,7 @@ class CreatingCarHandler(
     return handle(update, CarBuilder())
   }
 
-  override fun completeCreatingEntity(
+  override fun completeStep(
     update: Update,
     stepBuilder: AbstractStepBuilder<CreatingCarStep>
   ): Mono<Unit> {

@@ -1,4 +1,4 @@
-package by.miaskor.bot.service.step.autopart
+package by.miaskor.bot.service.step.autopart.create
 
 import by.miaskor.bot.domain.AbstractStepBuilder
 import by.miaskor.bot.domain.AutoPartBuilder
@@ -7,9 +7,9 @@ import by.miaskor.bot.domain.CreatingAutoPartStep.AUTO_PART
 import by.miaskor.bot.domain.CreatingAutoPartStep.CAR
 import by.miaskor.bot.domain.CreatingAutoPartStep.PHOTO
 import by.miaskor.bot.service.cache.TelegramClientCache
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
+import by.miaskor.bot.service.extension.text
 import by.miaskor.bot.service.step.StepValidator
-import by.miaskor.bot.service.text
 import by.miaskor.domain.api.connector.CarConnector
 import by.miaskor.domain.api.connector.CarPartConnector
 import com.pengrad.telegrambot.model.Update

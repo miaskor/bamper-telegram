@@ -19,7 +19,7 @@ open class Cache<K, V>(
     return value
   }
 
-  open fun getOrPopulate(key: K, defValue: V): V {
+  open fun get(key: K, defValue: V): V {
     return cache.getIfPresent(key) ?: populate(key, defValue)
   }
 

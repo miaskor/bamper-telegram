@@ -1,6 +1,7 @@
 package by.miaskor.bot.service
 
 import by.miaskor.bot.domain.BotState
+import by.miaskor.bot.service.extension.text
 import by.miaskor.bot.service.handler.command.CommandHandlerRegistry
 import by.miaskor.bot.service.handler.state.BotStateHandlerRegistry
 import com.pengrad.telegrambot.model.Update

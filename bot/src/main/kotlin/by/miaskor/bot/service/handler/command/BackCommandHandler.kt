@@ -3,6 +3,7 @@ package by.miaskor.bot.service.handler.command
 import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.BotState.CHOOSING_STORE_HOUSE
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
+import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART
 import by.miaskor.bot.domain.BotState.MAIN_MENU
 import by.miaskor.bot.domain.BotState.MODIFICATION_STORE_HOUSE_MENU
 import by.miaskor.bot.domain.Command.BACK
@@ -11,7 +12,7 @@ import by.miaskor.bot.service.BotStateChanger.changeBotState
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.cache.TelegramClientCache
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.extension.sendMessageWithKeyboard
 import by.miaskor.bot.service.pollLast
 import com.pengrad.telegrambot.TelegramBot
@@ -48,7 +49,10 @@ class BackCommandHandler(
           MAIN_MENU -> messageSettings.mainMenuMessage()
           EMPLOYEES_MENU -> messageSettings.employeesMenuMessage()
           CHOOSING_STORE_HOUSE -> messageSettings.allStoreHousesMessage()
-          MODIFICATION_STORE_HOUSE_MENU -> messageSettings.storeHouseMenuMessage().format(telegramClient.currentStoreHouseName())
+          MODIFICATION_STORE_HOUSE_MENU -> messageSettings.storeHouseMenuMessage()
+            .format(telegramClient.currentStoreHouseName())
+
+          FINDING_AUTO_PART -> messageSettings.findAutoPartMenuMessage()
           else -> "Something bad happened"
         }
         telegramBot.sendMessageWithKeyboard(update.chatId, sendMessage, keyboard)

@@ -4,12 +4,18 @@ import by.miaskor.bot.domain.CallbackCommand.AUTO_PARTS_NEXT
 import by.miaskor.bot.domain.CallbackCommand.AUTO_PARTS_PREV
 import by.miaskor.bot.domain.CallbackCommand.CARS_NEXT
 import by.miaskor.bot.domain.CallbackCommand.CARS_PREV
+import by.miaskor.bot.domain.CallbackCommand.FIND_AUTO_PARTS_NEXT
+import by.miaskor.bot.domain.CallbackCommand.FIND_AUTO_PARTS_PREV
 
 enum class ListEntityType(private vararg val callbackCommand: CallbackCommand) {
 
   AUTO_PART(AUTO_PARTS_PREV, AUTO_PARTS_NEXT) {
     override fun next() = AUTO_PARTS_NEXT
     override fun prev() = AUTO_PARTS_PREV
+  },
+  FIND_AUTO_PART(FIND_AUTO_PARTS_NEXT, FIND_AUTO_PARTS_PREV) {
+    override fun next() = FIND_AUTO_PARTS_NEXT
+    override fun prev() = FIND_AUTO_PARTS_PREV
   },
   CAR(CARS_NEXT, CARS_PREV) {
     override fun next() = CARS_NEXT

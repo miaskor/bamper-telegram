@@ -1,6 +1,6 @@
 package by.miaskor.bot.domain
 
-data class ListEntity(
-  val offset: Long = 0,
-  val reachLimit: Boolean = false
+open class ListEntity(
+  open val offset: Long = 0,
+  open val reachLimit: Boolean = false
 )

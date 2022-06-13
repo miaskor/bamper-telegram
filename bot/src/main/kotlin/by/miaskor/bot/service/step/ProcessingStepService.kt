@@ -5,7 +5,7 @@ import by.miaskor.bot.domain.AbstractStep
 import by.miaskor.bot.domain.AbstractStepBuilder
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.cache.Cache
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.extension.sendMessage
 import by.miaskor.bot.service.extension.sendMessageWithKeyboard
 import com.pengrad.telegrambot.TelegramBot

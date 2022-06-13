@@ -4,10 +4,10 @@ import by.miaskor.bot.domain.CreatingAutoPartStep
 import by.miaskor.bot.domain.CreatingCarStep
 import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.step.ProcessingStepService
-import by.miaskor.bot.service.step.autopart.AutoPartBuilderFieldEnricher
-import by.miaskor.bot.service.step.autopart.CreatingAutoPartStepKeyboardBuilder
-import by.miaskor.bot.service.step.autopart.CreatingAutoPartStepMessageResolver
-import by.miaskor.bot.service.step.autopart.CreatingAutoPartValidator
+import by.miaskor.bot.service.step.autopart.create.AutoPartBuilderFieldEnricher
+import by.miaskor.bot.service.step.autopart.create.CreatingAutoPartStepKeyboardBuilder
+import by.miaskor.bot.service.step.autopart.create.CreatingAutoPartStepMessageResolver
+import by.miaskor.bot.service.step.autopart.create.CreatingAutoPartValidator
 import by.miaskor.bot.service.step.car.CarBuilderFieldEnricher
 import by.miaskor.bot.service.step.car.CreatingCarStepKeyboardBuilder
 import by.miaskor.bot.service.step.car.CreatingCarStepMessageResolver

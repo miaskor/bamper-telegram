@@ -4,9 +4,9 @@ import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.Command.DELETE_CAR
 import by.miaskor.bot.service.MessageSender.sendMessage
 import by.miaskor.bot.service.cache.TelegramClientCache
-import by.miaskor.bot.service.chatId
+import by.miaskor.bot.service.extension.chatId
+import by.miaskor.bot.service.extension.text
 import by.miaskor.bot.service.handler.command.CommandHandler
-import by.miaskor.bot.service.text
 import by.miaskor.domain.api.connector.CarConnector
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
