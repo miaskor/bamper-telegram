@@ -117,4 +117,9 @@ class AutoPartService(
         )
       }
   }
+
+  fun getByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<AutoPartResponse> {
+    return autoPartRepository.findByStoreHouseIdAndId(storeHouseId, id)
+      .flatMap { downloadPhoto(it) }
+  }
 }
