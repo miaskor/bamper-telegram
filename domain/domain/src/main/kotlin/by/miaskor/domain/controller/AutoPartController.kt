@@ -8,6 +8,7 @@ import by.miaskor.domain.api.domain.StoreHouseRequestWithConstraint
 import by.miaskor.domain.service.AutoPartService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -40,6 +41,15 @@ class AutoPartController(
     @RequestBody storeHouseIdRequest: StoreHouseRequestWithConstraint
   ): Mono<ResponseEntity<ResponseWithLimit<AutoPartResponse>>> {
     return autoPartService.getAllByStoreHouseIdAndPartNumber(storeHouseIdRequest)
+      .map { ResponseEntity.ok(it) }
+  }
+
+  @GetMapping("/{storeHouseId}/{id}")
+  fun getByStoreHouseIdAndId(
+    @PathVariable storeHouseId: Long,
+    @PathVariable id: Long
+  ): Mono<ResponseEntity<AutoPartResponse>> {
+    return autoPartService.getByStoreHouseIdAndId(storeHouseId, id)
       .map { ResponseEntity.ok(it) }
   }
 

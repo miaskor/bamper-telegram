@@ -2,7 +2,6 @@ package by.miaskor.domain.api.connector
 
 import by.miaskor.domain.api.domain.AutoPartDto
 import by.miaskor.domain.api.domain.AutoPartResponse
-import by.miaskor.domain.api.domain.FindAutoPartDto
 import by.miaskor.domain.api.domain.ResponseWithLimit
 import by.miaskor.domain.api.domain.StoreHouseIdRequest
 import by.miaskor.domain.api.domain.StoreHouseRequestWithConstraint
@@ -23,10 +22,9 @@ class AutoPartConnector(
       .bodyToMono()
   }
 
-  fun isExistsByProperties(findAutoPartDto: FindAutoPartDto): Mono<Boolean> {
-    return webClient.post()
-      .uri("/auto-part/find")
-      .body(BodyInserters.fromValue(findAutoPartDto))
+  fun getByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<AutoPartResponse> {
+    return webClient.get()
+      .uri("/auto-part/$storeHouseId/$id")
       .retrieve()
       .bodyToMono()
   }

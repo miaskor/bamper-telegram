@@ -19,6 +19,7 @@ interface AutoPartRepository : CrudRepository<AutoPart> {
   ): Mono<List<AutoPartVO>>
 
   fun deleteByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Int>
+  fun findByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<AutoPartVO>
 }
 
 class JooqAutoPartRepository(
@@ -74,6 +75,19 @@ class JooqAutoPartRepository(
         .where(AUTO_PART.ID.eq(id))
         .and(AUTO_PART.STORE_HOUSE_ID.eq(storeHouseId))
         .execute()
+    }
+  }
+
+  override fun findByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<AutoPartVO> {
+    return Mono.fromSupplier {
+      dslContext.select(autoPartColumns)
+        .from(AUTO_PART)
+        .join(CAR).on(AUTO_PART.CAR_ID.eq(CAR.ID))
+        .join(BRAND).on(BRAND.ID.eq(CAR.BRAND_ID))
+        .join(CAR_PART).on(AUTO_PART.CAR_PART_ID.eq(CAR_PART.ID))
+        .where(AUTO_PART.STORE_HOUSE_ID.eq(storeHouseId))
+        .and(AUTO_PART.ID.eq(id))
+        .fetchOneInto(AutoPartVO::class.java)
     }
   }
 

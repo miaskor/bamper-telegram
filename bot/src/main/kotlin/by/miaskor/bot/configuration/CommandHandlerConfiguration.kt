@@ -11,6 +11,7 @@ import by.miaskor.bot.domain.BotState.DELETING_AUTO_PART
 import by.miaskor.bot.domain.BotState.DELETING_CAR
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART
+import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_ID
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_PART_NUMBER
 import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
 import by.miaskor.bot.domain.Command.ADD_EMPLOYEE
@@ -23,6 +24,7 @@ import by.miaskor.bot.domain.Command.DELETE_AUTO_PARTS
 import by.miaskor.bot.domain.Command.DELETE_CARS
 import by.miaskor.bot.domain.Command.EMPLOYEES
 import by.miaskor.bot.domain.Command.FIND_AUTO_PART
+import by.miaskor.bot.domain.Command.FIND_AUTO_PART_BY_PART_ID
 import by.miaskor.bot.domain.Command.FIND_AUTO_PART_BY_PART_NUMBER
 import by.miaskor.bot.domain.Command.REMOVE_EMPLOYEE
 import by.miaskor.bot.domain.ConstraintAutoPartListEntity
@@ -34,8 +36,9 @@ import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.bot.service.handler.command.CommandHandlerRegistry
 import by.miaskor.bot.service.handler.command.UndefinedCommandHandler
 import by.miaskor.bot.service.handler.command.autopart.DeleteAutoPartCommandHandler
+import by.miaskor.bot.service.handler.command.autopart.FindAutoPartByIdCommandHandler
+import by.miaskor.bot.service.handler.command.autopart.FindAutoPartByPartNumberCommandHandler
 import by.miaskor.bot.service.handler.command.autopart.ListAutoPartCommandHandler
-import by.miaskor.bot.service.handler.command.autopart.ListFindAutoPartCommandHandler
 import by.miaskor.bot.service.handler.command.car.DeleteCarCommandHandler
 import by.miaskor.bot.service.handler.command.car.ListCarCommandHandler
 import by.miaskor.bot.service.handler.command.employee.AddingEmployeeCommandHandler
@@ -102,11 +105,13 @@ open class CommandHandlerConfiguration(
       deleteAutoPartCommandHandler(),
       deleteCarCommandHandler(),
       listAutoPartCommandHandler(),
-      listFindAutoPartCommandHandler(),
+      findAutoPartByPartNumberCommandHandler(),
+      findAutoPartByIdCommandHandler(),
       deleteCarsCommandHandler(),
       deleteAutoPartsCommandHandler(),
       findAutoPartsCommandHandler(),
       findAutoPartsByPartNumberCommandHandler(),
+      findAutoPartsByIdCommandHandler(),
       createCarCommandHandler()
     )
   }
@@ -151,6 +156,17 @@ open class CommandHandlerConfiguration(
       FIND_AUTO_PART_BY_PART_NUMBER,
       FINDING_AUTO_PART_BY_PART_NUMBER,
       MessageSettings::findAutoPartByPartNumberMessage
+    )
+  }
+
+  @Bean
+  open fun findAutoPartsByIdCommandHandler(): CommandHandler {
+    return ChangingBotStateCommandHandler(
+      telegramBot,
+      serviceConfiguration.keyboardBuilder(),
+      FIND_AUTO_PART_BY_PART_ID,
+      FINDING_AUTO_PART_BY_ID,
+      MessageSettings::findAutoPartByIdMessage
     )
   }
 
@@ -247,10 +263,18 @@ open class CommandHandlerConfiguration(
   }
 
   @Bean
-  open fun listFindAutoPartCommandHandler(): CommandHandler {
-    return ListFindAutoPartCommandHandler(
+  open fun findAutoPartByPartNumberCommandHandler(): CommandHandler {
+    return FindAutoPartByPartNumberCommandHandler(
       listEntityHandler(),
       cacheConfiguration.autoPartByPartNumberListCache()
+    )
+  }
+
+  @Bean
+  open fun findAutoPartByIdCommandHandler(): CommandHandler {
+    return FindAutoPartByIdCommandHandler(
+      connectorConfiguration.autoPartConnector(),
+      cacheConfiguration.telegramClientCache()
     )
   }
 

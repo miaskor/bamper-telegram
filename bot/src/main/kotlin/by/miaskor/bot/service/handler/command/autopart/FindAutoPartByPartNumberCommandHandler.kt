@@ -10,7 +10,7 @@ import by.miaskor.bot.service.handler.list.ListEntityHandler
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
 
-class ListFindAutoPartCommandHandler(
+class FindAutoPartByPartNumberCommandHandler(
   private val listEntityHandler: ListEntityHandler,
   private val autoPartListCache: AbstractListCache<ConstraintAutoPartListEntity>
 ) : CommandHandler {

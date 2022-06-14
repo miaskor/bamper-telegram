@@ -43,5 +43,6 @@ interface MessageSettings {
   fun deletingAutoPartNotFoundMessage(): String
   fun deletingAutoPartIncorrectMessage(): String
   fun findAutoPartByPartNumberMessage(): String
+  fun findAutoPartByIdMessage(): String
   fun findAutoPartMenuMessage(): String
 }

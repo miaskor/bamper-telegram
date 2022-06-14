@@ -53,7 +53,7 @@ class CreatingAutoPartStepMessageResolver : StepMessageResolver<CreatingAutoPart
       when (step) {
         CreatingAutoPartStep.CAR -> creatingAutoPartMessage.carInvalidMessage()
         CreatingAutoPartStep.AUTO_PART -> creatingAutoPartMessage.autoPartInvalidMessage()
-        CreatingAutoPartStep.PRICE -> creatingAutoPartMessage.autoPartInvalidMessage()
+        CreatingAutoPartStep.PRICE -> creatingAutoPartMessage.priceInvalidMessage()
         CreatingAutoPartStep.CURRENCY -> creatingAutoPartMessage.currencyInvalidMessage()
         CreatingAutoPartStep.QUALITY -> creatingAutoPartMessage.qualityInvalidMessage()
         CreatingAutoPartStep.PHOTO -> creatingAutoPartMessage.photoInvalidMessage()

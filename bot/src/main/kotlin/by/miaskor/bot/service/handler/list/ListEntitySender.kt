@@ -23,14 +23,14 @@ object ListEntitySender {
   ): Mono<Unit> {
     return Flux.fromIterable(responseWithLimit.entities)
       .skipLast(1)
-      .flatMap { sendMessage<T>(update.chatId, it, messageFunction, entityDisassembler) }
+      .flatMap { sendEntity<T>(update.chatId, it, messageFunction, entityDisassembler) }
       .then(
         Mono.justOrEmpty(responseWithLimit.entities.lastOrNull())
           .flatMap { sendLast(it, update.chatId, entityDisassembler, messageFunction) }
       )
   }
 
-  private fun <T> sendMessage(
+  fun <T> sendEntity(
     chatId: Long,
     entity: T,
     messageFunction: KFunction1<MessageSettings, String>,
