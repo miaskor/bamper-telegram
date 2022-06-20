@@ -1,5 +1,6 @@
 package by.miaskor.domain.repository
 
+import by.miaskor.domain.api.domain.CarAutoPartRequest
 import by.miaskor.domain.model.AutoPartVO
 import by.miaskor.domain.tables.pojos.AutoPart
 import by.miaskor.domain.tables.references.AUTO_PART
@@ -11,11 +12,12 @@ import reactor.core.publisher.Mono
 
 interface AutoPartRepository : CrudRepository<AutoPart> {
   fun findAllByStoreHouseId(storeHouseId: Long, limit: Long, offset: Long): Mono<List<AutoPartVO>>
+  fun findAllByStoreHouseIdAndCarAndCarPart(carAutoPartRequest: CarAutoPartRequest): Mono<List<AutoPartVO>>
   fun findAllByStoreHouseIdAndPartNumber(
     partNumber: String,
     storeHouseId: Long,
     limit: Long,
-    offset: Long
+    offset: Long,
   ): Mono<List<AutoPartVO>>
 
   fun deleteByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Int>
@@ -49,11 +51,27 @@ class JooqAutoPartRepository(
     }
   }
 
+  override fun findAllByStoreHouseIdAndCarAndCarPart(carAutoPartRequest: CarAutoPartRequest): Mono<List<AutoPartVO>> {
+    return Mono.fromSupplier {
+      dslContext.select(autoPartColumns)
+        .from(AUTO_PART)
+        .join(CAR).on(AUTO_PART.CAR_ID.eq(CAR.ID))
+        .join(BRAND).on(BRAND.ID.eq(CAR.BRAND_ID))
+        .join(CAR_PART).on(AUTO_PART.CAR_PART_ID.eq(CAR_PART.ID))
+        .where(AUTO_PART.STORE_HOUSE_ID.eq(carAutoPartRequest.storeHouseId))
+        .and(AUTO_PART.CAR_PART_ID.eq(carAutoPartRequest.autoPartId))
+        .and(BRAND.ID.eq(carAutoPartRequest.brandId))
+        .limit(carAutoPartRequest.limit)
+        .offset(carAutoPartRequest.offset)
+        .fetchInto(AutoPartVO::class.java)
+    }
+  }
+
   override fun findAllByStoreHouseIdAndPartNumber(
     partNumber: String,
     storeHouseId: Long,
     limit: Long,
-    offset: Long
+    offset: Long,
   ): Mono<List<AutoPartVO>> {
     return Mono.fromSupplier {
       dslContext.select(autoPartColumns)

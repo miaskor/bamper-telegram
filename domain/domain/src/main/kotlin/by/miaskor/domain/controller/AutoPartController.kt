@@ -2,6 +2,7 @@ package by.miaskor.domain.controller
 
 import by.miaskor.domain.api.domain.AutoPartDto
 import by.miaskor.domain.api.domain.AutoPartResponse
+import by.miaskor.domain.api.domain.CarAutoPartRequest
 import by.miaskor.domain.api.domain.ResponseWithLimit
 import by.miaskor.domain.api.domain.StoreHouseIdRequest
 import by.miaskor.domain.api.domain.StoreHouseRequestWithConstraint
@@ -19,7 +20,7 @@ import reactor.core.publisher.Mono
 @RestController
 @RequestMapping("/auto-part")
 class AutoPartController(
-  private val autoPartService: AutoPartService
+  private val autoPartService: AutoPartService,
 ) {
 
   @PostMapping
@@ -30,7 +31,7 @@ class AutoPartController(
 
   @PostMapping("/list")
   fun getAllByStoreHouseId(
-    @RequestBody storeHouseIdRequest: StoreHouseIdRequest
+    @RequestBody storeHouseIdRequest: StoreHouseIdRequest,
   ): Mono<ResponseEntity<ResponseWithLimit<AutoPartResponse>>> {
     return autoPartService.getAllByStoreHouseId(storeHouseIdRequest)
       .map { ResponseEntity.ok(it) }
@@ -38,16 +39,24 @@ class AutoPartController(
 
   @PostMapping("/list/part-number")
   fun getAllByStoreHouseIdWithConstraint(
-    @RequestBody storeHouseIdRequest: StoreHouseRequestWithConstraint
+    @RequestBody storeHouseIdRequest: StoreHouseRequestWithConstraint,
   ): Mono<ResponseEntity<ResponseWithLimit<AutoPartResponse>>> {
     return autoPartService.getAllByStoreHouseIdAndPartNumber(storeHouseIdRequest)
+      .map { ResponseEntity.ok(it) }
+  }
+
+  @PostMapping("/list/car")
+  fun getAllByStoreHouseIdAndCarAndCarPart(
+    @RequestBody carAutoPartRequest: CarAutoPartRequest,
+  ): Mono<ResponseEntity<ResponseWithLimit<AutoPartResponse>>> {
+    return autoPartService.getAllByStoreHouseIdAndCarAndCarPart(carAutoPartRequest)
       .map { ResponseEntity.ok(it) }
   }
 
   @GetMapping("/{storeHouseId}/{id}")
   fun getByStoreHouseIdAndId(
     @PathVariable storeHouseId: Long,
-    @PathVariable id: Long
+    @PathVariable id: Long,
   ): Mono<ResponseEntity<AutoPartResponse>> {
     return autoPartService.getByStoreHouseIdAndId(storeHouseId, id)
       .map { ResponseEntity.ok(it) }
