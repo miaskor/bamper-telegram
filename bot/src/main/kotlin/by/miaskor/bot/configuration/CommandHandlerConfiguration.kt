@@ -11,6 +11,7 @@ import by.miaskor.bot.domain.BotState.DELETING_AUTO_PART
 import by.miaskor.bot.domain.BotState.DELETING_CAR
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART
+import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_CAR_AND_CAR_PART
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_ID
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_PART_NUMBER
 import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
@@ -24,6 +25,7 @@ import by.miaskor.bot.domain.Command.DELETE_AUTO_PARTS
 import by.miaskor.bot.domain.Command.DELETE_CARS
 import by.miaskor.bot.domain.Command.EMPLOYEES
 import by.miaskor.bot.domain.Command.FIND_AUTO_PART
+import by.miaskor.bot.domain.Command.FIND_AUTO_PART_BY_CAR_AND_CAR_PART
 import by.miaskor.bot.domain.Command.FIND_AUTO_PART_BY_PART_ID
 import by.miaskor.bot.domain.Command.FIND_AUTO_PART_BY_PART_NUMBER
 import by.miaskor.bot.domain.Command.REMOVE_EMPLOYEE
@@ -36,6 +38,7 @@ import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.bot.service.handler.command.CommandHandlerRegistry
 import by.miaskor.bot.service.handler.command.UndefinedCommandHandler
 import by.miaskor.bot.service.handler.command.autopart.DeleteAutoPartCommandHandler
+import by.miaskor.bot.service.handler.command.autopart.FindAutoPartByCarAndCarPartCommandHandler
 import by.miaskor.bot.service.handler.command.autopart.FindAutoPartByIdCommandHandler
 import by.miaskor.bot.service.handler.command.autopart.FindAutoPartByPartNumberCommandHandler
 import by.miaskor.bot.service.handler.command.autopart.ListAutoPartCommandHandler
@@ -66,7 +69,7 @@ open class CommandHandlerConfiguration(
   private val serviceConfiguration: ServiceConfiguration,
   private val cacheConfiguration: CacheConfiguration,
   private val settingsConfiguration: SettingsConfiguration,
-  private val connectorConfiguration: ConnectorConfiguration
+  private val connectorConfiguration: ConnectorConfiguration,
 ) {
 
   @Bean
@@ -106,11 +109,13 @@ open class CommandHandlerConfiguration(
       deleteCarCommandHandler(),
       listAutoPartCommandHandler(),
       findAutoPartByPartNumberCommandHandler(),
+      findAutoPartByCarAndCarPartCommandHandler(),
       findAutoPartByIdCommandHandler(),
       deleteCarsCommandHandler(),
       deleteAutoPartsCommandHandler(),
       findAutoPartsCommandHandler(),
       findAutoPartsByPartNumberCommandHandler(),
+      findAutoPartsByCarAndCarPartCommandHandler(),
       findAutoPartsByIdCommandHandler(),
       createCarCommandHandler()
     )
@@ -167,6 +172,17 @@ open class CommandHandlerConfiguration(
       FIND_AUTO_PART_BY_PART_ID,
       FINDING_AUTO_PART_BY_ID,
       MessageSettings::findAutoPartByIdMessage
+    )
+  }
+
+  @Bean
+  open fun findAutoPartsByCarAndCarPartCommandHandler(): CommandHandler {
+    return ChangingBotStateCommandHandler(
+      telegramBot,
+      serviceConfiguration.keyboardBuilder(),
+      FIND_AUTO_PART_BY_CAR_AND_CAR_PART,
+      FINDING_AUTO_PART_BY_CAR_AND_CAR_PART,
+      MessageSettings::findAutoPartByCarAndCarPartMessage
     )
   }
 
@@ -267,6 +283,14 @@ open class CommandHandlerConfiguration(
     return FindAutoPartByPartNumberCommandHandler(
       listEntityHandler(),
       cacheConfiguration.autoPartByPartNumberListCache()
+    )
+  }
+
+  @Bean
+  open fun findAutoPartByCarAndCarPartCommandHandler(): CommandHandler {
+    return FindAutoPartByCarAndCarPartCommandHandler(
+      listEntityHandler(),
+      cacheConfiguration.autoPartByCarAndCarPartListCache()
     )
   }
 

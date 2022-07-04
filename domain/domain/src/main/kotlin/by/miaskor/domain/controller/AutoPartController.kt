@@ -6,6 +6,7 @@ import by.miaskor.domain.api.domain.ResponseWithLimit
 import by.miaskor.domain.api.domain.StoreHouseIdRequest
 import by.miaskor.domain.api.domain.StoreHouseRequestWithConstraint
 import by.miaskor.domain.service.AutoPartService
+import by.miaskor.domain.service.StoreHouseConstraintHandler
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,7 +20,8 @@ import reactor.core.publisher.Mono
 @RestController
 @RequestMapping("/auto-part")
 class AutoPartController(
-  private val autoPartService: AutoPartService
+  private val autoPartService: AutoPartService,
+  private val storeHouseConstraintHandler: StoreHouseConstraintHandler,
 ) {
 
   @PostMapping
@@ -30,24 +32,24 @@ class AutoPartController(
 
   @PostMapping("/list")
   fun getAllByStoreHouseId(
-    @RequestBody storeHouseIdRequest: StoreHouseIdRequest
+    @RequestBody storeHouseIdRequest: StoreHouseIdRequest,
   ): Mono<ResponseEntity<ResponseWithLimit<AutoPartResponse>>> {
     return autoPartService.getAllByStoreHouseId(storeHouseIdRequest)
       .map { ResponseEntity.ok(it) }
   }
 
-  @PostMapping("/list/part-number")
+  @PostMapping("/list/constraint")
   fun getAllByStoreHouseIdWithConstraint(
-    @RequestBody storeHouseIdRequest: StoreHouseRequestWithConstraint
+    @RequestBody storeHouseIdRequest: StoreHouseRequestWithConstraint,
   ): Mono<ResponseEntity<ResponseWithLimit<AutoPartResponse>>> {
-    return autoPartService.getAllByStoreHouseIdAndPartNumber(storeHouseIdRequest)
+    return storeHouseConstraintHandler.handle(storeHouseIdRequest)
       .map { ResponseEntity.ok(it) }
   }
 
   @GetMapping("/{storeHouseId}/{id}")
   fun getByStoreHouseIdAndId(
     @PathVariable storeHouseId: Long,
-    @PathVariable id: Long
+    @PathVariable id: Long,
   ): Mono<ResponseEntity<AutoPartResponse>> {
     return autoPartService.getByStoreHouseIdAndId(storeHouseId, id)
       .map { ResponseEntity.ok(it) }

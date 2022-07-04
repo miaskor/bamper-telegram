@@ -6,6 +6,7 @@ import by.miaskor.cloud.drive.service.ImageDownloader
 import by.miaskor.cloud.drive.service.ImageUploader
 import by.miaskor.domain.api.domain.AutoPartDto
 import by.miaskor.domain.api.domain.AutoPartResponse
+import by.miaskor.domain.api.domain.CarAutoPartDto
 import by.miaskor.domain.api.domain.ResponseWithLimit
 import by.miaskor.domain.api.domain.StoreHouseIdRequest
 import by.miaskor.domain.api.domain.StoreHouseRequestWithConstraint
@@ -21,7 +22,7 @@ class AutoPartService(
   private val autoPartRepository: AutoPartRepository,
   private val uploader: ImageUploader,
   private val downloader: ImageDownloader,
-  private val telegramApiService: TelegramApiService
+  private val telegramApiService: TelegramApiService,
 ) {
 
   fun deleteByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Boolean> {
@@ -69,8 +70,14 @@ class AutoPartService(
     ).flatMap(::processAutoParts)
   }
 
+  fun getAllByStoreHouseIdAndCarAndCarPart(carAutoPartDto: CarAutoPartDto):
+      Mono<ResponseWithLimit<AutoPartResponse>> {
+    return autoPartRepository.findAllByStoreHouseIdAndCarAndCarPart(carAutoPartDto)
+      .flatMap(::processAutoParts)
+  }
+
   fun getAllByStoreHouseIdAndPartNumber(
-    storeHouseIdRequest: StoreHouseRequestWithConstraint
+    storeHouseIdRequest: StoreHouseRequestWithConstraint,
   ): Mono<ResponseWithLimit<AutoPartResponse>> {
     return autoPartRepository.findAllByStoreHouseIdAndPartNumber(
       storeHouseIdRequest.constraint,

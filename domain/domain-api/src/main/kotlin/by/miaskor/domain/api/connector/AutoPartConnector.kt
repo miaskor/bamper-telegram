@@ -44,11 +44,11 @@ class AutoPartConnector(
       .bodyToMono()
   }
 
-  fun getAllByStoreHouseIdAndPartNumber(
-    storeHouseIdRequest: StoreHouseRequestWithConstraint
+  fun getAllByConstraint(
+    storeHouseIdRequest: StoreHouseRequestWithConstraint,
   ): Mono<ResponseWithLimit<AutoPartResponse>> {
     return webClient.post()
-      .uri("/auto-part/list/part-number")
+      .uri("/auto-part/list/constraint")
       .body(BodyInserters.fromValue(storeHouseIdRequest))
       .retrieve()
       .bodyToMono()

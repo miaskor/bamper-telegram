@@ -1,7 +1,7 @@
 package by.miaskor.domain.api.domain
 
-data class StoreHouseIdRequest(
-  val storeHouseId: Long,
-  val limit: Long,
-  val offset: Long
+open class StoreHouseIdRequest(
+  open val storeHouseId: Long,
+  open val limit: Long,
+  open val offset: Long,
 )

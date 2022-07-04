@@ -1,5 +1,6 @@
 package by.miaskor.domain.repository
 
+import by.miaskor.domain.api.domain.CarAutoPartDto
 import by.miaskor.domain.model.AutoPartVO
 import by.miaskor.domain.tables.pojos.AutoPart
 import by.miaskor.domain.tables.references.AUTO_PART
@@ -11,11 +12,12 @@ import reactor.core.publisher.Mono
 
 interface AutoPartRepository : CrudRepository<AutoPart> {
   fun findAllByStoreHouseId(storeHouseId: Long, limit: Long, offset: Long): Mono<List<AutoPartVO>>
+  fun findAllByStoreHouseIdAndCarAndCarPart(carAutoPartDto: CarAutoPartDto): Mono<List<AutoPartVO>>
   fun findAllByStoreHouseIdAndPartNumber(
     partNumber: String,
     storeHouseId: Long,
     limit: Long,
-    offset: Long
+    offset: Long,
   ): Mono<List<AutoPartVO>>
 
   fun deleteByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Int>
@@ -23,7 +25,7 @@ interface AutoPartRepository : CrudRepository<AutoPart> {
 }
 
 class JooqAutoPartRepository(
-  private val dslContext: DSLContext
+  private val dslContext: DSLContext,
 ) : AutoPartRepository {
   override fun save(entity: AutoPart): Mono<Unit> {
     return Mono.just(entity)
@@ -49,11 +51,29 @@ class JooqAutoPartRepository(
     }
   }
 
+  override fun findAllByStoreHouseIdAndCarAndCarPart(carAutoPartDto: CarAutoPartDto): Mono<List<AutoPartVO>> {
+    return Mono.fromSupplier {
+      dslContext.select(autoPartColumns)
+        .from(AUTO_PART)
+        .join(CAR).on(AUTO_PART.CAR_ID.eq(CAR.ID))
+        .join(BRAND).on(BRAND.ID.eq(CAR.BRAND_ID))
+        .join(CAR_PART).on(AUTO_PART.CAR_PART_ID.eq(CAR_PART.ID))
+        .where(AUTO_PART.STORE_HOUSE_ID.eq(carAutoPartDto.storeHouseId))
+        .and(CAR_PART.NAME_EN.eq(carAutoPartDto.autoPart))
+        .or(CAR_PART.NAME_RU.eq(carAutoPartDto.autoPart))
+        .and(BRAND.BRAND_NAME.eq(carAutoPartDto.brand))
+        .and(BRAND.MODEL.eq(carAutoPartDto.model))
+        .limit(carAutoPartDto.limit)
+        .offset(carAutoPartDto.offset)
+        .fetchInto(AutoPartVO::class.java)
+    }
+  }
+
   override fun findAllByStoreHouseIdAndPartNumber(
     partNumber: String,
     storeHouseId: Long,
     limit: Long,
-    offset: Long
+    offset: Long,
   ): Mono<List<AutoPartVO>> {
     return Mono.fromSupplier {
       dslContext.select(autoPartColumns)

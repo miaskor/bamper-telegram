@@ -6,25 +6,28 @@ import by.miaskor.bot.domain.ConstraintAutoPartListEntity
 import by.miaskor.bot.domain.ListEntityType
 import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.extension.text
-import by.miaskor.domain.api.domain.ConstraintType.PART_NUMBER
+import by.miaskor.domain.api.domain.ConstraintType
 import com.pengrad.telegrambot.model.Update
 
-class AutoPartByPartNumberListCache(
+class AutoPartByCarAndCarPartListCache(
   listSettings: ListSettings,
-  cacheSettings: CacheSettings
+  cacheSettings: CacheSettings,
 ) : AbstractListCache<ConstraintAutoPartListEntity>(
   cacheSettings,
   listSettings
 ) {
   override fun populateIsNotExists(update: Update) {
     if (!isExists(update.chatId))
-      populate(update.chatId, ConstraintAutoPartListEntity(constraintType = PART_NUMBER, constraint = update.text))
+      populate(
+        update.chatId,
+        ConstraintAutoPartListEntity(constraintType = ConstraintType.CAR_AND_CAR_PART, constraint = update.text)
+      )
   }
 
   override fun copyEntity(
     listEntity: ConstraintAutoPartListEntity,
     offset: Long,
-    reachLimit: Boolean
+    reachLimit: Boolean,
   ): ConstraintAutoPartListEntity {
     return listEntity.copy(
       offset = offset,

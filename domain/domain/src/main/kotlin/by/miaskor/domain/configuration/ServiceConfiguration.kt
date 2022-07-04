@@ -6,6 +6,7 @@ import by.miaskor.domain.service.AutoPartService
 import by.miaskor.domain.service.BrandService
 import by.miaskor.domain.service.CarPartService
 import by.miaskor.domain.service.CarService
+import by.miaskor.domain.service.StoreHouseConstraintHandler
 import by.miaskor.domain.service.StoreHouseService
 import by.miaskor.domain.service.TelegramClientService
 import by.miaskor.domain.service.WorkerStoreHouseService
@@ -21,7 +22,7 @@ open class ServiceConfiguration(
   private val uploader: ImageUploader,
   private val imageDownloader: ImageDownloader,
   private val confProvider: ConfigurationProvider,
-  private val connectorConfiguration: ConnectorConfiguration
+  private val connectorConfiguration: ConnectorConfiguration,
 ) {
 
   @Bean
@@ -83,10 +84,16 @@ open class ServiceConfiguration(
       telegramApiService()
     )
   }
+
   @Bean
   open fun workerStoreHouseService(): WorkerStoreHouseService {
     return WorkerStoreHouseService(
       repositoryConfiguration.workerStoreHouseRepository()
     )
+  }
+
+  @Bean
+  open fun storeHouseConstraintHandler(): StoreHouseConstraintHandler {
+    return StoreHouseConstraintHandler(autoPartService())
   }
 }

@@ -13,6 +13,7 @@ import by.miaskor.bot.domain.BotState.DELETING_AUTO_PART
 import by.miaskor.bot.domain.BotState.DELETING_CAR
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART
+import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_CAR_AND_CAR_PART
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_ID
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_PART_NUMBER
 import by.miaskor.bot.domain.BotState.MAIN_MENU
@@ -30,7 +31,7 @@ import com.pengrad.telegrambot.model.request.ReplyKeyboardMarkup
 import reactor.core.publisher.Mono
 
 class KeyboardBuilder(
-  private val telegramClientCache: TelegramClientCache
+  private val telegramClientCache: TelegramClientCache,
 ) {
 
   fun build(chatId: Long): Mono<Keyboard> {
@@ -64,8 +65,11 @@ class KeyboardBuilder(
           DELETING_AUTO_PART -> buildReplyKeyboard(it.deletingAutoPartMenu())
           ADDING_EMPLOYEE_TO_STORE_HOUSE -> buildReplyKeyboard(it.addingEmployeeToStoreHouseMenu())
           FINDING_AUTO_PART -> buildReplyKeyboard(it.findAutoPartMenu())
-          FINDING_AUTO_PART_BY_PART_NUMBER -> buildReplyKeyboard(it.defaultMenu())
-          FINDING_AUTO_PART_BY_ID -> buildReplyKeyboard(it.defaultMenu())
+          FINDING_AUTO_PART_BY_PART_NUMBER,
+          FINDING_AUTO_PART_BY_CAR_AND_CAR_PART,
+          FINDING_AUTO_PART_BY_ID,
+          -> buildReplyKeyboard(it.defaultMenu())
+
           else -> buildReplyKeyboard(listOf("Something went wrong"))
         }
       }
@@ -94,7 +98,7 @@ class KeyboardBuilder(
 
   private fun addStoreHousesToKeyboard(
     telegramClient: TelegramClient,
-    keyboardSettings: KeyboardSettings
+    keyboardSettings: KeyboardSettings,
   ): List<String> {
     val storeHouses = telegramClient.storeHouses().map { it.name }
     val storeHouseMenuKeyboards = keyboardSettings.choosingStoreHouseMenu()

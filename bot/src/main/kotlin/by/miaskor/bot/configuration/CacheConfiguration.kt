@@ -7,6 +7,7 @@ import by.miaskor.bot.domain.CreatingCarStep
 import by.miaskor.bot.domain.FindingAutoPartStep
 import by.miaskor.bot.domain.ListEntity
 import by.miaskor.bot.service.cache.AbstractListCache
+import by.miaskor.bot.service.cache.AutoPartByCarAndCarPartListCache
 import by.miaskor.bot.service.cache.AutoPartByPartNumberListCache
 import by.miaskor.bot.service.cache.AutoPartListEntityCache
 import by.miaskor.bot.service.cache.Cache
@@ -19,7 +20,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 open class CacheConfiguration(
   private val settingsConfiguration: SettingsConfiguration,
-  private val connectorConfiguration: ConnectorConfiguration
+  private val connectorConfiguration: ConnectorConfiguration,
 ) {
 
   @Bean
@@ -70,12 +71,21 @@ open class CacheConfiguration(
   }
 
   @Bean
+  open fun autoPartByCarAndCarPartListCache(): AbstractListCache<ConstraintAutoPartListEntity> {
+    return AutoPartByCarAndCarPartListCache(
+      settingsConfiguration.listSettings(),
+      settingsConfiguration.cacheSettings()
+    )
+  }
+
+  @Bean
   @Suppress("UNCHECKED_CAST")
   open fun listEntityCacheRegistry(): ListEntityCacheRegistry {
     return ListEntityCacheRegistry(
       carListEntityCache(),
       autoPartListEntityCache(),
-      autoPartByPartNumberListCache() as AbstractListCache<ListEntity>
+      autoPartByPartNumberListCache() as AbstractListCache<ListEntity>,
+      autoPartByCarAndCarPartListCache() as AbstractListCache<ListEntity>
     )
   }
 }
