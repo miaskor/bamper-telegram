@@ -2,7 +2,6 @@ package by.miaskor.domain.api.connector
 
 import by.miaskor.domain.api.domain.AutoPartDto
 import by.miaskor.domain.api.domain.AutoPartResponse
-import by.miaskor.domain.api.domain.CarAutoPartRequest
 import by.miaskor.domain.api.domain.ResponseWithLimit
 import by.miaskor.domain.api.domain.StoreHouseIdRequest
 import by.miaskor.domain.api.domain.StoreHouseRequestWithConstraint
@@ -19,14 +18,6 @@ class AutoPartConnector(
     return webClient.post()
       .uri("/auto-part")
       .body(BodyInserters.fromValue(autoPartDto))
-      .retrieve()
-      .bodyToMono()
-  }
-
-  fun getByCarAndCarPart(carAutoPartRequest: CarAutoPartRequest): Mono<ResponseWithLimit<AutoPartResponse>> {
-    return webClient.post()
-      .uri("/auto-part/list/car")
-      .body(BodyInserters.fromValue(carAutoPartRequest))
       .retrieve()
       .bodyToMono()
   }
@@ -53,11 +44,11 @@ class AutoPartConnector(
       .bodyToMono()
   }
 
-  fun getAllByStoreHouseIdAndPartNumber(
-    storeHouseIdRequest: StoreHouseRequestWithConstraint
+  fun getAllByConstraint(
+    storeHouseIdRequest: StoreHouseRequestWithConstraint,
   ): Mono<ResponseWithLimit<AutoPartResponse>> {
     return webClient.post()
-      .uri("/auto-part/list/part-number")
+      .uri("/auto-part/list/constraint")
       .body(BodyInserters.fromValue(storeHouseIdRequest))
       .retrieve()
       .bodyToMono()

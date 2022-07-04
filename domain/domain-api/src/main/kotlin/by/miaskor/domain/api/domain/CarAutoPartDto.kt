@@ -1,9 +1,10 @@
 package by.miaskor.domain.api.domain
 
-data class CarAutoPartRequest(
+data class CarAutoPartDto(
   override val storeHouseId: Long,
-  val brandId: Long,
-  val autoPartId: Long,
+  val brand: String,
+  val autoPart: String,
+  val model: String,
   override val limit: Long,
   override val offset: Long,
 ) : StoreHouseIdRequest(storeHouseId, limit, offset)

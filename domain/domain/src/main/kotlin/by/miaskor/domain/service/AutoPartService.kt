@@ -6,7 +6,7 @@ import by.miaskor.cloud.drive.service.ImageDownloader
 import by.miaskor.cloud.drive.service.ImageUploader
 import by.miaskor.domain.api.domain.AutoPartDto
 import by.miaskor.domain.api.domain.AutoPartResponse
-import by.miaskor.domain.api.domain.CarAutoPartRequest
+import by.miaskor.domain.api.domain.CarAutoPartDto
 import by.miaskor.domain.api.domain.ResponseWithLimit
 import by.miaskor.domain.api.domain.StoreHouseIdRequest
 import by.miaskor.domain.api.domain.StoreHouseRequestWithConstraint
@@ -70,9 +70,9 @@ class AutoPartService(
     ).flatMap(::processAutoParts)
   }
 
-  fun getAllByStoreHouseIdAndCarAndCarPart(carAutoPartRequest: CarAutoPartRequest):
+  fun getAllByStoreHouseIdAndCarAndCarPart(carAutoPartDto: CarAutoPartDto):
       Mono<ResponseWithLimit<AutoPartResponse>> {
-    return autoPartRepository.findAllByStoreHouseIdAndCarAndCarPart(carAutoPartRequest)
+    return autoPartRepository.findAllByStoreHouseIdAndCarAndCarPart(carAutoPartDto)
       .flatMap(::processAutoParts)
   }
 

@@ -66,6 +66,12 @@ enum class Command(private vararg val commands: String) {
   @FieldEnrich("findAutoPartByIds", "commands")
   FIND_AUTO_PART_BY_PART_ID,
 
+  @FieldEnrich("findAutoPartByCarAndCarParts", "commands")
+  FIND_AUTO_PART_BY_CAR_AND_CAR_PART,
+
+  @FieldEnrich("autoPartByCarAndCarPart", "commands")
+  FIND_AUTO_PART_BY_CAR_AND_CAR_PART_ENTITY,
+
   @FieldEnrich("entityIds", "commands")
   FIND_AUTO_PART_BY_PART_ID_ENTITY,
 
