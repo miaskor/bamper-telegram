@@ -11,7 +11,7 @@ import by.miaskor.bot.service.MessageSender.sendMessageWithKeyboard
 import by.miaskor.bot.service.cache.Cache
 import by.miaskor.bot.service.cache.TelegramClientCache
 import by.miaskor.bot.service.extension.chatId
-import by.miaskor.bot.service.pollLast
+import by.miaskor.bot.service.extension.pollLast
 import by.miaskor.bot.service.step.ProcessingStepService
 import by.miaskor.bot.service.step.autopart.create.CreatingAutoPartStepKeyboardBuilder
 import by.miaskor.bot.service.step.autopart.create.CreatingAutoPartStepMessageResolver

@@ -11,6 +11,8 @@ databaseChangeLog:
       file: db/changelog/db.changelog-1.4.sql
   - include:
       file: db/changelog/db.changelog-1.5.sql
+  - include:
+      file: db/changelog/db.changelog-1.6.sql
   - logicalFilePath: db/changelog/db.changelog-master.yaml
   - changeSet:
       id: master-1

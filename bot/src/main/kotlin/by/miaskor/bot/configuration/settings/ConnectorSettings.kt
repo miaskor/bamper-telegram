@@ -2,5 +2,6 @@ package by.miaskor.bot.configuration.settings
 
 interface ConnectorSettings {
 
-  fun baseUrl(): String
+  fun domainBaseUrl(): String
+  fun bamperIntegrationBaseUrl(): String
 }

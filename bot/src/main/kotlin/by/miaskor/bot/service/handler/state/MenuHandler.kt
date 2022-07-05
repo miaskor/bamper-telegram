@@ -26,6 +26,7 @@ class MenuHandler(
           BotState.MAIN_MENU -> messageSettings.mainMenuMessage()
           BotState.EMPLOYEES_MENU -> messageSettings.employeesMenuMessage()
           BotState.MODIFICATION_STORE_HOUSE_MENU -> messageSettings.storeHouseMenuMessage()
+          BotState.BAMPER_MENU -> messageSettings.bamperMenuMessage()
           else -> "Something bad happened in menuHandler"
         }
         telegramBot.sendMessageWithKeyboard(update.chatId, message, keyboard)

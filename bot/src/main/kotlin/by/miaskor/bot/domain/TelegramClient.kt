@@ -7,12 +7,16 @@ import java.util.*
 data class TelegramClient(
   val chatId: Long,
   val chatLanguage: String = "EN",
-  val bamperClientId: Long? = null,
+  val bamperSessionId: String = "",
   val currentBotState: BotState = GREETINGS,
   val previousBotStates: SortedSet<BotState> = sortedSetOf(MAIN_MENU),
   private var employees: TelegramClientEmployees = TelegramClientEmployees(),
-  private var telegramClientStoreHouses: TelegramClientStoreHouses = TelegramClientStoreHouses()
+  private var telegramClientStoreHouses: TelegramClientStoreHouses = TelegramClientStoreHouses(),
 ) {
+
+  fun isAuth(): Boolean {
+    return bamperSessionId.isNotEmpty()
+  }
 
   fun currentStoreHouseName(): String {
     return telegramClientStoreHouses.currentStoreHouse.name

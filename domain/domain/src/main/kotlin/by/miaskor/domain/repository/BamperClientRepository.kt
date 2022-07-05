@@ -16,7 +16,8 @@ class JooqBamperClientRepository(
       .map { bamperClientRecord ->
         dslContext.insertInto(BAMPER_CLIENT)
           .set(bamperClientRecord)
-          .executeAsync()
+          .onDuplicateKeyIgnore()
+          .execute()
       }
   }
 

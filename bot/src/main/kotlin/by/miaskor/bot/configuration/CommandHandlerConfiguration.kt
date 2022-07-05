@@ -42,6 +42,9 @@ import by.miaskor.bot.service.handler.command.autopart.FindAutoPartByCarAndCarPa
 import by.miaskor.bot.service.handler.command.autopart.FindAutoPartByIdCommandHandler
 import by.miaskor.bot.service.handler.command.autopart.FindAutoPartByPartNumberCommandHandler
 import by.miaskor.bot.service.handler.command.autopart.ListAutoPartCommandHandler
+import by.miaskor.bot.service.handler.command.bamper.AuthBamperCommandHandler
+import by.miaskor.bot.service.handler.command.bamper.LogInBamperCommandHandler
+import by.miaskor.bot.service.handler.command.bamper.LogOutBamperCommandHandler
 import by.miaskor.bot.service.handler.command.car.DeleteCarCommandHandler
 import by.miaskor.bot.service.handler.command.car.ListCarCommandHandler
 import by.miaskor.bot.service.handler.command.employee.AddingEmployeeCommandHandler
@@ -114,6 +117,9 @@ open class CommandHandlerConfiguration(
       deleteCarsCommandHandler(),
       deleteAutoPartsCommandHandler(),
       findAutoPartsCommandHandler(),
+      logInBamperCommandHandler(),
+      logOutBamperCommandHandler(),
+      authBamperCommandHandler(),
       findAutoPartsByPartNumberCommandHandler(),
       findAutoPartsByCarAndCarPartCommandHandler(),
       findAutoPartsByIdCommandHandler(),
@@ -150,6 +156,31 @@ open class CommandHandlerConfiguration(
       FIND_AUTO_PART,
       FINDING_AUTO_PART,
       MessageSettings::findAutoPartMenuMessage
+    )
+  }
+
+  @Bean
+  open fun logInBamperCommandHandler(): CommandHandler {
+    return LogInBamperCommandHandler(
+      cacheConfiguration.telegramClientCache()
+    )
+  }
+
+  @Bean
+  open fun logOutBamperCommandHandler(): CommandHandler {
+    return LogOutBamperCommandHandler(
+      cacheConfiguration.telegramClientCache(),
+      backCommandHandler()
+    )
+  }
+
+  @Bean
+  open fun authBamperCommandHandler(): CommandHandler {
+    return AuthBamperCommandHandler(
+      connectorConfiguration.bamperIntegrationConnector(),
+      connectorConfiguration.bamperClientConnector(),
+      telegramBot,
+      cacheConfiguration.telegramClientCache()
     )
   }
 

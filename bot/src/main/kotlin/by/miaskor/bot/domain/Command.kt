@@ -96,6 +96,15 @@ enum class Command(private vararg val commands: String) {
   @FieldEnrich("findAutoParts", "commands")
   FIND_AUTO_PART,
 
+  @FieldEnrich("authBamper", "commands")
+  AUTH_BAMPER,
+
+  @FieldEnrich("logInBampers", "commands")
+  LOG_IN_BAMPER,
+
+  @FieldEnrich("logOutBampers", "commands")
+  LOG_OUT_BAMPER,
+
   @FieldEnrich("undefined", "commands")
   UNDEFINED;
 

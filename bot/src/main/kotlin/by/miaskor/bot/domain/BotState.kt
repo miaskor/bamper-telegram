@@ -2,6 +2,7 @@ package by.miaskor.bot.domain
 
 import by.miaskor.bot.domain.Command.ADD_EMPLOYEE
 import by.miaskor.bot.domain.Command.ADD_EMPLOYEE_TO_STORE_HOUSE
+import by.miaskor.bot.domain.Command.AUTH_BAMPER
 import by.miaskor.bot.domain.Command.BACK
 import by.miaskor.bot.domain.Command.CHANGE_LANGUAGE
 import by.miaskor.bot.domain.Command.CHOOSE_STORE_HOUSE
@@ -26,6 +27,8 @@ import by.miaskor.bot.domain.Command.LANGUAGE
 import by.miaskor.bot.domain.Command.LIST_AUTO_PART
 import by.miaskor.bot.domain.Command.LIST_CAR
 import by.miaskor.bot.domain.Command.LIST_EMPLOYEE
+import by.miaskor.bot.domain.Command.LOG_IN_BAMPER
+import by.miaskor.bot.domain.Command.LOG_OUT_BAMPER
 import by.miaskor.bot.domain.Command.REMOVE_EMPLOYEE
 import by.miaskor.bot.domain.Command.SELECT_CERTAIN_STORE_HOUSE
 import by.miaskor.bot.domain.Command.STORE_HOUSE
@@ -38,7 +41,7 @@ enum class BotState(private vararg val commands: Command) {
   CHANGING_LANGUAGE(LANGUAGE, BACK, UNDEFINED),
   ADDING_EMPLOYEE(BACK, EMPLOYEE, UNDEFINED),
   REMOVING_EMPLOYEE(BACK, EMPLOYEE, UNDEFINED),
-  MAIN_MENU(CREATE_STORE_HOUSE, CHOOSE_STORE_HOUSE, CHANGE_LANGUAGE, EMPLOYEES),
+  MAIN_MENU(CREATE_STORE_HOUSE, CHOOSE_STORE_HOUSE, CHANGE_LANGUAGE, LOG_IN_BAMPER, EMPLOYEES),
   CREATING_STORE_HOUSE(BACK, STORE_HOUSE, UNDEFINED),
   CHOOSING_STORE_HOUSE(BACK, SELECT_CERTAIN_STORE_HOUSE, UNDEFINED),
   MODIFICATION_STORE_HOUSE_MENU(
@@ -63,7 +66,8 @@ enum class BotState(private vararg val commands: Command) {
   FINDING_AUTO_PART_BY_PART_NUMBER(BACK, FIND_AUTO_PART_BY_PART_NUMBER_ENTITY),
   FINDING_AUTO_PART_BY_ID(BACK, FIND_AUTO_PART_BY_PART_ID_ENTITY, UNDEFINED),
   FINDING_AUTO_PART_BY_CAR_AND_CAR_PART(BACK, FIND_AUTO_PART_BY_CAR_AND_CAR_PART_ENTITY, UNDEFINED),
-  BAMPER_MENU;
+  AUTHORIZATION_BAMPER(BACK, AUTH_BAMPER, UNDEFINED),
+  BAMPER_MENU(BACK, LOG_OUT_BAMPER, UNDEFINED);
 
   companion object {
     private val finalStates =
@@ -71,7 +75,7 @@ enum class BotState(private vararg val commands: Command) {
         GREETINGS, ADDING_EMPLOYEE, REMOVING_EMPLOYEE, MAIN_MENU, CHOOSING_LANGUAGE,
         CHANGING_LANGUAGE, CREATING_STORE_HOUSE, CREATING_CAR, CREATING_AUTO_PART,
         ADDING_EMPLOYEE_TO_STORE_HOUSE, DELETING_CAR, DELETING_AUTO_PART, FINDING_AUTO_PART_BY_PART_NUMBER,
-        FINDING_AUTO_PART_BY_ID, FINDING_AUTO_PART_BY_CAR_AND_CAR_PART
+        FINDING_AUTO_PART_BY_ID, FINDING_AUTO_PART_BY_CAR_AND_CAR_PART, AUTHORIZATION_BAMPER
       )
 
     fun isNotFinalState(botState: BotState): Boolean {

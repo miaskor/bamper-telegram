@@ -3,6 +3,7 @@ package by.miaskor.domain.configuration
 import by.miaskor.cloud.drive.service.ImageDownloader
 import by.miaskor.cloud.drive.service.ImageUploader
 import by.miaskor.domain.service.AutoPartService
+import by.miaskor.domain.service.BamperClientService
 import by.miaskor.domain.service.BrandService
 import by.miaskor.domain.service.CarPartService
 import by.miaskor.domain.service.CarService
@@ -95,5 +96,10 @@ open class ServiceConfiguration(
   @Bean
   open fun storeHouseConstraintHandler(): StoreHouseConstraintHandler {
     return StoreHouseConstraintHandler(autoPartService())
+  }
+
+  @Bean
+  open fun bamperClientService(): BamperClientService {
+    return BamperClientService(repositoryConfiguration.bamperClientRepository())
   }
 }
