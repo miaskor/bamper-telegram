@@ -13,8 +13,8 @@ import by.miaskor.bot.service.KeyboardBuilder
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.cache.TelegramClientCache
 import by.miaskor.bot.service.extension.chatId
+import by.miaskor.bot.service.extension.pollLast
 import by.miaskor.bot.service.extension.sendMessageWithKeyboard
-import by.miaskor.bot.service.pollLast
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono

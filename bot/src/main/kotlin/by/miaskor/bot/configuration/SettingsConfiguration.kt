@@ -24,7 +24,7 @@ open class SettingsConfiguration(
 
   @Bean
   open fun connectorSettings(): ConnectorSettings {
-    return confProvider.bind("connector.domain", ConnectorSettings::class.java)
+    return confProvider.bind("connector", ConnectorSettings::class.java)
   }
 
   @Bean

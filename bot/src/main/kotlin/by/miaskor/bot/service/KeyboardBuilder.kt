@@ -3,6 +3,8 @@ package by.miaskor.bot.service
 import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE
 import by.miaskor.bot.domain.BotState.ADDING_EMPLOYEE_TO_STORE_HOUSE
+import by.miaskor.bot.domain.BotState.AUTHORIZATION_BAMPER
+import by.miaskor.bot.domain.BotState.BAMPER_MENU
 import by.miaskor.bot.domain.BotState.CHANGING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CHOOSING_LANGUAGE
 import by.miaskor.bot.domain.BotState.CHOOSING_STORE_HOUSE
@@ -49,9 +51,6 @@ class KeyboardBuilder(
           MAIN_MENU -> buildReplyKeyboard(it.mainMenu())
           CHANGING_LANGUAGE -> buildReplyKeyboard(it.changingLanguageMenu())
           EMPLOYEES_MENU -> buildReplyKeyboard(it.employeeMenu())
-          ADDING_EMPLOYEE -> buildReplyKeyboard(it.addingEmployee())
-          REMOVING_EMPLOYEE -> buildReplyKeyboard(it.removingEmployee())
-          CREATING_STORE_HOUSE -> buildReplyKeyboard(it.creatingStoreHouseMenu())
           CHOOSING_STORE_HOUSE -> {
             val buttons = addStoreHousesToKeyboard(telegramClient, it)
             buildReplyKeyboard(buttons)
@@ -59,15 +58,20 @@ class KeyboardBuilder(
 
           MODIFICATION_STORE_HOUSE_MENU -> buildReplyKeyboard(it.modificationStoreHouseMenu())
           READ_ONLY_STORE_HOUSE_MENU -> buildReplyKeyboard(it.readStoreHouseMenu())
-          CREATING_AUTO_PART -> buildReplyKeyboard(it.creatingAutoPartMenu())
-          CREATING_CAR -> buildReplyKeyboard(it.creatingCarMenu())
-          DELETING_CAR -> buildReplyKeyboard(it.deletingCarMenu())
-          DELETING_AUTO_PART -> buildReplyKeyboard(it.deletingAutoPartMenu())
-          ADDING_EMPLOYEE_TO_STORE_HOUSE -> buildReplyKeyboard(it.addingEmployeeToStoreHouseMenu())
           FINDING_AUTO_PART -> buildReplyKeyboard(it.findAutoPartMenu())
+          BAMPER_MENU -> buildReplyKeyboard(it.bamperMenu())
           FINDING_AUTO_PART_BY_PART_NUMBER,
           FINDING_AUTO_PART_BY_CAR_AND_CAR_PART,
           FINDING_AUTO_PART_BY_ID,
+          AUTHORIZATION_BAMPER,
+          REMOVING_EMPLOYEE,
+          ADDING_EMPLOYEE,
+          CREATING_CAR,
+          DELETING_CAR,
+          DELETING_AUTO_PART,
+          CREATING_AUTO_PART,
+          CREATING_STORE_HOUSE,
+          ADDING_EMPLOYEE_TO_STORE_HOUSE,
           -> buildReplyKeyboard(it.defaultMenu())
 
           else -> buildReplyKeyboard(listOf("Something went wrong"))
@@ -101,7 +105,7 @@ class KeyboardBuilder(
     keyboardSettings: KeyboardSettings,
   ): List<String> {
     val storeHouses = telegramClient.storeHouses().map { it.name }
-    val storeHouseMenuKeyboards = keyboardSettings.choosingStoreHouseMenu()
+    val storeHouseMenuKeyboards = keyboardSettings.defaultMenu()
     return storeHouses.plus(storeHouseMenuKeyboards)
   }
 }

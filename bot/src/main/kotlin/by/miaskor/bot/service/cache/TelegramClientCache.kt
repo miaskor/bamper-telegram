@@ -9,12 +9,17 @@ import java.util.*
 
 class TelegramClientCache(
   private val telegramClientConnector: TelegramClientConnector,
-  cacheSettings: CacheSettings
+  cacheSettings: CacheSettings,
 ) : Cache<Long, TelegramClient>(cacheSettings) {
 
   fun updateChatLanguage(chatId: Long, chatLanguage: String) {
     Optional.ofNullable(cache.getIfPresent(chatId))
       .ifPresent { cache.put(chatId, it.copy(chatLanguage = chatLanguage)) }
+  }
+
+  fun updateBamperSessionId(chatId: Long, bamperSessionId: String) {
+    Optional.ofNullable(cache.getIfPresent(chatId))
+      .ifPresent { cache.put(chatId, it.copy(bamperSessionId = bamperSessionId)) }
   }
 
   fun getTelegramClient(chatId: Long): Mono<TelegramClient> {
@@ -30,7 +35,6 @@ class TelegramClientCache(
         TelegramClient(
           chatId = it.chatId,
           chatLanguage = it.chatLanguage,
-          bamperClientId = it.bamperClientId,
           currentBotState = MAIN_MENU
         )
       }.doOnNext { populate(chatId, it) }

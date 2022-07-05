@@ -9,4 +9,5 @@ dependencies {
 
 
   implementation(project(":domain:domain-api"))
+  implementation(project(":bamper-integration:bamper-integration-api"))
 }
