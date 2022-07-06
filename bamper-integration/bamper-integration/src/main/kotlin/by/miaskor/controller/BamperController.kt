@@ -2,9 +2,13 @@ package by.miaskor.controller
 
 import by.miaskor.domain.AuthDto
 import by.miaskor.service.AuthorizationService
+import by.miaskor.service.ImportService
+import org.springframework.core.io.buffer.DataBufferUtils
+import org.springframework.http.codec.multipart.FilePart
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 
@@ -12,10 +16,22 @@ import reactor.core.publisher.Mono
 @RequestMapping("/bamper")
 class BamperController(
   private val authorizationService: AuthorizationService,
+  private val importService: ImportService,
 ) {
 
   @PostMapping("/auth")
   fun auth(@RequestBody authDto: AuthDto): Mono<String> {
     return authorizationService.auth(authDto)
+  }
+
+  @PostMapping("/import", consumes = ["*/*"])
+  fun importAdvertisement(@RequestPart file: Mono<FilePart>, @RequestPart sessionCookie: String): Mono<Unit> {
+    val block = file.flatMap {
+      DataBufferUtils.join(it.content())
+    }.map { it.asInputStream() }
+      .toFuture().get()
+
+    return Mono.just(block)
+      .flatMap { importService.importAdvertisement(it, sessionCookie) }
   }
 }
