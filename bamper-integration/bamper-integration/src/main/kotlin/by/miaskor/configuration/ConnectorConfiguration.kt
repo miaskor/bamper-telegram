@@ -17,7 +17,7 @@ open class ConnectorConfiguration(
   open fun webClient(): WebClient {
     return WebClient.builder()
       .baseUrl(bamperSettings.bamperUrl())
-      .clientConnector(ReactorClientHttpConnector(HttpClient.create().compress(true)))
+      .clientConnector(ReactorClientHttpConnector(HttpClient.create().compress(true).wiretap(true)))
       .build()
   }
 

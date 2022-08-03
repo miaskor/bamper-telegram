@@ -2,12 +2,15 @@ package by.miaskor.connector
 
 import by.miaskor.configuration.settings.BamperSettings
 import by.miaskor.domain.AuthDto
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
+import org.springframework.web.client.RestTemplate
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 import java.io.InputStream
 
@@ -48,24 +51,37 @@ class BamperConnector(
   fun importAdvertisement(file: InputStream, sessionCookie: String): Mono<Unit> {
 
     val builder = MultipartBodyBuilder()
-    builder.part("File", file)
+    val header1 = "form-data; name=attach; filename=file_to_upload_$sessionCookie.xlsx"
+    builder.part("File", file.readAllBytes(), MediaType.APPLICATION_OCTET_STREAM).header(
+      "Content-Disposition",
+      header1
+    )
     builder.part("action", "upload")
 
 
-    return webClient.post()
-      .uri(bamperSettings.importUri())
-      .contentType(MediaType.MULTIPART_FORM_DATA)
-      .cookie("PHPSESSID", sessionCookie)
-      .bodyValue(builder.build())
-      .retrieve()
-      .bodyToMono(String::class.java)
-      .flatMap { response ->
+    return Mono.fromSupplier {
+      val headers = HttpHeaders()
+      headers.add("Cookie", "$AUTH_COOKIE=$sessionCookie")
+      val requestEntity: HttpEntity<MultiValueMap<String, *>> = HttpEntity(builder.build(), headers)
+
+      val serverUrl = "https://bamper.by/personal/import/handler.php"
+
+      val restTemplate = RestTemplate()
+      restTemplate
+        .postForEntity(serverUrl, requestEntity, String::class.java)
+    }.flatMap { parseFile(it.body!!, sessionCookie) }
+  }
+
+  private fun parseFile(response: String, sessionCookie: String): Mono<Unit> {
+    return Mono.fromSupplier { parseUploadNumber(response) }
+      .flatMap { uploadNumber ->
         webClient.get()
-          .uri(bamperSettings.importUri())
-          .cookie("PHPSESSID", sessionCookie)
-          .attribute("ts", parseUploadNumber(response))
+          .uri(bamperSettings.parseUri())
+          .cookie(AUTH_COOKIE, sessionCookie)
+          .attribute("ts", uploadNumber)
           .retrieve()
-          .bodyToMono()
+          .toBodilessEntity()
+          .then(Mono.empty())
       }
   }
 
