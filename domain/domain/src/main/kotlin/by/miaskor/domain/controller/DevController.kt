@@ -2,6 +2,7 @@ package by.miaskor.domain.controller
 
 import by.miaskor.cloud.drive.domain.DownloadFile
 import by.miaskor.cloud.drive.domain.UploadFileRequest
+import by.miaskor.cloud.drive.service.CloudYandexDriveService
 import by.miaskor.cloud.drive.service.ImageDownloader
 import by.miaskor.cloud.drive.service.ImageUploader
 import by.miaskor.domain.service.AutoPartKeyGenerator
@@ -9,14 +10,13 @@ import org.springframework.core.io.buffer.DataBufferUtils
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.codec.multipart.FilePart
-import org.springframework.http.codec.multipart.Part
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.multipart.MultipartFile
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import javax.servlet.http.HttpServletResponse
 
@@ -24,7 +24,8 @@ import javax.servlet.http.HttpServletResponse
 @RequestMapping("/dev")
 class DevController(
   private val uploader: ImageUploader,
-  private val imageDownloader: ImageDownloader
+  private val imageDownloader: ImageDownloader,
+  private val cloudYandexDriveService: CloudYandexDriveService,
 ) {
 
   @PostMapping(path = ["/upload"], consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
@@ -52,5 +53,12 @@ class DevController(
     DataBufferUtils.write(image, response.outputStream)
       .map(DataBufferUtils::release)
       .blockLast()
+  }
+
+  @GetMapping(path = ["/download-url"])
+  fun downloadUrl(@RequestParam("photoPath") photoPath: String): Mono<String> {
+    return Mono.just(photoPath)
+      .map { DownloadFile(path = it) }
+      .flatMap { cloudYandexDriveService.getDownloadUrl(it) }
   }
 }

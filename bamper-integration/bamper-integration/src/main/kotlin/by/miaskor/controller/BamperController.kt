@@ -26,12 +26,9 @@ class BamperController(
 
   @PostMapping("/import", consumes = ["*/*"])
   fun importAdvertisement(@RequestPart file: Mono<FilePart>, @RequestPart sessionCookie: String): Mono<Unit> {
-    val block = file.flatMap {
+    return file.flatMap {
       DataBufferUtils.join(it.content())
     }.map { it.asInputStream() }
-      .toFuture().get()
-
-    return Mono.just(block)
       .flatMap { importService.importAdvertisement(it, sessionCookie) }
   }
 }

@@ -14,7 +14,7 @@ interface ImageDownloader {
 }
 
 class DefaultImageDownloader(
-  private val cloudYandexDriveConnector: CloudYandexDriveConnector
+  private val cloudYandexDriveConnector: CloudYandexDriveConnector,
 ) : ImageDownloader {
   override fun download(downloadFile: DownloadFile): Flux<DataBuffer> {
     return Mono.just(downloadFile.path)

@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono
 
 class CloudYandexDriveConnector(
   private val webClient: WebClient,
-  private val cloudDriveSettings: CloudDriveSettings
+  private val cloudDriveSettings: CloudDriveSettings,
 ) {
 
   fun uploadImage(image: Flux<DataBuffer>, path: String): Mono<Unit> {
@@ -20,7 +20,7 @@ class CloudYandexDriveConnector(
       .flatMap {
         webClient.put()
           .uri(it)
-          .header("Authorization", cloudDriveSettings.authToken())
+          .header(AUTHORIZATION_HEADER, cloudDriveSettings.authToken())
           .body(BodyInserters.fromPublisher(image, DataBuffer::class.java))
           .retrieve()
           .bodyToMono(Unit::class.java)
@@ -34,7 +34,7 @@ class CloudYandexDriveConnector(
           .queryParam("path", nameFolder)
           .build()
       }
-      .header("Authorization", cloudDriveSettings.authToken())
+      .header(AUTHORIZATION_HEADER, cloudDriveSettings.authToken())
       .retrieve()
       .bodyToMono(Unit::class.java)
   }
@@ -54,7 +54,7 @@ class CloudYandexDriveConnector(
           .queryParam("path", path)
           .build()
       }
-      .header("Authorization", cloudDriveSettings.authToken())
+      .header(AUTHORIZATION_HEADER, cloudDriveSettings.authToken())
       .exchangeToMono {
         Mono.just(it.statusCode())
           .filter { it.is2xxSuccessful }
@@ -70,7 +70,7 @@ class CloudYandexDriveConnector(
           .queryParam("path", path)
           .build()
       }
-      .header("Authorization", cloudDriveSettings.authToken())
+      .header(AUTHORIZATION_HEADER, cloudDriveSettings.authToken())
       .retrieve()
       .bodyToMono(DownloadUrlResponse::class.java)
       .map { it.href }
@@ -83,9 +83,13 @@ class CloudYandexDriveConnector(
           .queryParam("path", path)
           .build()
       }
-      .header("Authorization", cloudDriveSettings.authToken())
+      .header(AUTHORIZATION_HEADER, cloudDriveSettings.authToken())
       .retrieve()
       .bodyToMono(UploadUrlResponse::class.java)
       .map { it.href }
+  }
+
+  private companion object {
+    private const val AUTHORIZATION_HEADER = "Authorization"
   }
 }

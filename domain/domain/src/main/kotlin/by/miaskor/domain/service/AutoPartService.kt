@@ -87,6 +87,11 @@ class AutoPartService(
     ).flatMap(::processAutoParts)
   }
 
+  fun getByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<AutoPartResponse> {
+    return autoPartRepository.findByStoreHouseIdAndId(storeHouseId, id)
+      .flatMap { downloadPhoto(it) }
+  }
+
   private fun processAutoParts(list: List<AutoPartVO>): Mono<ResponseWithLimit<AutoPartResponse>> {
     return Flux.fromIterable(list)
       .flatMap { downloadPhoto(it) }
@@ -123,10 +128,5 @@ class AutoPartService(
           autoPartRU = autoPartVO.autoPartRU,
         )
       }
-  }
-
-  fun getByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<AutoPartResponse> {
-    return autoPartRepository.findByStoreHouseIdAndId(storeHouseId, id)
-      .flatMap { downloadPhoto(it) }
   }
 }
