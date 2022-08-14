@@ -1,9 +1,8 @@
 package by.miaskor.domain.api.domain
 
 data class AutoPartResponse(
-  val id: String,
   val description: String,
-  val photo: ByteArray,
+  val photoDownloadUrl: String,
   val price: Double,
   val quality: Boolean,
   val currency: String,
@@ -11,26 +10,12 @@ data class AutoPartResponse(
   val model: String,
   val brand: String,
   val year: String,
-  val autoPartEN: String,
-  val autoPartRU: String
-) {
-  companion object {
-    fun disassembly(autoPartResponse: AutoPartResponse, language: String): Array<String> {
-      return autoPartResponse.let {
-        arrayOf(
-          it.id,
-          if (language == "EN") it.autoPartEN else it.autoPartRU,
-          it.brand,
-          it.model,
-          it.year,
-          it.description,
-          it.partNumber,
-          it.price.toString(),
-          it.currency,
-          it.quality.toString()
-        )
-      }
-    }
-  }
-}
-
+  val body: String,
+  val transmission: String,
+  val engineCapacity: Double,
+  val fuelType: String,
+  val engineType: String,
+  val autoPartName: String,
+  val salePercent: Int = 0,
+  val active: Boolean = false,
+)

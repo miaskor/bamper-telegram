@@ -1,7 +1,7 @@
 package by.miaskor.domain.configuration
 
-import by.miaskor.cloud.drive.service.ImageDownloader
-import by.miaskor.cloud.drive.service.ImageUploader
+import by.miaskor.cloud.drive.configuration.ServiceConfiguration
+import by.miaskor.domain.service.AutoPartMapper
 import by.miaskor.domain.service.AutoPartService
 import by.miaskor.domain.service.BamperClientService
 import by.miaskor.domain.service.BrandService
@@ -20,8 +20,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 open class ServiceConfiguration(
   private val repositoryConfiguration: RepositoryConfiguration,
-  private val uploader: ImageUploader,
-  private val imageDownloader: ImageDownloader,
+  private val serviceConfiguration: ServiceConfiguration,
   private val confProvider: ConfigurationProvider,
   private val connectorConfiguration: ConnectorConfiguration,
 ) {
@@ -80,8 +79,8 @@ open class ServiceConfiguration(
   open fun autoPartService(): AutoPartService {
     return AutoPartService(
       repositoryConfiguration.autoPartRepository(),
-      uploader,
-      imageDownloader,
+      serviceConfiguration.imageUploader(),
+      autoPartMapper(),
       telegramApiService()
     )
   }
@@ -101,5 +100,10 @@ open class ServiceConfiguration(
   @Bean
   open fun bamperClientService(): BamperClientService {
     return BamperClientService(repositoryConfiguration.bamperClientRepository())
+  }
+
+  @Bean
+  open fun autoPartMapper(): AutoPartMapper {
+    return AutoPartMapper(serviceConfiguration.cloudYandexDriveService(), serviceConfiguration.imageDownloader())
   }
 }

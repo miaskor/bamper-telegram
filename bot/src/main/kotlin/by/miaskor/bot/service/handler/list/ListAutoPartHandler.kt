@@ -9,7 +9,7 @@ import by.miaskor.bot.service.cache.AbstractListCache
 import by.miaskor.bot.service.cache.TelegramClientCache
 import by.miaskor.bot.service.extension.chatId
 import by.miaskor.domain.api.connector.AutoPartConnector
-import by.miaskor.domain.api.domain.AutoPartResponse
+import by.miaskor.domain.api.domain.AutoPartWithPhotoResponse
 import by.miaskor.domain.api.domain.StoreHouseIdRequest
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
@@ -47,7 +47,7 @@ class ListAutoPartHandler(
           update,
           responseWithLimit,
           MessageSettings::listAutoPartMessage
-        ) { AutoPartResponse.disassembly(it, telegramClient.chatLanguage) }
+        ) { AutoPartWithPhotoResponse.disassembly(it, telegramClient.chatLanguage) }
       }
   }
 }

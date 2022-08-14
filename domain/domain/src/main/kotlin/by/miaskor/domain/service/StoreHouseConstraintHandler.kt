@@ -1,6 +1,6 @@
 package by.miaskor.domain.service
 
-import by.miaskor.domain.api.domain.AutoPartResponse
+import by.miaskor.domain.api.domain.AutoPartWithPhotoResponse
 import by.miaskor.domain.api.domain.CarAutoPartDto
 import by.miaskor.domain.api.domain.ConstraintType.CAR_AND_CAR_PART
 import by.miaskor.domain.api.domain.ConstraintType.PART_NUMBER
@@ -14,7 +14,7 @@ class StoreHouseConstraintHandler(
 
   fun handle(
     storeHouseRequestWithConstraint: StoreHouseRequestWithConstraint,
-  ): Mono<ResponseWithLimit<AutoPartResponse>> {
+  ): Mono<ResponseWithLimit<AutoPartWithPhotoResponse>> {
     return when (storeHouseRequestWithConstraint.constraintType) {
       CAR_AND_CAR_PART -> {
         val carAutoPartDto = disassembleCarAndCarPartConstraint(storeHouseRequestWithConstraint)

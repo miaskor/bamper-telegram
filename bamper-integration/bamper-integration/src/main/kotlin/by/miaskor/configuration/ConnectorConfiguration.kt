@@ -1,6 +1,7 @@
 package by.miaskor.configuration
 
 import by.miaskor.configuration.settings.BamperSettings
+import by.miaskor.configuration.settings.ConnectorSettings
 import by.miaskor.connector.BamperConnector
 import by.miaskor.domain.api.connector.AutoPartConnector
 import org.apache.logging.log4j.LogManager
@@ -15,6 +16,7 @@ import reactor.netty.http.client.HttpClient
 @Configuration
 open class ConnectorConfiguration(
   private val bamperSettings: BamperSettings,
+  private val connectorSettings: ConnectorSettings,
 ) {
 
   @Bean
@@ -35,7 +37,11 @@ open class ConnectorConfiguration(
 
   @Bean
   open fun autoPartConnector(): AutoPartConnector {
-    return AutoPartConnector(webClient())
+    val webClient = WebClient
+      .builder()
+      .baseUrl(connectorSettings.domainBaseUrl())
+      .build()
+    return AutoPartConnector(webClient)
   }
 
   private companion object {

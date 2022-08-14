@@ -1,6 +1,7 @@
 package by.miaskor.controller
 
 import by.miaskor.domain.AuthDto
+import by.miaskor.domain.ImportAdvertisementRequest
 import by.miaskor.service.AuthorizationService
 import by.miaskor.service.ImportService
 import org.springframework.core.io.buffer.DataBufferUtils
@@ -24,11 +25,16 @@ class BamperController(
     return authorizationService.auth(authDto)
   }
 
-  @PostMapping("/import", consumes = ["*/*"])
-  fun importAdvertisement(@RequestPart file: Mono<FilePart>, @RequestPart sessionCookie: String): Mono<Unit> {
+  @PostMapping("/dev/import", consumes = ["*/*"])
+  fun importDevAdvertisement(@RequestPart file: Mono<FilePart>, @RequestPart sessionCookie: String): Mono<Unit> {
     return file.flatMap {
       DataBufferUtils.join(it.content())
     }.map { it.asInputStream() }
       .flatMap { importService.importAdvertisement(it, sessionCookie) }
+  }
+
+  @PostMapping("/import")
+  fun importAdvertisement(@RequestBody importAdvertisementRequest: ImportAdvertisementRequest): Mono<Unit> {
+    return importService.importAdvertisement(importAdvertisementRequest)
   }
 }

@@ -46,6 +46,7 @@ interface MessageSettings {
   fun findAutoPartByIdMessage(): String
   fun findAutoPartByCarAndCarPartMessage(): String
   fun findAutoPartMenuMessage(): String
+  fun importAutoPartMessage(): String
   fun authMessage(): String
   fun bamperMenuMessage(): String
   fun authIsFailedMessage(): String

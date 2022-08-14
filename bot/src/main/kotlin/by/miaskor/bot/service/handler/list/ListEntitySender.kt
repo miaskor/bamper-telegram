@@ -5,7 +5,7 @@ import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.CallbackCommand
 import by.miaskor.bot.service.MessageSender
 import by.miaskor.bot.service.extension.chatId
-import by.miaskor.domain.api.domain.AutoPartResponse
+import by.miaskor.domain.api.domain.AutoPartWithPhotoResponse
 import by.miaskor.domain.api.domain.CarResponse
 import by.miaskor.domain.api.domain.ResponseWithLimit
 import com.pengrad.telegrambot.model.Update
@@ -38,7 +38,7 @@ object ListEntitySender {
   ): Mono<T> {
     return when (entity) {
       is CarResponse -> MessageSender.sendMessage(chatId, messageFunction, *entityDisassembler.invoke(entity))
-      is AutoPartResponse -> MessageSender.sendPhoto(
+      is AutoPartWithPhotoResponse -> MessageSender.sendPhoto(
         chatId,
         entity.photo,
         messageFunction,
@@ -64,7 +64,7 @@ object ListEntitySender {
         *entityDisassembler.invoke(entity)
       )
 
-      is AutoPartResponse -> MessageSender.sendPhotoWithInlineKeyboard(
+      is AutoPartWithPhotoResponse -> MessageSender.sendPhotoWithInlineKeyboard(
         chatId,
         entity.photo,
         messageFunction,

@@ -9,7 +9,7 @@ import by.miaskor.bot.service.extension.text
 import by.miaskor.bot.service.handler.command.CommandHandler
 import by.miaskor.bot.service.handler.list.ListEntitySender.sendEntity
 import by.miaskor.domain.api.connector.AutoPartConnector
-import by.miaskor.domain.api.domain.AutoPartResponse
+import by.miaskor.domain.api.domain.AutoPartWithPhotoResponse
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
 
@@ -30,7 +30,7 @@ class FindAutoPartByIdCommandHandler(
       .flatMap { autoPartConnector.getByStoreHouseIdAndId(telegramClient.currentStoreHouseId(), update.text.toLong()) }
       .flatMap {
         sendEntity(update.chatId, it, MessageSettings::listAutoPartMessage)
-        { AutoPartResponse.disassembly(it, telegramClient.chatLanguage) }
+        { AutoPartWithPhotoResponse.disassembly(it, telegramClient.chatLanguage) }
       }.then(Mono.empty())
   }
 }

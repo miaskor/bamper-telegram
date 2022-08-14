@@ -6,7 +6,7 @@ import com.github.benmanes.caffeine.cache.Caffeine
 import java.time.Duration
 
 open class Cache<K, V>(
-  cacheSettings: CacheSettings
+  cacheSettings: CacheSettings,
 ) {
 
   val cache: Cache<K, V> = Caffeine.newBuilder()

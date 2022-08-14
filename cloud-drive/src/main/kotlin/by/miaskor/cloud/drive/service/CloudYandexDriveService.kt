@@ -10,6 +10,6 @@ class CloudYandexDriveService(
 
   fun getDownloadUrl(downloadFile: DownloadFile): Mono<String> {
     return Mono.just(downloadFile.path)
-      .flatMap { cloudYandexDriveConnector.getDownloadedUrl(it) }
+      .flatMap(cloudYandexDriveConnector::getDownloadedUrl)
   }
 }
