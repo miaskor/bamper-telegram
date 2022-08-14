@@ -14,7 +14,8 @@ open class Cf4jConfiguration {
   open fun classPathConfigurationSource(): FilesConfigurationSource {
     return FilesConfigurationSource {
       listOf(
-        Path(BAMPER_PROPERTY_PATH)
+        Path(BAMPER_PROPERTY_PATH),
+        Path(PROPERTY_CONNECTOR_PATH)
       )
     }
   }
@@ -27,7 +28,9 @@ open class Cf4jConfiguration {
   }
 
   private companion object {
-    private const val BAMPER_PROPERTY_PATH =
-      "/home/miaskor/Documents/pet-projects/bamper-telegram-properties/bamper.yaml"
+
+    private const val BASE_PATH = "/home/miaskor/Documents/pet-projects/bamper-telegram-properties"
+    private const val BAMPER_PROPERTY_PATH = "$BASE_PATH/bamper.yaml"
+    private const val PROPERTY_CONNECTOR_PATH = "$BASE_PATH/connector.properties"
   }
 }

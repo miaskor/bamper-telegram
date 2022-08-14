@@ -1,6 +1,7 @@
 package by.miaskor.connector
 
 import by.miaskor.domain.AuthDto
+import by.miaskor.domain.ImportAdvertisementRequest
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
@@ -14,6 +15,14 @@ class BamperIntegrationConnector(
     return webClient.post()
       .uri("/bamper/auth")
       .body(BodyInserters.fromValue(authDto))
+      .retrieve()
+      .bodyToMono()
+  }
+
+  fun importAdvertisement(importAdvertisementRequest: ImportAdvertisementRequest): Mono<Unit> {
+    return webClient.post()
+      .uri("/bamper/import")
+      .body(BodyInserters.fromValue(importAdvertisementRequest))
       .retrieve()
       .bodyToMono()
   }

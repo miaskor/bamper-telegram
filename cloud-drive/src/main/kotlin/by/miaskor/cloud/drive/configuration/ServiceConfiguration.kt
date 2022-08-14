@@ -1,5 +1,6 @@
 package by.miaskor.cloud.drive.configuration
 
+import by.miaskor.cloud.drive.service.CloudYandexDriveService
 import by.miaskor.cloud.drive.service.DefaultFilePathGenerator
 import by.miaskor.cloud.drive.service.DefaultFolderCreator
 import by.miaskor.cloud.drive.service.DefaultImageDownloader
@@ -13,7 +14,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 open class ServiceConfiguration(
-  private val connectorConfiguration: ConnectorConfiguration
+  private val connectorConfiguration: ConnectorConfiguration,
 ) {
 
   @Bean
@@ -29,6 +30,11 @@ open class ServiceConfiguration(
   @Bean
   open fun imageDownloader(): ImageDownloader {
     return DefaultImageDownloader(connectorConfiguration.cloudYandexDriveConnector())
+  }
+
+  @Bean
+  open fun cloudYandexDriveService(): CloudYandexDriveService {
+    return CloudYandexDriveService(connectorConfiguration.cloudYandexDriveConnector())
   }
 
   @Bean

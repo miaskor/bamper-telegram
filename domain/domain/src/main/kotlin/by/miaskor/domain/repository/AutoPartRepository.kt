@@ -2,11 +2,13 @@ package by.miaskor.domain.repository
 
 import by.miaskor.domain.api.domain.CarAutoPartDto
 import by.miaskor.domain.model.AutoPartVO
+import by.miaskor.domain.model.AutoPartWithPhotoUrlVO
 import by.miaskor.domain.tables.pojos.AutoPart
 import by.miaskor.domain.tables.references.AUTO_PART
 import by.miaskor.domain.tables.references.BRAND
 import by.miaskor.domain.tables.references.CAR
 import by.miaskor.domain.tables.references.CAR_PART
+import by.miaskor.domain.tables.references.STORE_HOUSE
 import org.jooq.DSLContext
 import reactor.core.publisher.Mono
 
@@ -22,6 +24,7 @@ interface AutoPartRepository : CrudRepository<AutoPart> {
 
   fun deleteByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Int>
   fun findByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<AutoPartVO>
+  fun findByTelegramChatIdAndId(telegramChatId: Long, id: Long): Mono<AutoPartWithPhotoUrlVO>
 }
 
 class JooqAutoPartRepository(
@@ -108,6 +111,36 @@ class JooqAutoPartRepository(
         .where(AUTO_PART.STORE_HOUSE_ID.eq(storeHouseId))
         .and(AUTO_PART.ID.eq(id))
         .fetchOneInto(AutoPartVO::class.java)
+    }
+  }
+
+  override fun findByTelegramChatIdAndId(telegramChatId: Long, id: Long): Mono<AutoPartWithPhotoUrlVO> {
+    return Mono.fromSupplier {
+      dslContext.select(
+        AUTO_PART.DESCRIPTION.`as`("description"),
+        AUTO_PART.PHOTO_PATH.`as`("photoPath"),
+        AUTO_PART.PRICE.`as`("price"),
+        AUTO_PART.QUALITY.`as`("quality"),
+        AUTO_PART.CURRENCY.`as`("currency"),
+        AUTO_PART.PART_NUMBER.`as`("partNumber"),
+        BRAND.MODEL.`as`("model"),
+        BRAND.BRAND_NAME.`as`("brandName"),
+        CAR.YEAR.`as`("year"),
+        CAR.BODY.`as`("body"),
+        CAR.TRANSMISSION.`as`("transmission"),
+        CAR.ENGINE_CAPACITY.`as`("engineCapacity"),
+        CAR.FUEL_TYPE.`as`("fuelType"),
+        CAR.ENGINE_TYPE.`as`("engineType"),
+        CAR_PART.NAME_RU.`as`("autoPartName")
+      )
+        .from(AUTO_PART)
+        .join(CAR).on(AUTO_PART.CAR_ID.eq(CAR.ID))
+        .join(BRAND).on(BRAND.ID.eq(CAR.BRAND_ID))
+        .join(CAR_PART).on(AUTO_PART.CAR_PART_ID.eq(CAR_PART.ID))
+        .join(STORE_HOUSE).on(STORE_HOUSE.ID.eq(AUTO_PART.STORE_HOUSE_ID))
+        .where(STORE_HOUSE.TELEGRAM_CHAT_ID.eq(telegramChatId))
+        .and(AUTO_PART.ID.eq(id))
+        .fetchOneInto(AutoPartWithPhotoUrlVO::class.java)
     }
   }
 

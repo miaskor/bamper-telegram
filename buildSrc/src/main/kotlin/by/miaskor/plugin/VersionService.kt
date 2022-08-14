@@ -21,6 +21,7 @@ object VersionService {
     listOf("org.liquibase:liquibase-groovy-dsl") to "3.0.0",
     listOf("info.picocli:picocli") to "4.6.1",
     listOf("org.yaml:snakeyaml") to "1.29",
+    listOf("org.dhatim:fastexcel") to "0.12.15",
     listOf(
       "org.junit.jupiter:junit-jupiter-api",
       "org.junit.jupiter:junit-jupiter-engine"

@@ -41,7 +41,9 @@ subprojects {
   }
 
   dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-web") {
+      exclude(group = "org.springframework", module = "spring-webmvc")
+    }
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation(lib("org.cfg4j:cfg4j-core"))
     implementation("org.jetbrains.kotlin:kotlin-reflect")

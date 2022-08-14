@@ -14,6 +14,7 @@ import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_CAR_AND_CAR_PART
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_ID
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_PART_NUMBER
+import by.miaskor.bot.domain.BotState.IMPORT_BY_ID
 import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
 import by.miaskor.bot.domain.Command.ADD_EMPLOYEE
 import by.miaskor.bot.domain.Command.ADD_EMPLOYEE_TO_STORE_HOUSE
@@ -28,6 +29,7 @@ import by.miaskor.bot.domain.Command.FIND_AUTO_PART
 import by.miaskor.bot.domain.Command.FIND_AUTO_PART_BY_CAR_AND_CAR_PART
 import by.miaskor.bot.domain.Command.FIND_AUTO_PART_BY_PART_ID
 import by.miaskor.bot.domain.Command.FIND_AUTO_PART_BY_PART_NUMBER
+import by.miaskor.bot.domain.Command.IMPORT_AUTO_PART
 import by.miaskor.bot.domain.Command.REMOVE_EMPLOYEE
 import by.miaskor.bot.domain.ConstraintAutoPartListEntity
 import by.miaskor.bot.domain.ListEntity
@@ -43,6 +45,7 @@ import by.miaskor.bot.service.handler.command.autopart.FindAutoPartByIdCommandHa
 import by.miaskor.bot.service.handler.command.autopart.FindAutoPartByPartNumberCommandHandler
 import by.miaskor.bot.service.handler.command.autopart.ListAutoPartCommandHandler
 import by.miaskor.bot.service.handler.command.bamper.AuthBamperCommandHandler
+import by.miaskor.bot.service.handler.command.bamper.ImportAutoPartByIdCommandHandler
 import by.miaskor.bot.service.handler.command.bamper.LogInBamperCommandHandler
 import by.miaskor.bot.service.handler.command.bamper.LogOutBamperCommandHandler
 import by.miaskor.bot.service.handler.command.car.DeleteCarCommandHandler
@@ -123,6 +126,8 @@ open class CommandHandlerConfiguration(
       findAutoPartsByPartNumberCommandHandler(),
       findAutoPartsByCarAndCarPartCommandHandler(),
       findAutoPartsByIdCommandHandler(),
+      importAutoPartByIdCommandHandler(),
+      importAutoPartCommandHandler(),
       createCarCommandHandler()
     )
   }
@@ -160,9 +165,28 @@ open class CommandHandlerConfiguration(
   }
 
   @Bean
+  open fun importAutoPartCommandHandler(): CommandHandler {
+    return ChangingBotStateCommandHandler(
+      telegramBot,
+      serviceConfiguration.keyboardBuilder(),
+      IMPORT_AUTO_PART,
+      IMPORT_BY_ID,
+      MessageSettings::importAutoPartMessage
+    )
+  }
+
+  @Bean
   open fun logInBamperCommandHandler(): CommandHandler {
     return LogInBamperCommandHandler(
       cacheConfiguration.telegramClientCache()
+    )
+  }
+
+  @Bean
+  open fun importAutoPartByIdCommandHandler(): CommandHandler {
+    return ImportAutoPartByIdCommandHandler(
+      cacheConfiguration.telegramClientCache(),
+      connectorConfiguration.bamperIntegrationConnector()
     )
   }
 

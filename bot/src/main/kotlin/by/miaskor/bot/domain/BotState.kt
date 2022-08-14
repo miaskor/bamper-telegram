@@ -23,6 +23,8 @@ import by.miaskor.bot.domain.Command.FIND_AUTO_PART_BY_PART_ID
 import by.miaskor.bot.domain.Command.FIND_AUTO_PART_BY_PART_ID_ENTITY
 import by.miaskor.bot.domain.Command.FIND_AUTO_PART_BY_PART_NUMBER
 import by.miaskor.bot.domain.Command.FIND_AUTO_PART_BY_PART_NUMBER_ENTITY
+import by.miaskor.bot.domain.Command.IMPORT_AUTO_PART
+import by.miaskor.bot.domain.Command.IMPORT_AUTO_PART_BY_ID
 import by.miaskor.bot.domain.Command.LANGUAGE
 import by.miaskor.bot.domain.Command.LIST_AUTO_PART
 import by.miaskor.bot.domain.Command.LIST_CAR
@@ -67,7 +69,8 @@ enum class BotState(private vararg val commands: Command) {
   FINDING_AUTO_PART_BY_ID(BACK, FIND_AUTO_PART_BY_PART_ID_ENTITY, UNDEFINED),
   FINDING_AUTO_PART_BY_CAR_AND_CAR_PART(BACK, FIND_AUTO_PART_BY_CAR_AND_CAR_PART_ENTITY, UNDEFINED),
   AUTHORIZATION_BAMPER(BACK, AUTH_BAMPER, UNDEFINED),
-  BAMPER_MENU(BACK, LOG_OUT_BAMPER, UNDEFINED);
+  BAMPER_MENU(BACK, IMPORT_AUTO_PART, LOG_OUT_BAMPER, UNDEFINED),
+  IMPORT_BY_ID(BACK, IMPORT_AUTO_PART_BY_ID, UNDEFINED);
 
   companion object {
     private val finalStates =

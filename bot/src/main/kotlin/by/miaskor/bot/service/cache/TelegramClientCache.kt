@@ -5,6 +5,7 @@ import by.miaskor.bot.domain.BotState.MAIN_MENU
 import by.miaskor.bot.domain.TelegramClient
 import by.miaskor.domain.api.connector.TelegramClientConnector
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.switchIfEmpty
 import java.util.*
 
 class TelegramClientCache(
@@ -23,8 +24,8 @@ class TelegramClientCache(
   }
 
   fun getTelegramClient(chatId: Long): Mono<TelegramClient> {
-    return Mono.justOrEmpty(cache.getIfPresent(chatId))
-      .switchIfEmpty(Mono.defer { isClientExists(chatId) })
+    return Mono.justOrEmpty<TelegramClient>(cache.getIfPresent(chatId))
+      .switchIfEmpty { isClientExists(chatId) }
       .defaultIfEmpty(TelegramClient(chatId = chatId))
       .doOnNext { populate(chatId, it) }
   }

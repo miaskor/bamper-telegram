@@ -1,14 +1,14 @@
-package by.miaskor.domain.api.domain
+package by.miaskor.domain.model
 
-data class AutoPartResponse(
+data class AutoPartWithPhotoUrlVO(
   val description: String,
-  val photoDownloadUrl: String,
+  val photoPath: String,
   val price: Double,
   val quality: Boolean,
   val currency: String,
   val partNumber: String,
   val model: String,
-  val brand: String,
+  val brandName: String,
   val year: String,
   val body: String,
   val transmission: String,
@@ -16,6 +16,4 @@ data class AutoPartResponse(
   val fuelType: String,
   val engineType: String,
   val autoPartName: String,
-  val salePercent: Int = 0,
-  val active: Boolean = false,
 )
