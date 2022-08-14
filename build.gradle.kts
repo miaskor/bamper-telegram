@@ -3,14 +3,14 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript { plugins.apply("by.miaskor.artifact-versions") }
 plugins {
-  id("org.springframework.boot") version "2.6.6"
-  id("io.spring.dependency-management") version "1.0.11.RELEASE"
-  id("nu.studer.jooq") version "6.0.1"
-  id("org.liquibase.gradle") version "2.1.1"
+  id("org.springframework.boot")
+  id("io.spring.dependency-management")
+  id("nu.studer.jooq")
+  id("org.liquibase.gradle")
 
-  kotlin("jvm") version "1.6.10"
-  kotlin("plugin.spring") version "1.6.10"
-  kotlin("plugin.jpa") version "1.6.10"
+  kotlin("jvm")
+  kotlin("plugin.spring")
+  kotlin("plugin.jpa")
   distribution
 }
 
