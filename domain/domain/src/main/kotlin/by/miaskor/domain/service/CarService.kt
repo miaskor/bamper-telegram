@@ -3,7 +3,7 @@ package by.miaskor.domain.service
 import by.miaskor.domain.api.domain.CarDto
 import by.miaskor.domain.api.domain.CarResponse
 import by.miaskor.domain.api.domain.ResponseWithLimit
-import by.miaskor.domain.api.domain.StoreHouseIdRequest
+import by.miaskor.domain.api.domain.StoreHouseIdWithLimitRequest
 import by.miaskor.domain.repository.CarRepository
 import by.miaskor.domain.tables.pojos.Car
 import reactor.core.publisher.Mono
@@ -34,11 +34,11 @@ class CarService(
       }
   }
 
-  fun getAllByStoreHouseId(storeHouseIdRequest: StoreHouseIdRequest): Mono<ResponseWithLimit<CarResponse>> {
+  fun getAllByStoreHouseId(storeHouseIdWithLimitRequest: StoreHouseIdWithLimitRequest): Mono<ResponseWithLimit<CarResponse>> {
     return carRepository.findAllByStoreHouseId(
-      storeHouseIdRequest.storeHouseId,
-      storeHouseIdRequest.limit + 1,
-      storeHouseIdRequest.offset
+      storeHouseIdWithLimitRequest.storeHouseId,
+      storeHouseIdWithLimitRequest.limit + 1,
+      storeHouseIdWithLimitRequest.offset
     )
       .map {
         val isMoreExists = it.size > 10

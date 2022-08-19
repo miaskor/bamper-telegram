@@ -3,9 +3,10 @@ package by.miaskor.domain.controller
 import by.miaskor.domain.api.domain.AutoPartDto
 import by.miaskor.domain.api.domain.AutoPartResponse
 import by.miaskor.domain.api.domain.AutoPartWithPhotoResponse
+import by.miaskor.domain.api.domain.ConstraintType
 import by.miaskor.domain.api.domain.ResponseWithLimit
-import by.miaskor.domain.api.domain.StoreHouseIdRequest
-import by.miaskor.domain.api.domain.StoreHouseRequestWithConstraint
+import by.miaskor.domain.api.domain.StoreHouseIdWithConstraint
+import by.miaskor.domain.api.domain.StoreHouseIdWithLimitRequest
 import by.miaskor.domain.service.AutoPartService
 import by.miaskor.domain.service.StoreHouseConstraintHandler
 import org.springframework.http.ResponseEntity
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("/auto-part")
+@RequestMapping("/auto-parts")
 class AutoPartController(
   private val autoPartService: AutoPartService,
   private val storeHouseConstraintHandler: StoreHouseConstraintHandler,
@@ -31,43 +32,64 @@ class AutoPartController(
       .then(Mono.just(ResponseEntity.ok().build()))
   }
 
-  @PostMapping("/list")
+  @GetMapping(params = ["storeHouseId", "limit", "offset"])
   fun getAllByStoreHouseId(
-    @RequestBody storeHouseIdRequest: StoreHouseIdRequest,
+    @RequestParam storeHouseId: Long,
+    @RequestParam limit: Long,
+    @RequestParam offset: Long,
   ): Mono<ResponseEntity<ResponseWithLimit<AutoPartWithPhotoResponse>>> {
-    return autoPartService.getAllByStoreHouseId(storeHouseIdRequest)
-      .map { ResponseEntity.ok(it) }
+    return Mono.fromSupplier {
+      StoreHouseIdWithLimitRequest(
+        storeHouseId = storeHouseId,
+        limit = limit,
+        offset = offset
+      )
+    }.flatMap(autoPartService::getAllByStoreHouseId)
+      .map { response -> ResponseEntity.ok(response) }
   }
 
-  @PostMapping("/list/constraint")
+  @GetMapping(params = ["storeHouseId", "limit", "offset", "constraint", "constraintType"])
   fun getAllByStoreHouseIdWithConstraint(
-    @RequestBody storeHouseIdRequest: StoreHouseRequestWithConstraint,
+    @RequestParam storeHouseId: Long,
+    @RequestParam limit: Long,
+    @RequestParam offset: Long,
+    @RequestParam constraint: String,
+    @RequestParam constraintType: ConstraintType,
   ): Mono<ResponseEntity<ResponseWithLimit<AutoPartWithPhotoResponse>>> {
-    return storeHouseConstraintHandler.handle(storeHouseIdRequest)
-      .map { ResponseEntity.ok(it) }
+
+    return Mono.fromSupplier {
+      StoreHouseIdWithConstraint(
+        storeHouseId = storeHouseId,
+        limit = limit,
+        offset = offset,
+        constraintType = constraintType,
+        constraint = constraint
+      )
+    }.flatMap(storeHouseConstraintHandler::handle)
+      .map { response -> ResponseEntity.ok(response) }
   }
 
-  @GetMapping("/store-house")
+  @GetMapping(params = ["storeHouseId", "autoPartId"])
   fun getByStoreHouseIdAndId(
     @RequestParam storeHouseId: Long,
     @RequestParam autoPartId: Long,
   ): Mono<ResponseEntity<AutoPartWithPhotoResponse>> {
     return autoPartService.getByStoreHouseIdAndId(storeHouseId, autoPartId)
-      .map { ResponseEntity.ok(it) }
+      .map { response -> ResponseEntity.ok(response) }
   }
 
-  @GetMapping("/telegram-chat")
+  @GetMapping(params = ["telegramChatId", "autoPartId"])
   fun getByTelegramChatIdAndId(
     @RequestParam telegramChatId: Long,
     @RequestParam autoPartId: Long,
   ): Mono<ResponseEntity<AutoPartResponse>> {
     return autoPartService.getByTelegramChatIdAndId(telegramChatId, autoPartId)
-      .map { ResponseEntity.ok(it) }
+      .map { response -> ResponseEntity.ok(response) }
   }
 
   @DeleteMapping
   fun deleteById(@RequestParam storeHouseId: Long, @RequestParam autoPartId: Long): Mono<ResponseEntity<Boolean>> {
     return autoPartService.deleteByStoreHouseIdAndId(storeHouseId, autoPartId)
-      .map { ResponseEntity.ok(it) }
+      .map { response -> ResponseEntity.ok(response) }
   }
 }

@@ -7,8 +7,8 @@ import by.miaskor.domain.api.domain.AutoPartResponse
 import by.miaskor.domain.api.domain.AutoPartWithPhotoResponse
 import by.miaskor.domain.api.domain.CarAutoPartDto
 import by.miaskor.domain.api.domain.ResponseWithLimit
-import by.miaskor.domain.api.domain.StoreHouseIdRequest
-import by.miaskor.domain.api.domain.StoreHouseRequestWithConstraint
+import by.miaskor.domain.api.domain.StoreHouseIdWithLimitRequest
+import by.miaskor.domain.api.domain.StoreHouseIdWithConstraint
 import by.miaskor.domain.repository.AutoPartRepository
 import by.miaskor.domain.service.telegram.TelegramApiService
 import by.miaskor.domain.tables.pojos.AutoPart
@@ -53,11 +53,11 @@ class AutoPartService(
       }.flatMap(autoPartRepository::save)
   }
 
-  fun getAllByStoreHouseId(storeHouseIdRequest: StoreHouseIdRequest): Mono<ResponseWithLimit<AutoPartWithPhotoResponse>> {
+  fun getAllByStoreHouseId(storeHouseIdWithLimitRequest: StoreHouseIdWithLimitRequest): Mono<ResponseWithLimit<AutoPartWithPhotoResponse>> {
     return autoPartRepository.findAllByStoreHouseId(
-      storeHouseIdRequest.storeHouseId,
-      storeHouseIdRequest.limit + 1,
-      storeHouseIdRequest.offset
+      storeHouseIdWithLimitRequest.storeHouseId,
+      storeHouseIdWithLimitRequest.limit + 1,
+      storeHouseIdWithLimitRequest.offset
     ).flatMap(autoPartMapper::mapWithPhoto)
   }
 
@@ -68,7 +68,7 @@ class AutoPartService(
   }
 
   fun getAllByStoreHouseIdAndPartNumber(
-    storeHouseIdRequest: StoreHouseRequestWithConstraint,
+    storeHouseIdRequest: StoreHouseIdWithConstraint,
   ): Mono<ResponseWithLimit<AutoPartWithPhotoResponse>> {
     return autoPartRepository.findAllByStoreHouseIdAndPartNumber(
       storeHouseIdRequest.constraint,

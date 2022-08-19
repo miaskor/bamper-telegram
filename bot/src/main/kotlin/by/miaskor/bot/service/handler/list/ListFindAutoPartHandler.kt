@@ -10,7 +10,7 @@ import by.miaskor.bot.service.cache.TelegramClientCache
 import by.miaskor.bot.service.extension.chatId
 import by.miaskor.domain.api.connector.AutoPartConnector
 import by.miaskor.domain.api.domain.AutoPartWithPhotoResponse
-import by.miaskor.domain.api.domain.StoreHouseRequestWithConstraint
+import by.miaskor.domain.api.domain.StoreHouseIdWithConstraint
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
 import reactor.kotlin.core.util.function.component1
@@ -29,7 +29,7 @@ class ListFindAutoPartHandler(
       .flatMap(telegramClientCache::getTelegramClient)
       .zipWith(Mono.justOrEmpty(listEntityCache.cache.getIfPresent(update.chatId)))
       .flatMap { (telegramClient, autoPart) ->
-        val storeHouseIdRequest = StoreHouseRequestWithConstraint(
+        val storeHouseIdRequest = StoreHouseIdWithConstraint(
           constraint = autoPart.constraint,
           storeHouseId = telegramClient.currentStoreHouseId(),
           limit = listSettings.limit(),
@@ -42,7 +42,7 @@ class ListFindAutoPartHandler(
 
   private fun sendAutoParts(
     update: Update,
-    storeHouseRequestWithConstraint: StoreHouseRequestWithConstraint,
+    storeHouseRequestWithConstraint: StoreHouseIdWithConstraint,
     telegramClient: TelegramClient,
   ): Mono<Unit> {
     return Mono.just(storeHouseRequestWithConstraint)

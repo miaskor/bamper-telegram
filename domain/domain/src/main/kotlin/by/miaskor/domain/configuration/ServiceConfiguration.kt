@@ -66,8 +66,8 @@ open class ServiceConfiguration(
 
   @Bean
   open fun telegramApiService(): TelegramApiService {
-    val getPhotoPathUrl = confProvider.getProperty("bot.getPhotoPathUrl", String::class.java)
-    val getPhotoUrl = confProvider.getProperty("bot.getPhotoUrl", String::class.java)
+    val getPhotoPathUrl = confProvider.getProperty("bot.getPhotoPathUri", String::class.java)
+    val getPhotoUrl = confProvider.getProperty("bot.getPhotoUri", String::class.java)
     return TelegramApiService(
       connectorConfiguration.telegramWebClient(),
       getPhotoPathUrl,

@@ -5,7 +5,7 @@ import by.miaskor.domain.api.domain.CarAutoPartDto
 import by.miaskor.domain.api.domain.ConstraintType.CAR_AND_CAR_PART
 import by.miaskor.domain.api.domain.ConstraintType.PART_NUMBER
 import by.miaskor.domain.api.domain.ResponseWithLimit
-import by.miaskor.domain.api.domain.StoreHouseRequestWithConstraint
+import by.miaskor.domain.api.domain.StoreHouseIdWithConstraint
 import reactor.core.publisher.Mono
 
 class StoreHouseConstraintHandler(
@@ -13,7 +13,7 @@ class StoreHouseConstraintHandler(
 ) {
 
   fun handle(
-    storeHouseRequestWithConstraint: StoreHouseRequestWithConstraint,
+    storeHouseRequestWithConstraint: StoreHouseIdWithConstraint,
   ): Mono<ResponseWithLimit<AutoPartWithPhotoResponse>> {
     return when (storeHouseRequestWithConstraint.constraintType) {
       CAR_AND_CAR_PART -> {
@@ -26,7 +26,7 @@ class StoreHouseConstraintHandler(
   }
 
   private companion object {
-    private fun disassembleCarAndCarPartConstraint(request: StoreHouseRequestWithConstraint): CarAutoPartDto {
+    private fun disassembleCarAndCarPartConstraint(request: StoreHouseIdWithConstraint): CarAutoPartDto {
       val (brand, model, autoPart) = request.constraint.split(", ")
 
       return CarAutoPartDto(

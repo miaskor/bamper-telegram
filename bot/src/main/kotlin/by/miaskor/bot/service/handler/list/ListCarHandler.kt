@@ -10,7 +10,7 @@ import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.handler.list.ListEntitySender.sendEntities
 import by.miaskor.domain.api.connector.CarConnector
 import by.miaskor.domain.api.domain.CarResponse
-import by.miaskor.domain.api.domain.StoreHouseIdRequest
+import by.miaskor.domain.api.domain.StoreHouseIdWithLimitRequest
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
 
@@ -25,7 +25,7 @@ class ListCarHandler(
     return Mono.just(update.chatId)
       .flatMap(telegramClientCache::getTelegramClient)
       .map { telegramClient ->
-        StoreHouseIdRequest(
+        StoreHouseIdWithLimitRequest(
           storeHouseId = telegramClient.currentStoreHouseId(),
           limit = listSettings.limit(),
           offset = listEntityCache.getOffset(update.chatId)
@@ -35,9 +35,9 @@ class ListCarHandler(
 
   private fun sendCars(
     update: Update,
-    storeHouseIdRequest: StoreHouseIdRequest
+    storeHouseIdWithLimitRequest: StoreHouseIdWithLimitRequest
   ): Mono<Unit> {
-    return Mono.just(storeHouseIdRequest)
+    return Mono.just(storeHouseIdWithLimitRequest)
       .flatMap(carConnector::getAllByStoreHouseId)
       .flatMap { responseWithLimit ->
         sendEntities(

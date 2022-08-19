@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("/bamper-client")
+@RequestMapping("/bamper-clients")
 class BamperClientController(
   private val bamperClientService: BamperClientService,
 ) {
 
-  @PostMapping("/create")
+  @PostMapping
   fun create(@RequestBody bamperClientDto: BamperClientDto): Mono<Unit> {
     return bamperClientService.save(bamperClientDto)
   }

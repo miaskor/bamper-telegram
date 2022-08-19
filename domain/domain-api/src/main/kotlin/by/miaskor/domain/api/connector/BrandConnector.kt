@@ -1,26 +1,33 @@
 package by.miaskor.domain.api.connector
 
-import by.miaskor.domain.api.domain.BrandDto
-import org.springframework.web.reactive.function.BodyInserters
+import by.miaskor.domain.api.domain.BrandResponse
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 
+private const val BASE_URL = "/brands"
+
 class BrandConnector(
-  private val webClient: WebClient
+  private val webClient: WebClient,
 ) {
 
-  fun getByBrandName(brandName: String): Mono<BrandDto> {
+  fun getByBrandName(brandName: String): Mono<BrandResponse> {
     return webClient.get()
-      .uri("/brand/brand-name/$brandName")
+      .uri(BASE_URL) { uriBuilder ->
+        uriBuilder.queryParam("brandName", brandName)
+          .build()
+      }
       .retrieve()
       .bodyToMono()
   }
 
-  fun getByBrandNameAndModel(brandDto: BrandDto): Mono<BrandDto> {
-    return webClient.post()
-      .uri("/brand")
-      .body(BodyInserters.fromValue(brandDto))
+  fun getByBrandNameAndModel(brandName: String, model: String): Mono<BrandResponse> {
+    return webClient.get()
+      .uri(BASE_URL) { uriBuilder ->
+        uriBuilder.queryParam("brandName", brandName)
+        uriBuilder.queryParam("model", model)
+          .build()
+      }
       .retrieve()
       .bodyToMono()
   }

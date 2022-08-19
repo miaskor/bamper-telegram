@@ -8,17 +8,16 @@ import by.miaskor.bot.domain.CreatingCarStep.MODEL
 import by.miaskor.bot.service.extension.text
 import by.miaskor.bot.service.step.StepValidator
 import by.miaskor.domain.api.connector.BrandConnector
-import by.miaskor.domain.api.domain.BrandDto
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
 
 class CreationCarStepValidation(
-  private val brandConnector: BrandConnector
+  private val brandConnector: BrandConnector,
 ) : StepValidator<CreatingCarStep> {
   override fun validate(
     step: CreatingCarStep,
     update: Update,
-    stepBuilder: AbstractStepBuilder<CreatingCarStep>
+    stepBuilder: AbstractStepBuilder<CreatingCarStep>,
   ): Mono<Boolean> {
     val carBuilder = stepBuilder as CarBuilder
     return Mono.just(update.text)
@@ -32,12 +31,10 @@ class CreationCarStepValidation(
           }
 
           MODEL -> {
-            Mono.fromSupplier {
-              BrandDto(
-                brandName = carBuilder.getBrandName(),
-                model = update.text
-              )
-            }.flatMap(brandConnector::getByBrandNameAndModel)
+            brandConnector.getByBrandNameAndModel(
+              brandName = carBuilder.getBrandName(),
+              model = update.text
+            )
               .doOnNext { carBuilder.brandId(it.id) }
               .hasElement()
           }
