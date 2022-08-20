@@ -9,6 +9,7 @@ import by.miaskor.bot.service.CommandResolver
 import by.miaskor.bot.service.LanguageSettingsResolver
 import by.miaskor.bot.service.MessageSender
 import by.miaskor.bot.service.enrich.FieldEnricher
+import by.miaskor.bot.service.handler.list.ListEntitySender
 import org.cfg4j.provider.ConfigurationProvider
 import org.springframework.context.annotation.Configuration
 import javax.annotation.PostConstruct
@@ -21,7 +22,8 @@ open class ApplicationConfiguration(
   private val botStateHandlerConfiguration: BotStateHandlerConfiguration,
   private val confProvider: ConfigurationProvider,
   private val cacheConfiguration: CacheConfiguration,
-  private val botConfiguration: BotConfiguration
+  private val botConfiguration: BotConfiguration,
+  private val settingsConfiguration: SettingsConfiguration,
 ) {
 
   @PostConstruct
@@ -52,5 +54,7 @@ open class ApplicationConfiguration(
       this.telegramBot = botConfiguration.telegramBot()
       keyboardBuilder = serviceConfiguration.keyboardBuilder()
     }
+
+    ListEntitySender.executorSettings = settingsConfiguration.executorSettings()
   }
 }

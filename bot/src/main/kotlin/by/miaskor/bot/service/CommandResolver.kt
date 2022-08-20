@@ -6,6 +6,7 @@ import by.miaskor.bot.service.handler.command.CommandHandlerRegistry
 import by.miaskor.bot.service.handler.state.BotStateHandlerRegistry
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 
 object CommandResolver {
 
@@ -14,7 +15,7 @@ object CommandResolver {
   lateinit var callBackCommandHandler: CallBackCommandHandler
 
   fun Mono<BotState>.processCommand(update: Update): Mono<Unit> {
-    return this.flatMap { t ->
+    return this.flatMap<Unit> { t ->
       Mono.just(update)
         .filter { it.callbackQuery() != null }
         .switchIfEmpty(
@@ -30,7 +31,6 @@ object CommandResolver {
         )
         .flatMap(callBackCommandHandler::handle)
         .then(Mono.empty())
-
-    }
+    }.subscribeOn(Schedulers.boundedElastic())
   }
 }

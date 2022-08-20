@@ -1,4 +1,4 @@
-package by.miaskor.cloud.drive.settings
+package by.miaskor.cloud.drive.configuration.settings
 
 interface CloudDriveSettings {
   fun authToken(): String

@@ -2,7 +2,7 @@ package by.miaskor.cloud.drive.service.connector
 
 import by.miaskor.cloud.drive.domain.DownloadUrlResponse
 import by.miaskor.cloud.drive.domain.UploadUrlResponse
-import by.miaskor.cloud.drive.settings.CloudDriveSettings
+import by.miaskor.cloud.drive.configuration.settings.CloudDriveSettings
 import org.springframework.core.io.buffer.DataBuffer
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.BodyInserters

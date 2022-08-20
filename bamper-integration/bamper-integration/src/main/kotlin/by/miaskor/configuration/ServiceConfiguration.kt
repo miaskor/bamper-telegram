@@ -1,16 +1,15 @@
 package by.miaskor.configuration
 
-import by.miaskor.configuration.settings.ImportSettings
-import by.miaskor.service.AuthorizationService
 import by.miaskor.service.ExcelGenerator
-import by.miaskor.service.ImportService
+import by.miaskor.service.auth.AuthorizationService
+import by.miaskor.service.imprt.ImportService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 open class ServiceConfiguration(
   private val connectorConfiguration: ConnectorConfiguration,
-  private val importSettings: ImportSettings,
+  private val settingsConfiguration: SettingsConfiguration,
 ) {
 
   @Bean
@@ -29,6 +28,6 @@ open class ServiceConfiguration(
 
   @Bean
   open fun excelGenerator(): ExcelGenerator {
-    return ExcelGenerator(importSettings)
+    return ExcelGenerator(settingsConfiguration.importSettings())
   }
 }

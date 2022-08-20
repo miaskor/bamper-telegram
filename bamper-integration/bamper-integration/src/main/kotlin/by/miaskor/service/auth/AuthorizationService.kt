@@ -1,4 +1,4 @@
-package by.miaskor.service
+package by.miaskor.service.auth
 
 import by.miaskor.connector.BamperConnector
 import by.miaskor.domain.AuthDto

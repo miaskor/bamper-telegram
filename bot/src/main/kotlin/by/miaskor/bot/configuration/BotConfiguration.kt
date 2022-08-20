@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 open class BotConfiguration(
   private val settingsConfiguration: SettingsConfiguration,
-  private val cacheConfiguration: CacheConfiguration
+  private val cacheConfiguration: CacheConfiguration,
 ) {
 
   @Bean
@@ -24,7 +24,8 @@ open class BotConfiguration(
   open fun bot(): Bot {
     return Bot(
       telegramBot(),
-      cacheConfiguration.telegramClientCache()
+      cacheConfiguration.telegramClientCache(),
+      settingsConfiguration.executorSettings()
     )
   }
 }
