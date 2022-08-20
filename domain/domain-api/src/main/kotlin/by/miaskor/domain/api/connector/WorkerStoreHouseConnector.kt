@@ -12,7 +12,7 @@ class WorkerStoreHouseConnector(
 
   fun create(workerTelegramStoreHouseDto: WorkerTelegramStoreHouseDto): Mono<Unit> {
     return webClient.post()
-      .uri("/worker-store-house")
+      .uri("/worker-store-houses")
       .body(BodyInserters.fromValue(workerTelegramStoreHouseDto))
       .retrieve()
       .bodyToMono()

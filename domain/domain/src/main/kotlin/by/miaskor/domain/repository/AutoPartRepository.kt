@@ -11,6 +11,8 @@ import by.miaskor.domain.tables.references.CAR_PART
 import by.miaskor.domain.tables.references.STORE_HOUSE
 import org.jooq.DSLContext
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Scheduler
+import reactor.core.scheduler.Schedulers
 
 interface AutoPartRepository : CrudRepository<AutoPart> {
   fun findAllByStoreHouseId(storeHouseId: Long, limit: Long, offset: Long): Mono<List<AutoPartVO>>
@@ -29,19 +31,21 @@ interface AutoPartRepository : CrudRepository<AutoPart> {
 
 class JooqAutoPartRepository(
   private val dslContext: DSLContext,
+  private val scheduler: Scheduler = Schedulers.boundedElastic(),
 ) : AutoPartRepository {
   override fun save(entity: AutoPart): Mono<Unit> {
-    return Mono.just(entity)
+    return Mono.fromCallable { entity }
       .map { dslContext.newRecord(AUTO_PART, it) }
       .map { autoPartRecord ->
         dslContext.insertInto(AUTO_PART)
           .set(autoPartRecord)
           .execute()
-      }
+      }.subscribeOn(scheduler)
+      .then(Mono.empty())
   }
 
   override fun findAllByStoreHouseId(storeHouseId: Long, limit: Long, offset: Long): Mono<List<AutoPartVO>> {
-    return Mono.fromSupplier {
+    return Mono.fromCallable {
       dslContext.select(autoPartColumns)
         .from(AUTO_PART)
         .join(CAR).on(AUTO_PART.CAR_ID.eq(CAR.ID))
@@ -51,11 +55,11 @@ class JooqAutoPartRepository(
         .limit(limit)
         .offset(offset)
         .fetchInto(AutoPartVO::class.java)
-    }
+    }.subscribeOn(scheduler)
   }
 
   override fun findAllByStoreHouseIdAndCarAndCarPart(carAutoPartDto: CarAutoPartDto): Mono<List<AutoPartVO>> {
-    return Mono.fromSupplier {
+    return Mono.fromCallable {
       dslContext.select(autoPartColumns)
         .from(AUTO_PART)
         .join(CAR).on(AUTO_PART.CAR_ID.eq(CAR.ID))
@@ -69,7 +73,7 @@ class JooqAutoPartRepository(
         .limit(carAutoPartDto.limit)
         .offset(carAutoPartDto.offset)
         .fetchInto(AutoPartVO::class.java)
-    }
+    }.subscribeOn(scheduler)
   }
 
   override fun findAllByStoreHouseIdAndPartNumber(
@@ -78,7 +82,7 @@ class JooqAutoPartRepository(
     limit: Long,
     offset: Long,
   ): Mono<List<AutoPartVO>> {
-    return Mono.fromSupplier {
+    return Mono.fromCallable {
       dslContext.select(autoPartColumns)
         .from(AUTO_PART)
         .join(CAR).on(AUTO_PART.CAR_ID.eq(CAR.ID))
@@ -89,20 +93,20 @@ class JooqAutoPartRepository(
         .limit(limit)
         .offset(offset)
         .fetchInto(AutoPartVO::class.java)
-    }
+    }.subscribeOn(scheduler)
   }
 
   override fun deleteByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Int> {
-    return Mono.fromSupplier {
+    return Mono.fromCallable {
       dslContext.deleteFrom(AUTO_PART)
         .where(AUTO_PART.ID.eq(id))
         .and(AUTO_PART.STORE_HOUSE_ID.eq(storeHouseId))
         .execute()
-    }
+    }.subscribeOn(scheduler)
   }
 
   override fun findByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<AutoPartVO> {
-    return Mono.fromSupplier {
+    return Mono.fromCallable<AutoPartVO> {
       dslContext.select(autoPartColumns)
         .from(AUTO_PART)
         .join(CAR).on(AUTO_PART.CAR_ID.eq(CAR.ID))
@@ -111,11 +115,11 @@ class JooqAutoPartRepository(
         .where(AUTO_PART.STORE_HOUSE_ID.eq(storeHouseId))
         .and(AUTO_PART.ID.eq(id))
         .fetchOneInto(AutoPartVO::class.java)
-    }
+    }.subscribeOn(scheduler)
   }
 
   override fun findByTelegramChatIdAndId(telegramChatId: Long, id: Long): Mono<AutoPartWithPhotoUrlVO> {
-    return Mono.fromSupplier {
+    return Mono.fromCallable<AutoPartWithPhotoUrlVO> {
       dslContext.select(
         AUTO_PART.DESCRIPTION.`as`("description"),
         AUTO_PART.PHOTO_PATH.`as`("photoPath"),
@@ -141,7 +145,7 @@ class JooqAutoPartRepository(
         .where(STORE_HOUSE.TELEGRAM_CHAT_ID.eq(telegramChatId))
         .and(AUTO_PART.ID.eq(id))
         .fetchOneInto(AutoPartWithPhotoUrlVO::class.java)
-    }
+    }.subscribeOn(scheduler)
   }
 
   override fun findById(id: Long): Mono<AutoPart> {

@@ -1,7 +1,6 @@
 package by.miaskor.domain.configuration
 
 import by.miaskor.cloud.drive.configuration.ServiceConfiguration
-import by.miaskor.domain.service.AutoPartMapper
 import by.miaskor.domain.service.AutoPartService
 import by.miaskor.domain.service.BamperClientService
 import by.miaskor.domain.service.BrandService
@@ -12,7 +11,8 @@ import by.miaskor.domain.service.StoreHouseService
 import by.miaskor.domain.service.TelegramClientService
 import by.miaskor.domain.service.WorkerStoreHouseService
 import by.miaskor.domain.service.WorkerTelegramService
-import by.miaskor.domain.service.telegram.TelegramApiService
+import by.miaskor.domain.service.telegram.TelegramConnector
+import by.miaskor.domain.service.telegram.TelegramService
 import org.cfg4j.provider.ConfigurationProvider
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -22,14 +22,15 @@ open class ServiceConfiguration(
   private val repositoryConfiguration: RepositoryConfiguration,
   private val serviceConfiguration: ServiceConfiguration,
   private val confProvider: ConfigurationProvider,
+  private val mapperConfiguration: MapperConfiguration,
   private val connectorConfiguration: ConnectorConfiguration,
 ) {
 
   @Bean
   open fun telegramClientService(): TelegramClientService {
     return TelegramClientService(
-      workerTelegramService(),
-      repositoryConfiguration.telegramClientRepository()
+      repositoryConfiguration.telegramClientRepository(),
+      mapperConfiguration.telegramClientMapper()
     )
   }
 
@@ -45,18 +46,25 @@ open class ServiceConfiguration(
   open fun storeHouseService(): StoreHouseService {
     return StoreHouseService(
       repositoryConfiguration.storeHouseRepository(),
-      workerStoreHouseService()
+      workerStoreHouseService(),
+      mapperConfiguration.storeHouseMapper()
     )
   }
 
   @Bean
   open fun brandService(): BrandService {
-    return BrandService(repositoryConfiguration.brandRepository())
+    return BrandService(
+      repositoryConfiguration.brandRepository(),
+      mapperConfiguration.brandMapper()
+    )
   }
 
   @Bean
   open fun carService(): CarService {
-    return CarService(repositoryConfiguration.carRepository())
+    return CarService(
+      repositoryConfiguration.carRepository(),
+      mapperConfiguration.carMapper()
+    )
   }
 
   @Bean
@@ -65,13 +73,20 @@ open class ServiceConfiguration(
   }
 
   @Bean
-  open fun telegramApiService(): TelegramApiService {
+  open fun telegramConnector(): TelegramConnector {
     val getPhotoPathUrl = confProvider.getProperty("bot.getPhotoPathUri", String::class.java)
     val getPhotoUrl = confProvider.getProperty("bot.getPhotoUri", String::class.java)
-    return TelegramApiService(
+    return TelegramConnector(
       connectorConfiguration.telegramWebClient(),
       getPhotoPathUrl,
       getPhotoUrl
+    )
+  }
+
+  @Bean
+  open fun telegramService(): TelegramService {
+    return TelegramService(
+      telegramConnector()
     )
   }
 
@@ -80,8 +95,8 @@ open class ServiceConfiguration(
     return AutoPartService(
       repositoryConfiguration.autoPartRepository(),
       serviceConfiguration.imageUploader(),
-      autoPartMapper(),
-      telegramApiService()
+      mapperConfiguration.autoPartMapper(),
+      telegramService()
     )
   }
 
@@ -100,10 +115,5 @@ open class ServiceConfiguration(
   @Bean
   open fun bamperClientService(): BamperClientService {
     return BamperClientService(repositoryConfiguration.bamperClientRepository())
-  }
-
-  @Bean
-  open fun autoPartMapper(): AutoPartMapper {
-    return AutoPartMapper(serviceConfiguration.cloudYandexDriveService(), serviceConfiguration.imageDownloader())
   }
 }

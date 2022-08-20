@@ -29,7 +29,7 @@ class AutoPartController(
   @PostMapping
   fun create(@RequestBody autoPartDto: AutoPartDto): Mono<ResponseEntity<Unit>> {
     return autoPartService.create(autoPartDto)
-      .then(Mono.just(ResponseEntity.ok().build()))
+      .thenReturn(ResponseEntity.ok().build())
   }
 
   @GetMapping(params = ["storeHouseId", "limit", "offset"])

@@ -7,7 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-class TelegramApiService(
+class TelegramConnector(
   private val webClient: WebClient,
   private val getPhotoPathUri: String,
   private val getPhotoUri: String,

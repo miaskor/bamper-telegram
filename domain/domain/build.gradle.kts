@@ -10,6 +10,7 @@ dependencies {
 
   implementation(lib("io.projectreactor.netty:reactor-netty"))
   implementation(lib("io.projectreactor:reactor-core"))
+  implementation(lib("io.projectreactor.kotlin:reactor-kotlin-extensions"))
 
   implementation(lib("org.jooq:jooq-meta"))
   implementation(lib("org.jooq:jooq-codegen"))

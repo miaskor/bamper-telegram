@@ -8,17 +8,17 @@ import by.miaskor.domain.service.CarService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("/car")
+@RequestMapping("/cars")
 class CarController(
-  private val carService: CarService
+  private val carService: CarService,
 ) {
 
   @PostMapping
@@ -27,22 +27,30 @@ class CarController(
       .map { ResponseEntity.ok(it) }
   }
 
-  @GetMapping("/{storeHouseId}/{id}")
-  fun getById(@PathVariable storeHouseId: Long, @PathVariable id: Long): Mono<ResponseEntity<CarResponse>> {
+  @GetMapping(params = ["storeHouseId", "id"])
+  fun getById(@RequestParam storeHouseId: Long, @RequestParam id: Long): Mono<ResponseEntity<CarResponse>> {
     return carService.getByStoreHouseIdAndId(storeHouseId, id)
       .map { ResponseEntity.ok(it) }
   }
 
-  @PostMapping("/list")
+  @GetMapping(params = ["storeHouseId", "limit", "offset"])
   fun getByStoreHouseId(
-    @RequestBody storeHouseIdWithLimitRequest: StoreHouseIdWithLimitRequest
+    @RequestParam storeHouseId: Long,
+    @RequestParam limit: Long,
+    @RequestParam offset: Long,
   ): Mono<ResponseEntity<ResponseWithLimit<CarResponse>>> {
-    return carService.getAllByStoreHouseId(storeHouseIdWithLimitRequest)
+    return Mono.fromSupplier {
+      StoreHouseIdWithLimitRequest(
+        storeHouseId = storeHouseId,
+        limit = limit,
+        offset = offset
+      )
+    }.flatMap(carService::getAllByStoreHouseId)
       .map { ResponseEntity.ok(it) }
   }
 
-  @DeleteMapping("/{storeHouseId}/{id}")
-  fun deleteById(@PathVariable storeHouseId: Long, @PathVariable id: Long): Mono<ResponseEntity<Boolean>> {
+  @DeleteMapping(params = ["storeHouseId", "id"])
+  fun deleteById(@RequestParam storeHouseId: Long, @RequestParam id: Long): Mono<ResponseEntity<Boolean>> {
     return carService.deleteByStoreHouseIdAndId(storeHouseId, id)
       .map { ResponseEntity.ok(it) }
   }

@@ -5,7 +5,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 
-private const val BASE_URL = "/brands"
+private const val BASE_URI = "/brands"
 
 class BrandConnector(
   private val webClient: WebClient,
@@ -13,7 +13,7 @@ class BrandConnector(
 
   fun getByBrandName(brandName: String): Mono<BrandResponse> {
     return webClient.get()
-      .uri(BASE_URL) { uriBuilder ->
+      .uri(BASE_URI) { uriBuilder ->
         uriBuilder.queryParam("brandName", brandName)
           .build()
       }
@@ -23,7 +23,7 @@ class BrandConnector(
 
   fun getByBrandNameAndModel(brandName: String, model: String): Mono<BrandResponse> {
     return webClient.get()
-      .uri(BASE_URL) { uriBuilder ->
+      .uri(BASE_URI) { uriBuilder ->
         uriBuilder.queryParam("brandName", brandName)
         uriBuilder.queryParam("model", model)
           .build()

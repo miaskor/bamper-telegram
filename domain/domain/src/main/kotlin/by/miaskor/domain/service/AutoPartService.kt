@@ -7,18 +7,20 @@ import by.miaskor.domain.api.domain.AutoPartResponse
 import by.miaskor.domain.api.domain.AutoPartWithPhotoResponse
 import by.miaskor.domain.api.domain.CarAutoPartDto
 import by.miaskor.domain.api.domain.ResponseWithLimit
-import by.miaskor.domain.api.domain.StoreHouseIdWithLimitRequest
 import by.miaskor.domain.api.domain.StoreHouseIdWithConstraint
+import by.miaskor.domain.api.domain.StoreHouseIdWithLimitRequest
 import by.miaskor.domain.repository.AutoPartRepository
-import by.miaskor.domain.service.telegram.TelegramApiService
+import by.miaskor.domain.service.mapper.AutoPartMapper
+import by.miaskor.domain.service.telegram.TelegramService
 import by.miaskor.domain.tables.pojos.AutoPart
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 
 class AutoPartService(
   private val autoPartRepository: AutoPartRepository,
   private val uploader: ImageUploader,
   private val autoPartMapper: AutoPartMapper,
-  private val telegramApiService: TelegramApiService,
+  private val telegramService: TelegramService,
 ) {
 
   fun deleteByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Boolean> {
@@ -29,15 +31,14 @@ class AutoPartService(
 
   fun create(autoPartDto: AutoPartDto): Mono<Unit> {
     val autoPartKey = AutoPartKeyGenerator.generate()
-    return telegramApiService.getPhotoPath(autoPartDto.photoId)
-      .map { photoPath ->
-        UploadFileRequest(
-          autoPartDto.chatId,
-          telegramApiService.getPhoto(photoPath),
-          autoPartKey
-        )
-      }.flatMap(uploader::upload)
-      .map {
+    return Mono.fromCallable {
+      UploadFileRequest(
+        autoPartDto.chatId,
+        telegramService.getPhoto(autoPartDto.photoId),
+        autoPartKey
+      )
+    }.flatMap(uploader::upload)
+      .map { uploadFileResponse ->
         AutoPart(
           description = autoPartDto.description,
           price = autoPartDto.price,
@@ -47,10 +48,11 @@ class AutoPartService(
           carId = autoPartDto.carId,
           carPartId = autoPartDto.carPartId,
           storeHouseId = autoPartDto.storeHouseId,
-          photoPath = it.path,
+          photoPath = uploadFileResponse.path,
           autoPartKey = autoPartKey
         )
       }.flatMap(autoPartRepository::save)
+      .subscribeOn(Schedulers.boundedElastic())
   }
 
   fun getAllByStoreHouseId(storeHouseIdWithLimitRequest: StoreHouseIdWithLimitRequest): Mono<ResponseWithLimit<AutoPartWithPhotoResponse>> {
@@ -80,7 +82,7 @@ class AutoPartService(
 
   fun getByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<AutoPartWithPhotoResponse> {
     return autoPartRepository.findByStoreHouseIdAndId(storeHouseId, id)
-      .flatMap(autoPartMapper::downloadPhoto)
+      .flatMap(autoPartMapper::mapWithPhoto)
   }
 
   fun getByTelegramChatIdAndId(telegramChatId: Long, id: Long): Mono<AutoPartResponse> {

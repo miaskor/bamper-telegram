@@ -5,11 +5,13 @@ import by.miaskor.domain.api.domain.CarResponse
 import by.miaskor.domain.api.domain.ResponseWithLimit
 import by.miaskor.domain.api.domain.StoreHouseIdWithLimitRequest
 import by.miaskor.domain.repository.CarRepository
+import by.miaskor.domain.service.mapper.CarMapper
 import by.miaskor.domain.tables.pojos.Car
 import reactor.core.publisher.Mono
 
 class CarService(
-  private val carRepository: CarRepository
+  private val carRepository: CarRepository,
+  private val carMapper: CarMapper,
 ) {
 
   fun create(carDto: CarDto): Mono<Long> {
@@ -29,8 +31,8 @@ class CarService(
 
   fun getByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<CarResponse> {
     return carRepository.findByStoreHouseIdAndId(storeHouseId, id)
-      .map {
-        CarResponse(it.id ?: -1)
+      .map { car ->
+        CarResponse(car.id ?: -1)
       }
   }
 
@@ -39,7 +41,7 @@ class CarService(
       storeHouseIdWithLimitRequest.storeHouseId,
       storeHouseIdWithLimitRequest.limit + 1,
       storeHouseIdWithLimitRequest.offset
-    )
+    ).map(carMapper::map)
       .map {
         val isMoreExists = it.size > 10
         val cars = if (isMoreExists) it.dropLast(1) else it
@@ -52,12 +54,14 @@ class CarService(
 
   fun deleteByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<Boolean> {
     return carRepository.deleteByStoreHouseIdAndId(storeHouseId, id)
-      .flatMap {
-        if (it > 0)
-          Mono.just(true)
-        else
-          Mono.empty()
-      }
+      .flatMap(::isDeletionSuccessful)
       .onErrorReturn(false)
+  }
+
+  private fun isDeletionSuccessful(deletedRecords: Int): Mono<Boolean> {
+    return if (deletedRecords > 0)
+      Mono.just(true)
+    else
+      Mono.empty()
   }
 }

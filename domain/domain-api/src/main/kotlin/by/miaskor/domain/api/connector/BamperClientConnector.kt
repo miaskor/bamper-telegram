@@ -12,7 +12,7 @@ class BamperClientConnector(
 
   fun create(bamperClientDto: BamperClientDto): Mono<Unit> {
     return webClient.post()
-      .uri("/bamper-client")
+      .uri("/bamper-clients")
       .body(BodyInserters.fromValue(bamperClientDto))
       .retrieve()
       .bodyToMono()
