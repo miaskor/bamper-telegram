@@ -3,36 +3,28 @@ package by.miaskor.domain.service
 import by.miaskor.domain.api.domain.StoreHouseDto
 import by.miaskor.domain.model.WorkerStoreHouseVO
 import by.miaskor.domain.repository.StoreHouseRepository
+import by.miaskor.domain.service.mapper.StoreHouseMapper
 import by.miaskor.domain.tables.pojos.StoreHouse
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.util.function.component1
+import reactor.kotlin.core.util.function.component2
 
 class StoreHouseService(
   private val storeHouseRepository: StoreHouseRepository,
-  private val workerStoreHouseService: WorkerStoreHouseService
+  private val workerStoreHouseService: WorkerStoreHouseService,
+  private val storeHouseMapper: StoreHouseMapper,
 ) {
 
   fun getByNameAndTelegramChatId(storeHouseDto: StoreHouseDto): Mono<StoreHouseDto> {
     return storeHouseRepository.findByNameAndTelegramChatId(storeHouseDto.name, storeHouseDto.chatId)
-      .map {
-        StoreHouseDto(
-          id = it.id ?: -1,
-          name = it.storeHouseName ?: "",
-          chatId = it.telegramChatId ?: -1
-        )
-      }
+      .map(storeHouseMapper::map)
   }
 
   fun getAllByChatId(chatId: Long): Mono<List<StoreHouseDto>> {
     return storeHouseRepository.findAllByChatId(chatId)
       .flatMapIterable { it }
-      .map {
-        StoreHouseDto(
-          id = it.id ?: -1,
-          chatId = it.telegramChatId ?: -1,
-          name = it.storeHouseName ?: ""
-        )
-      }
+      .map(storeHouseMapper::map)
       .mergeWith(
         workerStoreHouseService.getStoreHousesByChatId(chatId)
           .flatMapMany { getWorkerStoreHouses(it) }
@@ -41,15 +33,15 @@ class StoreHouseService(
 
   private fun getWorkerStoreHouses(workerStoreHouses: List<WorkerStoreHouseVO>): Flux<StoreHouseDto> {
     return Mono.fromSupplier { workerStoreHouses.map { it.storeHouseId } }
-      .flatMap { storeHouseRepository.findAllByIds(it) }
+      .flatMap { workerStoreHouseIds -> storeHouseRepository.findAllByIds(workerStoreHouseIds) }
       .flatMapIterable { it }
       .zipWithIterable(workerStoreHouses)
-      .map {
+      .map { (storeHouse, workerStoreHouseVO) ->
         StoreHouseDto(
-          id = it.t1.id ?: -1,
-          chatId = it.t1.telegramChatId ?: -1,
-          name = it.t1.storeHouseName ?: "",
-          modifiable = it.t2.privilege == "M"
+          id = storeHouse.id ?: -1,
+          chatId = storeHouse.telegramChatId ?: -1,
+          name = storeHouse.storeHouseName ?: "",
+          modifiable = workerStoreHouseVO.privilege == "M"
         )
       }
   }

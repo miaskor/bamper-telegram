@@ -3,14 +3,14 @@ package by.miaskor.domain.service
 import by.miaskor.domain.api.domain.EmployeeExistsRequest
 import by.miaskor.domain.api.domain.TelegramClientRequest
 import by.miaskor.domain.api.domain.TelegramClientResponse
-import by.miaskor.domain.api.domain.WorkerTelegramDto
 import by.miaskor.domain.repository.TelegramClientRepository
+import by.miaskor.domain.service.mapper.TelegramClientMapper
 import by.miaskor.domain.tables.pojos.TelegramClient
 import reactor.core.publisher.Mono
 
 class TelegramClientService(
-  private val workerTelegramService: WorkerTelegramService,
-  private val telegramClientRepository: TelegramClientRepository
+  private val telegramClientRepository: TelegramClientRepository,
+  private val telegramClientMapper: TelegramClientMapper,
 ) {
 
   fun upsert(telegramClientRequest: TelegramClientRequest): Mono<Unit> {
@@ -24,52 +24,19 @@ class TelegramClientService(
   }
 
   fun getAllEmployees(employerChatId: Long): Mono<List<TelegramClientResponse>> {
-    return workerTelegramService.getAllWorkerChatIdByEmployerChatId(employerChatId)
-      .flatMap(telegramClientRepository::findByChatIds)
+    return telegramClientRepository.findEmployeesByEmployerId(employerChatId)
       .flatMapIterable { it }
-      .map {
-        TelegramClientResponse(
-          chatId = it.chatId ?: -1,
-          chatLanguage = it.chatLanguage ?: "",
-          username = it.userName ?: "",
-          bamperClientId = it.bamperClientId
-        )
-      }.collectList()
+      .map(telegramClientMapper::map)
+      .collectList()
   }
 
   fun getByChatId(chatId: Long): Mono<TelegramClientResponse> {
     return telegramClientRepository.findByChatId(chatId)
-      .map {
-        TelegramClientResponse(
-          chatId = it.chatId ?: -1,
-          chatLanguage = it.chatLanguage ?: "",
-          bamperClientId = it.bamperClientId
-        )
-      }
+      .map(telegramClientMapper::map)
   }
 
   fun getByUsername(username: String): Mono<TelegramClientResponse> {
     return telegramClientRepository.findByUsername(username)
-      .map {
-        TelegramClientResponse(
-          chatId = it.chatId ?: -1,
-          chatLanguage = it.chatLanguage ?: "",
-          bamperClientId = it.bamperClientId
-        )
-      }
-  }
-
-  fun isTelegramClientWorker(employeeExistsRequest: EmployeeExistsRequest): Mono<Boolean> {
-    return Mono.just(employeeExistsRequest.employeeUsername)
-      .flatMap(::getByUsername)
-      .map {
-        WorkerTelegramDto(
-          employeeChatId = it.chatId,
-          employerChatId = employeeExistsRequest.employerChatId
-        )
-      }
-      .flatMap(workerTelegramService::get)
-      .hasElement()
-      .defaultIfEmpty(false)
+      .map(telegramClientMapper::map)
   }
 }

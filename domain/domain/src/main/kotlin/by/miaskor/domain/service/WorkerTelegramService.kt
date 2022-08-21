@@ -7,15 +7,15 @@ import reactor.core.publisher.Mono
 
 class WorkerTelegramService(
   private val workerTelegramRepository: WorkerTelegramRepository,
-  private val workerStoreHouseService: WorkerStoreHouseService
+  private val workerStoreHouseService: WorkerStoreHouseService,
 ) {
 
   fun get(workerTelegramDto: WorkerTelegramDto): Mono<WorkerTelegramDto> {
     return workerTelegramRepository.find(workerTelegramDto.employeeChatId, workerTelegramDto.employerChatId)
-      .map {
+      .map { workerTelegram ->
         WorkerTelegramDto(
-          employeeChatId = it.workerTelegramChatId ?: -1,
-          employerChatId = it.employerTelegramChatId ?: -1
+          employeeChatId = workerTelegram.workerTelegramChatId ?: -1,
+          employerChatId = workerTelegram.employerTelegramChatId ?: -1
         )
       }
   }
@@ -25,17 +25,12 @@ class WorkerTelegramService(
       .then(workerStoreHouseService.removeByChatId(workerTelegramDto.employeeChatId))
   }
 
-  fun getAllWorkerChatIdByEmployerChatId(employerChatId: Long): Mono<List<Long>> {
-    return workerTelegramRepository.findAllWorkerChatIdByEmployerChatId(employerChatId)
-  }
-
   fun save(workerTelegramDto: WorkerTelegramDto): Mono<Unit> {
-    return Mono.just(workerTelegramDto)
-      .map {
-        WorkerTelegram(
-          workerTelegramChatId = workerTelegramDto.employeeChatId,
-          employerTelegramChatId = workerTelegramDto.employerChatId
-        )
-      }.flatMap(workerTelegramRepository::save)
+    return Mono.fromSupplier {
+      WorkerTelegram(
+        workerTelegramChatId = workerTelegramDto.employeeChatId,
+        employerTelegramChatId = workerTelegramDto.employerChatId
+      )
+    }.flatMap(workerTelegramRepository::save)
   }
 }

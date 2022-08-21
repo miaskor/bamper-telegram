@@ -5,12 +5,15 @@ import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 
 class CarPartConnector(
-  private val webClient: WebClient
+  private val webClient: WebClient,
 ) {
 
   fun getIdByName(name: String): Mono<Long> {
     return webClient.get()
-      .uri("/car-part/$name")
+      .uri("/car-parts") { uriBuilder ->
+        uriBuilder.queryParam("name", name)
+          .build()
+      }
       .retrieve()
       .bodyToMono()
   }

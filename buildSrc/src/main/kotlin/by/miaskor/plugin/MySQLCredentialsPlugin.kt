@@ -28,7 +28,7 @@ class MySQLCredentialsPlugin : Plugin<Project> {
   }
 
   private companion object {
-    private const val COMMON_PATH = "/home/miaskor/Documents/pet-projects/bamper-telegram-properties"
-    private const val DOMAIN_PROPERTY_PATH = "$COMMON_PATH/domain.properties"
+    private const val COMMON_PATH = "/home/miaskor/Documents/pet-projects/bamper-telegram-properties/data-source"
+    private const val DOMAIN_PROPERTY_PATH = "$COMMON_PATH/mysql.yaml"
   }
 }

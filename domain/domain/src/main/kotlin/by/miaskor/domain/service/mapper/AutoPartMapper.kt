@@ -1,4 +1,4 @@
-package by.miaskor.domain.service
+package by.miaskor.domain.service.mapper
 
 import by.miaskor.cloud.drive.domain.DownloadFile
 import by.miaskor.cloud.drive.service.CloudYandexDriveService
@@ -8,8 +8,6 @@ import by.miaskor.domain.api.domain.AutoPartWithPhotoResponse
 import by.miaskor.domain.api.domain.ResponseWithLimit
 import by.miaskor.domain.model.AutoPartVO
 import by.miaskor.domain.model.AutoPartWithPhotoUrlVO
-import org.springframework.core.io.buffer.DataBufferUtils
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 
@@ -43,12 +41,12 @@ class AutoPartMapper(
   }
 
   fun mapWithPhoto(list: List<AutoPartVO>): Mono<ResponseWithLimit<AutoPartWithPhotoResponse>> {
-    return Flux.fromIterable(list)
-      .flatMap(::downloadPhoto)
+    return Mono.fromSupplier { if (list.size > 10) list.dropLast(1) else list }
+      .flatMapIterable { it }
+      .flatMap(::mapWithPhoto)
       .collectList()
-      .map {
-        val isMoreExists = it.size > 10
-        val autoParts = if (isMoreExists) it.dropLast(1) else it
+      .map { autoParts ->
+        val isMoreExists = list.size > 10
         ResponseWithLimit(
           entities = autoParts,
           isMoreExists = isMoreExists
@@ -56,13 +54,10 @@ class AutoPartMapper(
       }
   }
 
-  fun downloadPhoto(autoPartVO: AutoPartVO): Mono<AutoPartWithPhotoResponse> {
-    return Mono.just(autoPartVO.photoPath)
-      .flatMap { path ->
-        DataBufferUtils.join(downloader.download(DownloadFile(path)))
-      }.map { photo ->
-        val byteArrayPhoto = ByteArray(photo.capacity())
-        photo.read(byteArrayPhoto)
+  fun mapWithPhoto(autoPartVO: AutoPartVO): Mono<AutoPartWithPhotoResponse> {
+    return Mono.fromCallable { DownloadFile(autoPartVO.photoPath) }
+      .flatMap(downloader::download)
+      .map { byteArrayPhoto ->
         AutoPartWithPhotoResponse(
           id = autoPartVO.id.toString(),
           description = autoPartVO.description,
@@ -77,6 +72,6 @@ class AutoPartMapper(
           autoPartEN = autoPartVO.autoPartEN,
           autoPartRU = autoPartVO.autoPartRU,
         )
-      }
+      }.subscribeOn(Schedulers.boundedElastic())
   }
 }

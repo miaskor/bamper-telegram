@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 
 @RestController
-@RequestMapping("/worker-store-house")
+@RequestMapping("/worker-store-houses")
 class WorkerStoreHouseController(
   private val workerStoreHouseService: WorkerStoreHouseService
 ) {

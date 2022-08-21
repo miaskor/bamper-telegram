@@ -1,5 +1,6 @@
 package by.miaskor.bot.service.handler.list
 
+import by.miaskor.bot.configuration.settings.ExecutorSettings
 import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.configuration.settings.MessageSettings
 import by.miaskor.bot.domain.CallbackCommand
@@ -11,19 +12,25 @@ import by.miaskor.domain.api.domain.ResponseWithLimit
 import com.pengrad.telegrambot.model.Update
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.core.scheduler.Schedulers
 import kotlin.reflect.KFunction1
 
 object ListEntitySender {
+
+  lateinit var executorSettings: ExecutorSettings
 
   fun <T> sendEntities(
     update: Update,
     responseWithLimit: ResponseWithLimit<T>,
     messageFunction: KFunction1<MessageSettings, String>,
-    entityDisassembler: (T) -> Array<String>
+    entityDisassembler: (T) -> Array<String>,
   ): Mono<Unit> {
     return Flux.fromIterable(responseWithLimit.entities)
       .skipLast(1)
-      .flatMap { sendEntity<T>(update.chatId, it, messageFunction, entityDisassembler) }
+      .parallel(executorSettings.maxConcurrency())
+      .runOn(Schedulers.newParallel("list-entity-sender-thread", executorSettings.maxConcurrency()))
+      .concatMap { sendEntity(update.chatId, it, messageFunction, entityDisassembler) }
+      .sequential()
       .then(
         Mono.justOrEmpty(responseWithLimit.entities.lastOrNull())
           .flatMap { sendLast(it, update.chatId, entityDisassembler, messageFunction) }
@@ -34,7 +41,7 @@ object ListEntitySender {
     chatId: Long,
     entity: T,
     messageFunction: KFunction1<MessageSettings, String>,
-    entityDisassembler: (T) -> Array<String>
+    entityDisassembler: (T) -> Array<String>,
   ): Mono<T> {
     return when (entity) {
       is CarResponse -> MessageSender.sendMessage(chatId, messageFunction, *entityDisassembler.invoke(entity))
@@ -53,7 +60,7 @@ object ListEntitySender {
     entity: T,
     chatId: Long,
     entityDisassembler: (T) -> Array<String>,
-    messageFunction: KFunction1<MessageSettings, String>
+    messageFunction: KFunction1<MessageSettings, String>,
   ): Mono<Unit> {
     return when (entity) {
       is CarResponse -> MessageSender.sendMessageWithInlineKeyboard(

@@ -1,6 +1,6 @@
 package by.miaskor.cloud.drive.configuration
 
-import by.miaskor.cloud.drive.settings.CloudDriveSettings
+import by.miaskor.cloud.drive.configuration.settings.CloudDriveSettings
 import org.cfg4j.provider.ConfigurationProvider
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -1,31 +1,22 @@
 package by.miaskor.domain.service
 
-import by.miaskor.domain.api.domain.BrandDto
+import by.miaskor.domain.api.domain.BrandResponse
 import by.miaskor.domain.repository.BrandRepository
+import by.miaskor.domain.service.mapper.BrandMapper
 import reactor.core.publisher.Mono
 
 class BrandService(
-  private val brandRepository: BrandRepository
+  private val brandRepository: BrandRepository,
+  private val brandMapper: BrandMapper,
 ) {
 
-  fun getByBrandName(brandName: String): Mono<BrandDto> {
+  fun getByBrandName(brandName: String): Mono<BrandResponse> {
     return brandRepository.findByBrandName(brandName)
-      .map {
-        BrandDto(
-          brandName = it.brandName ?: "",
-          model = it.model ?: ""
-        )
-      }
+      .map(brandMapper::map)
   }
 
-  fun getByBrandNameAndModel(brandDto: BrandDto): Mono<BrandDto> {
-    return brandRepository.findByBrandNameAndModel(brandDto.brandName, brandDto.model)
-      .map {
-        BrandDto(
-          id = it.id ?: -1,
-          brandName = it.brandName ?: "",
-          model = it.model ?: ""
-        )
-      }
+  fun getByBrandNameAndModel(brandName: String, model: String): Mono<BrandResponse> {
+    return brandRepository.findByBrandNameAndModel(brandName, model)
+      .map(brandMapper::map)
   }
 }

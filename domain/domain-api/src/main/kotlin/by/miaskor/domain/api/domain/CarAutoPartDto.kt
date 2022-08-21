@@ -7,4 +7,4 @@ data class CarAutoPartDto(
   val model: String,
   override val limit: Long,
   override val offset: Long,
-) : StoreHouseIdRequest(storeHouseId, limit, offset)
+) : StoreHouseIdWithLimitRequest(storeHouseId, limit, offset)

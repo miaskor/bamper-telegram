@@ -1,15 +1,21 @@
 dependencies {
+  implementation(project(":domain:domain-api"))
+  implementation(project(":cloud-drive"))
+  implementation(project(":common"))
+
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
   implementation("org.springframework.boot:spring-boot-starter-jooq")
   implementation("org.springframework.boot:spring-boot-starter-data-rest")
   implementation("org.springframework:spring-webflux")
+
   implementation(lib("io.projectreactor.netty:reactor-netty"))
-  implementation("org.liquibase:liquibase-core")
   implementation(lib("io.projectreactor:reactor-core"))
+  implementation(lib("io.projectreactor.kotlin:reactor-kotlin-extensions"))
+
   implementation(lib("org.jooq:jooq-meta"))
   implementation(lib("org.jooq:jooq-codegen"))
-  implementation(project(":domain:domain-api"))
-  implementation(project(":cloud-drive"))
+
+  implementation("org.liquibase:liquibase-core")
   jooqGenerator(lib("mysql:mysql-connector-java"))
 
   runtimeOnly(lib("mysql:mysql-connector-java"))

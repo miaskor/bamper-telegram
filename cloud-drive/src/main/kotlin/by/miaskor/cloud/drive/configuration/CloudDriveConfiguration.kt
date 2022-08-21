@@ -9,4 +9,4 @@ import org.springframework.context.annotation.Import
   SettingsConfiguration::class
 )
 @Configuration
-open class ApplicationConfiguration
+open class CloudDriveConfiguration

@@ -18,6 +18,7 @@ import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_CAR_AND_CAR_PART
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_ID
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_PART_NUMBER
+import by.miaskor.bot.domain.BotState.IMPORTING_AUTO_PART_BY_ID
 import by.miaskor.bot.domain.BotState.MAIN_MENU
 import by.miaskor.bot.domain.BotState.MODIFICATION_STORE_HOUSE_MENU
 import by.miaskor.bot.domain.BotState.READ_ONLY_STORE_HOUSE_MENU
@@ -45,21 +46,21 @@ class KeyboardBuilder(
   private fun build(telegramClient: TelegramClient): Mono<Keyboard> {
     return Mono.just(telegramClient.chatId)
       .resolveLanguage(KeyboardSettings::class)
-      .map {
+      .map { keyboardSettings ->
         when (telegramClient.currentBotState) {
-          CHOOSING_LANGUAGE -> buildReplyKeyboard(it.choosingLanguageMenu())
-          MAIN_MENU -> buildReplyKeyboard(it.mainMenu())
-          CHANGING_LANGUAGE -> buildReplyKeyboard(it.changingLanguageMenu())
-          EMPLOYEES_MENU -> buildReplyKeyboard(it.employeeMenu())
+          CHOOSING_LANGUAGE -> buildReplyKeyboard(keyboardSettings.choosingLanguageMenu())
+          MAIN_MENU -> buildReplyKeyboard(keyboardSettings.mainMenu())
+          CHANGING_LANGUAGE -> buildReplyKeyboard(keyboardSettings.changingLanguageMenu())
+          EMPLOYEES_MENU -> buildReplyKeyboard(keyboardSettings.employeeMenu())
           CHOOSING_STORE_HOUSE -> {
-            val buttons = addStoreHousesToKeyboard(telegramClient, it)
+            val buttons = addStoreHousesToKeyboard(telegramClient, keyboardSettings)
             buildReplyKeyboard(buttons)
           }
 
-          MODIFICATION_STORE_HOUSE_MENU -> buildReplyKeyboard(it.modificationStoreHouseMenu())
-          READ_ONLY_STORE_HOUSE_MENU -> buildReplyKeyboard(it.readStoreHouseMenu())
-          FINDING_AUTO_PART -> buildReplyKeyboard(it.findAutoPartMenu())
-          BAMPER_MENU -> buildReplyKeyboard(it.bamperMenu())
+          MODIFICATION_STORE_HOUSE_MENU -> buildReplyKeyboard(keyboardSettings.modificationStoreHouseMenu())
+          READ_ONLY_STORE_HOUSE_MENU -> buildReplyKeyboard(keyboardSettings.readStoreHouseMenu())
+          FINDING_AUTO_PART -> buildReplyKeyboard(keyboardSettings.findAutoPartMenu())
+          BAMPER_MENU -> buildReplyKeyboard(keyboardSettings.bamperMenu())
           FINDING_AUTO_PART_BY_PART_NUMBER,
           FINDING_AUTO_PART_BY_CAR_AND_CAR_PART,
           FINDING_AUTO_PART_BY_ID,
@@ -72,7 +73,8 @@ class KeyboardBuilder(
           CREATING_AUTO_PART,
           CREATING_STORE_HOUSE,
           ADDING_EMPLOYEE_TO_STORE_HOUSE,
-          -> buildReplyKeyboard(it.defaultMenu())
+          IMPORTING_AUTO_PART_BY_ID,
+          -> buildReplyKeyboard(keyboardSettings.defaultMenu())
 
           else -> buildReplyKeyboard(listOf("Something went wrong"))
         }

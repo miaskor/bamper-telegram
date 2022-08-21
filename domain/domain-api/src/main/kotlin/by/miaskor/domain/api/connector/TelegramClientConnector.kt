@@ -1,19 +1,20 @@
 package by.miaskor.domain.api.connector
 
-import by.miaskor.domain.api.domain.EmployeeExistsRequest
 import by.miaskor.domain.api.domain.TelegramClientRequest
 import by.miaskor.domain.api.domain.TelegramClientResponse
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Mono
 
+private const val BASE_URI = "/telegram-clients"
+
 class TelegramClientConnector(
-  private val webClient: WebClient
+  private val webClient: WebClient,
 ) {
 
   fun upsert(telegramClientRequest: TelegramClientRequest): Mono<Unit> {
     return webClient.post()
-      .uri("/telegram-client")
+      .uri(BASE_URI)
       .bodyValue(telegramClientRequest)
       .retrieve()
       .bodyToMono()
@@ -21,29 +22,30 @@ class TelegramClientConnector(
 
   fun getByChatId(chatId: Long): Mono<TelegramClientResponse> {
     return webClient.get()
-      .uri("/telegram-client/chatId/$chatId")
+      .uri(BASE_URI) { uriBuilder ->
+        uriBuilder.queryParam("chatId", chatId)
+          .build()
+      }
       .retrieve()
       .bodyToMono()
   }
 
   fun getAllEmployeesByEmployerChatId(employerChatId: Long): Mono<List<TelegramClientResponse>> {
     return webClient.get()
-      .uri("/telegram-client/employees/$employerChatId")
+      .uri(BASE_URI) { uriBuilder ->
+        uriBuilder.queryParam("employerChatId", employerChatId)
+          .build()
+      }
       .retrieve()
       .bodyToMono()
   }
 
   fun getByUsername(username: String): Mono<TelegramClientResponse> {
     return webClient.get()
-      .uri("/telegram-client/username/$username")
-      .retrieve()
-      .bodyToMono()
-  }
-
-  fun isTelegramClientWorker(employeeExistsRequest: EmployeeExistsRequest): Mono<Boolean> {
-    return webClient.post()
-      .uri("/telegram-client/isWorker")
-      .bodyValue(employeeExistsRequest)
+      .uri(BASE_URI) { uriBuilder ->
+        uriBuilder.queryParam("username", username)
+          .build()
+      }
       .retrieve()
       .bodyToMono()
   }

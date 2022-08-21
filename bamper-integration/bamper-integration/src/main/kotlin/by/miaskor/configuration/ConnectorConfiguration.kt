@@ -1,9 +1,10 @@
 package by.miaskor.configuration
 
-import by.miaskor.configuration.settings.BamperSettings
-import by.miaskor.configuration.settings.ConnectorSettings
 import by.miaskor.connector.BamperConnector
 import by.miaskor.domain.api.connector.AutoPartConnector
+import by.miaskor.service.auth.AuthRequestBuilder
+import by.miaskor.service.auth.AuthSessionCookieResolver
+import by.miaskor.service.imprt.ImportRequestBuilder
 import org.apache.logging.log4j.LogManager
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -15,8 +16,7 @@ import reactor.netty.http.client.HttpClient
 
 @Configuration
 open class ConnectorConfiguration(
-  private val bamperSettings: BamperSettings,
-  private val connectorSettings: ConnectorSettings,
+  private val settingsConfiguration: SettingsConfiguration,
 ) {
 
   @Bean
@@ -32,14 +32,35 @@ open class ConnectorConfiguration(
 
   @Bean
   open fun bamperConnector(): BamperConnector {
-    return BamperConnector(webClient(), bamperSettings)
+    return BamperConnector(
+      webClient = webClient(),
+      bamperSettings = settingsConfiguration.bamperSettings(),
+      authRequestBuilder = authRequestBuilder(),
+      authSessionCookieResolver = authSessionCookieResolver(),
+      importRequestBuilder = importRequestBuilder()
+    )
+  }
+
+  @Bean
+  open fun authRequestBuilder(): AuthRequestBuilder {
+    return AuthRequestBuilder(settingsConfiguration.bamperSettings())
+  }
+
+  @Bean
+  open fun authSessionCookieResolver(): AuthSessionCookieResolver {
+    return AuthSessionCookieResolver(settingsConfiguration.bamperSettings())
+  }
+
+  @Bean
+  open fun importRequestBuilder(): ImportRequestBuilder {
+    return ImportRequestBuilder(settingsConfiguration.importSettings())
   }
 
   @Bean
   open fun autoPartConnector(): AutoPartConnector {
     val webClient = WebClient
       .builder()
-      .baseUrl(connectorSettings.domainBaseUrl())
+      .baseUrl(settingsConfiguration.connectorSettings().domainBaseUrl())
       .build()
     return AutoPartConnector(webClient)
   }

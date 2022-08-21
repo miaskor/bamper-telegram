@@ -14,7 +14,7 @@ import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_CAR_AND_CAR_PART
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_ID
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART_BY_PART_NUMBER
-import by.miaskor.bot.domain.BotState.IMPORT_BY_ID
+import by.miaskor.bot.domain.BotState.IMPORTING_AUTO_PART_BY_ID
 import by.miaskor.bot.domain.BotState.REMOVING_EMPLOYEE
 import by.miaskor.bot.domain.Command.ADD_EMPLOYEE
 import by.miaskor.bot.domain.Command.ADD_EMPLOYEE_TO_STORE_HOUSE
@@ -170,7 +170,7 @@ open class CommandHandlerConfiguration(
       telegramBot,
       serviceConfiguration.keyboardBuilder(),
       IMPORT_AUTO_PART,
-      IMPORT_BY_ID,
+      IMPORTING_AUTO_PART_BY_ID,
       MessageSettings::importAutoPartMessage
     )
   }

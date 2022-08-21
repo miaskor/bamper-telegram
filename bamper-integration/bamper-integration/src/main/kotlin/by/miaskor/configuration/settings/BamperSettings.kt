@@ -7,4 +7,5 @@ interface BamperSettings {
   fun importUri(): String
   fun parseUri(): String
   fun authorizationFormData(): List<String>
+  fun sessionCookieName(): String
 }
