@@ -1,5 +1,6 @@
 package by.miaskor.domain.service.telegram
 
+import by.miaskor.common.DefaultProperty
 import by.miaskor.domain.service.telegram.domain.PhotoPathResponse
 import org.springframework.core.io.buffer.DataBuffer
 import org.springframework.http.MediaType
@@ -9,9 +10,9 @@ import reactor.core.publisher.Mono
 
 class TelegramConnector(
   private val webClient: WebClient,
-  private val getPhotoPathUri: String,
-  private val getPhotoUri: String,
 ) {
+  private val getPhotoPathUri: String by DefaultProperty("bot.getPhotoPathUri")
+  private val getPhotoUri: String by DefaultProperty("bot.getPhotoUri")
 
   fun getPhotoPath(photoId: String): Mono<String> {
     return webClient

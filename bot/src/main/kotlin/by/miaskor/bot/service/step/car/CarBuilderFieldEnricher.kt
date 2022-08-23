@@ -8,6 +8,7 @@ import by.miaskor.bot.domain.CreatingCarStep.BRAND_NAME
 import by.miaskor.bot.domain.CreatingCarStep.ENGINE_CAPACITY
 import by.miaskor.bot.domain.CreatingCarStep.ENGINE_TYPE
 import by.miaskor.bot.domain.CreatingCarStep.FUEL_TYPE
+import by.miaskor.bot.domain.CreatingCarStep.MODEL
 import by.miaskor.bot.domain.CreatingCarStep.TRANSMISSION
 import by.miaskor.bot.domain.CreatingCarStep.YEAR
 import by.miaskor.bot.service.extension.text
@@ -24,6 +25,7 @@ class CarBuilderFieldEnricher : StepBuilderFieldEnricher<CreatingCarStep> {
     val carBuilder = stepBuilder as CarBuilder
     when (step) {
       BRAND_NAME -> carBuilder.brandName(update.text)
+      MODEL -> carBuilder.model(update.text)
       YEAR -> carBuilder.year(update.text)
       BODY -> carBuilder.body(update.text)
       TRANSMISSION -> carBuilder.transmission(update.text)
