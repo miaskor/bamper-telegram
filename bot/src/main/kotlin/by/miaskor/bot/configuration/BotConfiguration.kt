@@ -24,8 +24,7 @@ open class BotConfiguration(
   open fun bot(): Bot {
     return Bot(
       telegramBot(),
-      cacheConfiguration.telegramClientCache(),
-      settingsConfiguration.executorSettings()
+      cacheConfiguration.telegramClientCache()
     )
   }
 }

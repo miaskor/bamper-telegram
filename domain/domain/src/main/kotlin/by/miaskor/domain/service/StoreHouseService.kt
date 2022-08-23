@@ -7,8 +7,6 @@ import by.miaskor.domain.service.mapper.StoreHouseMapper
 import by.miaskor.domain.tables.pojos.StoreHouse
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.util.function.component1
-import reactor.kotlin.core.util.function.component2
 
 class StoreHouseService(
   private val storeHouseRepository: StoreHouseRepository,
@@ -34,14 +32,18 @@ class StoreHouseService(
   private fun getWorkerStoreHouses(workerStoreHouses: List<WorkerStoreHouseVO>): Flux<StoreHouseDto> {
     return Mono.fromSupplier { workerStoreHouses.map { it.storeHouseId } }
       .flatMap { workerStoreHouseIds -> storeHouseRepository.findAllByIds(workerStoreHouseIds) }
-      .flatMapIterable { it }
-      .zipWithIterable(workerStoreHouses)
-      .map { (storeHouse, workerStoreHouseVO) ->
-        StoreHouseDto(
-          id = storeHouse.id ?: -1,
-          chatId = storeHouse.telegramChatId ?: -1,
-          name = storeHouse.storeHouseName ?: "",
-          modifiable = workerStoreHouseVO.privilege == "M"
+      .flatMapMany { storeHouses ->
+        Flux.fromIterable(
+          storeHouses.map { storeHouse ->
+            val workerStoreHouseVO = workerStoreHouses
+              .find { workerStoreHouse -> workerStoreHouse.storeHouseId == storeHouse.id }
+            StoreHouseDto(
+              id = storeHouse.id ?: -1,
+              chatId = storeHouse.telegramChatId ?: -1,
+              name = storeHouse.storeHouseName ?: "",
+              modifiable = workerStoreHouseVO?.privilege == "M"
+            )
+          }
         )
       }
   }

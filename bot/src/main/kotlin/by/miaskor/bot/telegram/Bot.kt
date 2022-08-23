@@ -5,6 +5,7 @@ import by.miaskor.bot.service.CommandResolver.processCommand
 import by.miaskor.bot.service.cache.TelegramClientCache
 import by.miaskor.bot.service.extension.chatId
 import by.miaskor.bot.service.extension.info
+import by.miaskor.common.BindingProperty
 import com.pengrad.telegrambot.TelegramBot
 import com.pengrad.telegrambot.UpdatesListener.CONFIRMED_UPDATES_ALL
 import com.pengrad.telegrambot.model.Update
@@ -16,8 +17,8 @@ import reactor.core.scheduler.Schedulers
 class Bot(
   telegramBot: TelegramBot,
   private val telegramClientCache: TelegramClientCache,
-  private val executorSettings: ExecutorSettings,
 ) {
+  private val executorSettings: ExecutorSettings by BindingProperty("bot.executor")
 
   init {
     telegramBot.setUpdatesListener { updates ->

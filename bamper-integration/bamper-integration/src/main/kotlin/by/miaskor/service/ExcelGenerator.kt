@@ -35,7 +35,6 @@ class ExcelGenerator(
 
   private fun fillValues(row: Int = 1, worksheet: Worksheet, autoPartResponse: AutoPartResponse) {
     worksheet.apply {
-      value(row, 0, 123)
       value(row, 1, autoPartResponse.brand)
       value(row, 2, autoPartResponse.model)
       value(row, 4, autoPartResponse.year)

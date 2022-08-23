@@ -47,13 +47,13 @@ class CreatingAutoPartHandler(
   ): Mono<Unit> {
     return Mono.just(update.chatId)
       .flatMap(telegramClientCache::getTelegramClient)
-      .flatMap { completeCreatingCar(update, it, stepBuilder as AutoPartBuilder) }
+      .flatMap { completeCreatingAutoPart(update, it, stepBuilder as AutoPartBuilder) }
   }
 
-  private fun completeCreatingCar(
+  private fun completeCreatingAutoPart(
     update: Update,
     telegramClient: TelegramClient,
-    autoPartBuilder: AutoPartBuilder
+    autoPartBuilder: AutoPartBuilder,
   ): Mono<Unit> {
     return Mono.just(update.chatId)
       .changeBotState(update::chatId, telegramClient.previousBotStates.pollLast())

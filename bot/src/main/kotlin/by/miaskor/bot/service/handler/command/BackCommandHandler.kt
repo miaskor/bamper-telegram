@@ -1,6 +1,7 @@
 package by.miaskor.bot.service.handler.command
 
 import by.miaskor.bot.configuration.settings.MessageSettings
+import by.miaskor.bot.domain.BotState.BAMPER_MENU
 import by.miaskor.bot.domain.BotState.CHOOSING_STORE_HOUSE
 import by.miaskor.bot.domain.BotState.EMPLOYEES_MENU
 import by.miaskor.bot.domain.BotState.FINDING_AUTO_PART
@@ -54,6 +55,7 @@ class BackCommandHandler(
             .format(telegramClient.currentStoreHouseName())
 
           FINDING_AUTO_PART -> messageSettings.findAutoPartMenuMessage()
+          BAMPER_MENU -> messageSettings.bamperMenuMessage()
           else -> "Something bad happened"
         }
         telegramBot.sendMessageWithKeyboard(update.chatId, sendMessage, keyboard)

@@ -74,13 +74,7 @@ open class ServiceConfiguration(
 
   @Bean
   open fun telegramConnector(): TelegramConnector {
-    val getPhotoPathUrl = confProvider.getProperty("bot.getPhotoPathUri", String::class.java)
-    val getPhotoUrl = confProvider.getProperty("bot.getPhotoUri", String::class.java)
-    return TelegramConnector(
-      connectorConfiguration.telegramWebClient(),
-      getPhotoPathUrl,
-      getPhotoUrl
-    )
+    return TelegramConnector(connectorConfiguration.telegramWebClient())
   }
 
   @Bean

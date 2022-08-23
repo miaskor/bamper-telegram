@@ -1,9 +1,9 @@
 package by.miaskor.bot.configuration
 
+import by.miaskor.bot.service.cf4j.DefaultConfigurationProvider
 import by.miaskor.bot.service.cf4j.LinkPropertiesProvider
 import by.miaskor.common.PropertyConfiguration
 import org.cfg4j.provider.ConfigurationProvider
-import org.cfg4j.provider.ConfigurationProviderBuilder
 import org.cfg4j.source.context.propertiesprovider.JsonBasedPropertiesProvider
 import org.cfg4j.source.context.propertiesprovider.PropertiesProviderSelector
 import org.cfg4j.source.context.propertiesprovider.PropertyBasedPropertiesProvider
@@ -27,8 +27,6 @@ open class Cf4jConfiguration(
 
   @Bean
   open fun configurationProvider(): ConfigurationProvider {
-    return ConfigurationProviderBuilder()
-      .withConfigurationSource(classPathConfigurationSource())
-      .build()
+    return DefaultConfigurationProvider(classPathConfigurationSource())
   }
 }

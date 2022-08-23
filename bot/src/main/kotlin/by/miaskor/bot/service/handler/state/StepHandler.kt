@@ -3,8 +3,8 @@ package by.miaskor.bot.service.handler.state
 import by.miaskor.bot.configuration.settings.KeyboardSettings
 import by.miaskor.bot.domain.AbstractStep
 import by.miaskor.bot.domain.AbstractStepBuilder
-import by.miaskor.bot.domain.Command
 import by.miaskor.bot.domain.Command.NEXT_STEP
+import by.miaskor.bot.domain.Command.PREVIOUS_STEP
 import by.miaskor.bot.service.LanguageSettingsResolver.resolveLanguage
 import by.miaskor.bot.service.cache.Cache
 import by.miaskor.bot.service.extension.chatId
@@ -36,24 +36,30 @@ abstract class StepHandler<T>(
           cache.populate(update.chatId, nextStep)
           sendMessage(nextStep, update)
             .filter { currentStep.next().isFinalStep() }
-            .flatMap { completeStep(update, stepBuilder) }
+            .flatMap {
+              completeStep(update, stepBuilder)
+                .doOnTerminate { cache.evict(update.chatId) }
+            }
         } else if (NEXT_STEP isCommand update.text && !currentStep.isStepNotMandatory()) {
           sendMessage(stepBuilder, update)
-        } else if (Command.PREVIOUS_STEP isCommand update.text) {
+        } else if (PREVIOUS_STEP isCommand update.text) {
           val previousStep = stepBuilder.previousStep()
           cache.populate(update.chatId, previousStep)
           sendMessage(previousStep, update)
         } else {
           processingStepService.process(update, currentStep, stepBuilder)
             .filter { it && stepBuilder.currentStep().isFinalStep() }
-            .flatMap { completeStep(update, stepBuilder) }
+            .flatMap {
+              completeStep(update, stepBuilder)
+                .doOnTerminate { cache.evict(update.chatId) }
+            }
         }
       }
   }
 
   protected fun sendMessage(
     stepBuilder: AbstractStepBuilder<T>,
-    update: Update
+    update: Update,
   ): Mono<Unit> {
     return Mono.just(update.chatId)
       .resolveLanguage(KeyboardSettings::class)
@@ -66,6 +72,6 @@ abstract class StepHandler<T>(
 
   protected abstract fun completeStep(
     update: Update,
-    stepBuilder: AbstractStepBuilder<T>
+    stepBuilder: AbstractStepBuilder<T>,
   ): Mono<Unit>
 }
