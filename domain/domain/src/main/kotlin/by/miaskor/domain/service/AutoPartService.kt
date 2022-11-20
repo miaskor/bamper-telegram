@@ -1,7 +1,7 @@
 package by.miaskor.domain.service
 
-import by.miaskor.cloud.drive.domain.UploadFileRequest
-import by.miaskor.cloud.drive.service.ImageUploader
+import by.miaskor.cloud.drive.domain.upload.UploadFile
+import by.miaskor.cloud.drive.service.CloudDriveService
 import by.miaskor.domain.api.domain.AutoPartDto
 import by.miaskor.domain.api.domain.AutoPartResponse
 import by.miaskor.domain.api.domain.AutoPartWithPhotoResponse
@@ -18,7 +18,7 @@ import reactor.core.scheduler.Schedulers
 
 class AutoPartService(
   private val autoPartRepository: AutoPartRepository,
-  private val uploader: ImageUploader,
+  private val cloudDriveService: CloudDriveService,
   private val autoPartMapper: AutoPartMapper,
   private val telegramService: TelegramService,
 ) {
@@ -31,13 +31,14 @@ class AutoPartService(
 
   fun create(autoPartDto: AutoPartDto): Mono<Unit> {
     val autoPartKey = AutoPartKeyGenerator.generate()
-    return Mono.fromCallable {
-      UploadFileRequest(
-        autoPartDto.chatId,
+    val imagePath = ImagePathGenerator.generate(autoPartDto.chatId.toString(), autoPartKey)
+    return Mono.fromSupplier {
+      UploadFile(
+        imagePath,
         telegramService.getPhoto(autoPartDto.photoId),
-        autoPartKey
       )
-    }.flatMap(uploader::upload)
+    }
+      .flatMap(cloudDriveService::uploadFile)
       .map { uploadFileResponse ->
         AutoPart(
           description = autoPartDto.description,
@@ -48,10 +49,11 @@ class AutoPartService(
           carId = autoPartDto.carId,
           carPartId = autoPartDto.carPartId,
           storeHouseId = autoPartDto.storeHouseId,
-          photoPath = uploadFileResponse.path,
+          photoPath = uploadFileResponse.value,
           autoPartKey = autoPartKey
         )
-      }.flatMap(autoPartRepository::save)
+      }
+      .flatMap(autoPartRepository::save)
       .subscribeOn(Schedulers.boundedElastic())
   }
 
@@ -60,7 +62,8 @@ class AutoPartService(
       storeHouseIdWithLimitRequest.storeHouseId,
       storeHouseIdWithLimitRequest.limit + 1,
       storeHouseIdWithLimitRequest.offset
-    ).flatMap(autoPartMapper::mapWithPhoto)
+    )
+      .flatMap(autoPartMapper::mapWithPhoto)
   }
 
   fun getAllByStoreHouseIdAndCarAndCarPart(carAutoPartDto: CarAutoPartDto):
@@ -77,7 +80,8 @@ class AutoPartService(
       storeHouseIdRequest.storeHouseId,
       storeHouseIdRequest.limit + 1,
       storeHouseIdRequest.offset
-    ).flatMap(autoPartMapper::mapWithPhoto)
+    )
+      .flatMap(autoPartMapper::mapWithPhoto)
   }
 
   fun getByStoreHouseIdAndId(storeHouseId: Long, id: Long): Mono<AutoPartWithPhotoResponse> {

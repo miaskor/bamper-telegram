@@ -1,8 +1,7 @@
 package by.miaskor.domain.service.mapper
 
-import by.miaskor.cloud.drive.domain.DownloadFile
-import by.miaskor.cloud.drive.service.CloudYandexDriveService
-import by.miaskor.cloud.drive.service.ImageDownloader
+import by.miaskor.cloud.drive.domain.FilePath
+import by.miaskor.cloud.drive.service.CloudDriveService
 import by.miaskor.domain.api.domain.AutoPartResponse
 import by.miaskor.domain.api.domain.AutoPartWithPhotoResponse
 import by.miaskor.domain.api.domain.ResponseWithLimit
@@ -11,14 +10,11 @@ import by.miaskor.domain.model.AutoPartWithPhotoUrlVO
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 
-class AutoPartMapper(
-  private val cloudYandexDriveService: CloudYandexDriveService,
-  private val downloader: ImageDownloader,
-) {
+class AutoPartMapper(private val cloudDriveService: CloudDriveService) {
 
   fun mapWithPhotoUrl(autoPartWithPhotoUrlVO: AutoPartWithPhotoUrlVO): Mono<AutoPartResponse> {
-    return Mono.fromCallable { DownloadFile(autoPartWithPhotoUrlVO.photoPath) }
-      .flatMap(cloudYandexDriveService::getDownloadUrl)
+    return Mono.fromSupplier { FilePath(autoPartWithPhotoUrlVO.photoPath) }
+      .flatMap(cloudDriveService::getDownloadUrl)
       .map { photoUrl ->
         AutoPartResponse(
           description = autoPartWithPhotoUrlVO.description,
@@ -55,8 +51,8 @@ class AutoPartMapper(
   }
 
   fun mapWithPhoto(autoPartVO: AutoPartVO): Mono<AutoPartWithPhotoResponse> {
-    return Mono.fromCallable { DownloadFile(autoPartVO.photoPath) }
-      .flatMap(downloader::download)
+    return Mono.fromCallable { FilePath(autoPartVO.photoPath) }
+      .flatMap(cloudDriveService::downloadFile)
       .map { byteArrayPhoto ->
         AutoPartWithPhotoResponse(
           id = autoPartVO.id.toString(),

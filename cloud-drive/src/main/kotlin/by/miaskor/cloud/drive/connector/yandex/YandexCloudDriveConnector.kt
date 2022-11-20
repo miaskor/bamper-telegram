@@ -1,25 +1,26 @@
-package by.miaskor.cloud.drive.service.connector
+package by.miaskor.cloud.drive.connector.yandex
 
-import by.miaskor.cloud.drive.domain.DownloadUrlResponse
-import by.miaskor.cloud.drive.domain.UploadUrlResponse
 import by.miaskor.cloud.drive.configuration.settings.CloudDriveSettings
+import by.miaskor.cloud.drive.domain.download.DownloadUrlResponse
+import by.miaskor.cloud.drive.domain.upload.UploadUrlResponse
 import org.springframework.core.io.buffer.DataBuffer
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.bodyToMono
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
-class CloudYandexDriveConnector(
+class YandexCloudDriveConnector(
   private val webClient: WebClient,
   private val cloudDriveSettings: CloudDriveSettings,
 ) {
 
   fun uploadImage(image: Flux<DataBuffer>, path: String): Mono<Unit> {
     return getUploadedUrl(path)
-      .flatMap {
+      .flatMap { url ->
         webClient.put()
-          .uri(it)
+          .uri(url)
           .header(AUTHORIZATION_HEADER, cloudDriveSettings.authToken())
           .body(BodyInserters.fromPublisher(image, DataBuffer::class.java))
           .retrieve()
@@ -31,15 +32,15 @@ class CloudYandexDriveConnector(
     return webClient.put()
       .uri { uriBuilder ->
         uriBuilder.path(cloudDriveSettings.createFolderUri())
-          .queryParam("path", nameFolder)
+          .queryParam(PATH_PARAM, nameFolder)
           .build()
       }
       .header(AUTHORIZATION_HEADER, cloudDriveSettings.authToken())
       .retrieve()
-      .bodyToMono(Unit::class.java)
+      .bodyToMono()
   }
 
-  fun getImage(downloadUrl: String): Flux<DataBuffer> {
+  fun getFile(downloadUrl: String): Flux<DataBuffer> {
     return webClient.get()
       .uri(downloadUrl)
       .accept(MediaType.APPLICATION_OCTET_STREAM)
@@ -51,14 +52,12 @@ class CloudYandexDriveConnector(
     return webClient.get()
       .uri { uriBuilder ->
         uriBuilder.path(cloudDriveSettings.folderInformationUri())
-          .queryParam("path", path)
+          .queryParam(PATH_PARAM, path)
           .build()
       }
       .header(AUTHORIZATION_HEADER, cloudDriveSettings.authToken())
-      .exchangeToMono {
-        Mono.just(it.statusCode())
-          .filter { it.is2xxSuccessful }
-          .map { true }
+      .exchangeToMono { clientResponse ->
+        Mono.fromSupplier { clientResponse.statusCode().is2xxSuccessful }
           .defaultIfEmpty(false)
       }
   }
@@ -67,29 +66,30 @@ class CloudYandexDriveConnector(
     return webClient.get()
       .uri { uriBuilder ->
         uriBuilder.path(cloudDriveSettings.getDownloadedUri())
-          .queryParam("path", path)
+          .queryParam(PATH_PARAM, path)
           .build()
       }
       .header(AUTHORIZATION_HEADER, cloudDriveSettings.authToken())
       .retrieve()
       .bodyToMono(DownloadUrlResponse::class.java)
-      .map { it.href }
+      .map(DownloadUrlResponse::href)
   }
 
   private fun getUploadedUrl(path: String): Mono<String> {
     return webClient.get()
       .uri { uriBuilder ->
         uriBuilder.path(cloudDriveSettings.getUploadedUri())
-          .queryParam("path", path)
+          .queryParam(PATH_PARAM, path)
           .build()
       }
       .header(AUTHORIZATION_HEADER, cloudDriveSettings.authToken())
       .retrieve()
       .bodyToMono(UploadUrlResponse::class.java)
-      .map { it.href }
+      .map(UploadUrlResponse::href)
   }
 
   private companion object {
-    private const val AUTHORIZATION_HEADER = "Authorization"
+    const val AUTHORIZATION_HEADER = "Authorization"
+    const val PATH_PARAM = "path"
   }
 }
