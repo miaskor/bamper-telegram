@@ -1,48 +1,43 @@
 package by.miaskor.cloud.drive.configuration
 
-import by.miaskor.cloud.drive.service.CloudYandexDriveService
-import by.miaskor.cloud.drive.service.DefaultFilePathGenerator
-import by.miaskor.cloud.drive.service.DefaultFolderCreator
-import by.miaskor.cloud.drive.service.DefaultImageDownloader
-import by.miaskor.cloud.drive.service.DefaultImageUploader
-import by.miaskor.cloud.drive.service.FilePathGenerator
-import by.miaskor.cloud.drive.service.FolderCreator
-import by.miaskor.cloud.drive.service.ImageDownloader
-import by.miaskor.cloud.drive.service.ImageUploader
+import by.miaskor.cloud.drive.service.CloudDriveService
+import by.miaskor.cloud.drive.service.FileDownloader
+import by.miaskor.cloud.drive.service.FileUploader
+import by.miaskor.cloud.drive.service.FolderService
+import by.miaskor.cloud.drive.service.yandex.YandexCloudDriveService
+import by.miaskor.cloud.drive.service.yandex.YandexFileDownloader
+import by.miaskor.cloud.drive.service.yandex.YandexFileUploader
+import by.miaskor.cloud.drive.service.yandex.YandexFolderService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class ServiceConfiguration(
-  private val connectorConfiguration: ConnectorConfiguration,
-) {
+open class ServiceConfiguration(private val connectorConfiguration: ConnectorConfiguration) {
 
   @Bean
-  open fun filePathGenerator(): FilePathGenerator {
-    return DefaultFilePathGenerator()
+  open fun folderService(): FolderService {
+    return YandexFolderService(connectorConfiguration.yandexCloudDriveConnector())
   }
 
   @Bean
-  open fun folderCreator(): FolderCreator {
-    return DefaultFolderCreator(connectorConfiguration.cloudYandexDriveConnector())
+  open fun fileDownloader(): FileDownloader {
+    return YandexFileDownloader(connectorConfiguration.yandexCloudDriveConnector())
   }
 
   @Bean
-  open fun imageDownloader(): ImageDownloader {
-    return DefaultImageDownloader(connectorConfiguration.cloudYandexDriveConnector())
+  open fun cloudDriveService(): CloudDriveService {
+    return YandexCloudDriveService(
+      yandexCloudDriveConnector = connectorConfiguration.yandexCloudDriveConnector(),
+      fileDownloader = fileDownloader(),
+      fileUploader = fileUploader()
+    )
   }
 
   @Bean
-  open fun cloudYandexDriveService(): CloudYandexDriveService {
-    return CloudYandexDriveService(connectorConfiguration.cloudYandexDriveConnector())
-  }
-
-  @Bean
-  open fun imageUploader(): ImageUploader {
-    return DefaultImageUploader(
-      connectorConfiguration.cloudYandexDriveConnector(),
-      folderCreator(),
-      filePathGenerator()
+  open fun fileUploader(): FileUploader {
+    return YandexFileUploader(
+      yandexCloudDriveConnector = connectorConfiguration.yandexCloudDriveConnector(),
+      folderService = folderService()
     )
   }
 }

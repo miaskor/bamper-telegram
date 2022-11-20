@@ -6,9 +6,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-open class SettingsConfiguration(
-  private val confProvider: ConfigurationProvider
-) {
+open class SettingsConfiguration(private val confProvider: ConfigurationProvider) {
 
   @Bean
   open fun cloudDriveSettings(): CloudDriveSettings {

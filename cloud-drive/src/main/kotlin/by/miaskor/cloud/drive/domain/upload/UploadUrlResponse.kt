@@ -1,4 +1,4 @@
-package by.miaskor.cloud.drive.domain
+package by.miaskor.cloud.drive.domain.upload
 
 data class UploadUrlResponse(
   val operationId: String = "",

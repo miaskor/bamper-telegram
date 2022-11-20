@@ -74,7 +74,13 @@ open class ServiceConfiguration(
 
   @Bean
   open fun telegramConnector(): TelegramConnector {
-    return TelegramConnector(connectorConfiguration.telegramWebClient())
+    val getPhotoPathUrl = confProvider.getProperty("bot.getPhotoPathUri", String::class.java)
+    val getPhotoUrl = confProvider.getProperty("bot.getPhotoUri", String::class.java)
+    return TelegramConnector(
+      connectorConfiguration.telegramWebClient(),
+      getPhotoPathUrl,
+      getPhotoUrl
+    )
   }
 
   @Bean
@@ -88,7 +94,7 @@ open class ServiceConfiguration(
   open fun autoPartService(): AutoPartService {
     return AutoPartService(
       repositoryConfiguration.autoPartRepository(),
-      serviceConfiguration.imageUploader(),
+      serviceConfiguration.cloudDriveService(),
       mapperConfiguration.autoPartMapper(),
       telegramService()
     )

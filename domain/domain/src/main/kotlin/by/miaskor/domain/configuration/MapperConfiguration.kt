@@ -16,7 +16,7 @@ open class MapperConfiguration(
 
   @Bean
   open fun autoPartMapper(): AutoPartMapper {
-    return AutoPartMapper(serviceConfiguration.cloudYandexDriveService(), serviceConfiguration.imageDownloader())
+    return AutoPartMapper(serviceConfiguration.cloudDriveService())
   }
 
   @Bean
