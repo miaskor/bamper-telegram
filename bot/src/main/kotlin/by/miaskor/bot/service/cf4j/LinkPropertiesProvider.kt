@@ -8,6 +8,9 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.*
 
+private const val LINK_PATTERN = "#link<.*>"
+private const val SEPARATOR = ","
+
 class LinkPropertiesProvider : PropertiesProvider {
 
   private val inMemoryListProperties = mutableListOf<Properties>()
@@ -24,15 +27,13 @@ class LinkPropertiesProvider : PropertiesProvider {
           for (key in flatten.keys) {
             var value = flatten[key]
             if (value is String && value.matches(Regex(LINK_PATTERN))) {
-              val actualKeys = value
-                .replace("#link<", "")
-                .replace(">", "")
-                .split(",")
+              val actualKeys = removeLinkPattern(value)
               value = actualKeys.map { actualKey ->
                 inMemoryListProperties.first {
                   it.containsKey(actualKey)
                 }.getValue(actualKey)
-              }.joinToString(",")
+              }
+                .joinToString(SEPARATOR)
               flatten[key] = value
             }
           }
@@ -46,6 +47,13 @@ class LinkPropertiesProvider : PropertiesProvider {
     } catch (e: ScannerException) {
       throw IllegalStateException("Unable to load yaml configuration from provided stream", e)
     }
+  }
+
+  private fun removeLinkPattern(value: String): List<String> {
+    return value
+      .replace(LINK_PATTERN.substringBefore("."), "")
+      .replace(LINK_PATTERN.last().toString(), "")
+      .split(SEPARATOR)
   }
 
   /**
@@ -93,7 +101,7 @@ class LinkPropertiesProvider : PropertiesProvider {
           joiner
             .append(separator)
             .append(subMap.entries.iterator().next().value.toString())
-          separator = ","
+          separator = SEPARATOR
         }
         result[key] = joiner.toString()
       } else {
@@ -101,10 +109,6 @@ class LinkPropertiesProvider : PropertiesProvider {
       }
     }
     return result
-  }
-
-  private companion object {
-    private const val LINK_PATTERN = "#link<.*>"
   }
 }
 

@@ -25,14 +25,6 @@ subprojects {
     plugin("by.miaskor.artifact-versions")
     plugin("io.spring.dependency-management")
   }
-  project(":domain:domain") {
-    apply {
-      plugin("nu.studer.jooq")
-      plugin("org.liquibase.gradle")
-      plugin("by.miaskor.mysql-credentials")
-    }
-  }
-
   group = "by.miaskor"
   version = "0.0.1-SNAPSHOT"
   java.sourceCompatibility = VERSION_11

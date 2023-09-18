@@ -60,8 +60,12 @@ open class ConnectorConfiguration(
   open fun autoPartConnector(): AutoPartConnector {
     val webClient = WebClient
       .builder()
-      .baseUrl(settingsConfiguration.connectorSettings().domainBaseUrl())
+      .baseUrl(
+        settingsConfiguration.connectorSettings()
+          .domainBaseUrl()
+      )
       .build()
+
     return AutoPartConnector(webClient)
   }
 

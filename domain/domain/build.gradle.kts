@@ -1,3 +1,9 @@
+plugins {
+  id("nu.studer.jooq")
+  id("org.liquibase.gradle")
+  id("by.miaskor.mysql-credentials")
+}
+
 dependencies {
   implementation(project(":domain:domain-api"))
   implementation(project(":cloud-drive"))

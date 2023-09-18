@@ -1,6 +1,9 @@
 pluginManagement {
   plugins {
-    val versions = File("/home/miaskor/Documents/pet-projects/bamper-telegram-properties/versions.yaml").absoluteFile
+
+    //todo(refactoring)
+    val versions = File("/home/miaskor/IdeaProjects/bamper-telegram-properties/versions.yaml")
+      .absoluteFile
       .readLines()
 
     fun getPluginVersion(versionForPlugin: String): String {
@@ -20,7 +23,6 @@ pluginManagement {
 
   }
 }
-
 rootProject.name = "bamper-telegram"
 include("bot")
 include("domain:domain-api")
