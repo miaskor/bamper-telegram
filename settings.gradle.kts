@@ -2,8 +2,10 @@ pluginManagement {
   plugins {
 
     //todo(refactoring)
-    val versions = File("/home/miaskor/IdeaProjects/bamper-telegram-properties/versions.yaml")
-      .absoluteFile
+    val versions = rootDir
+      .parentFile
+      .resolve("bamper-telegram-properties")
+      .resolve("versions.yaml")
       .readLines()
 
     fun getPluginVersion(versionForPlugin: String): String {

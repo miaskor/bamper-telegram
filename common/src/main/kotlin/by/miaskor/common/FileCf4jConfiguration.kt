@@ -10,9 +10,8 @@ import java.nio.file.Path
 import java.util.regex.Pattern.matches
 import kotlin.io.path.Path
 
-private const val PROPERTY_DIR = "/bamper-telegram-properties"
 private const val SEPARATOR = "|"
-private const val FILE_PATH_KEY = "cf4j.properties.file-path"
+private const val FILE_PATH_KEY = "cf4j.properties.base-path"
 private const val FILES_KEY = "cf4j.properties.files"
 private const val DEFAULT_EXT = ".yaml"
 private const val FILE_PROPERTY_PATTERN = ".+\\.\\w+"
@@ -35,21 +34,28 @@ open class FileCf4jConfiguration(
   }
 
   protected fun getPropertyPaths(): List<Path> {
-    val previousDirOfProject = environment.getProperty("user.dir")
-      ?.substringBeforeLast("/")
-    val basePath = environment.getProperty(FILE_PATH_KEY)
-      ?: "$previousDirOfProject$PROPERTY_DIR"
-    val files = environment.getProperty(FILES_KEY)
-      ?: throw IllegalArgumentException("Property application.properties.files is not exists")
+    val basePathFromConfig = environment.getRequiredProperty(FILE_PATH_KEY)
+    val files = environment.getRequiredProperty(FILES_KEY)
+
+    val projectDir = Path.of(System.getProperty("user.dir"))
+    val parentDir = projectDir.parent
+      ?: throw IllegalStateException("Cannot resolve parent directory of project")
+
+    val basePath = parentDir
+      .resolve(basePathFromConfig)
+      .normalize()
+      .toAbsolutePath()
 
     return files.split(SEPARATOR)
       .map { fileName ->
-        if (matches(FILE_PROPERTY_PATTERN, fileName)) {
-          "$basePath/$fileName"
-        } else {
-          "$basePath/$fileName$DEFAULT_EXT"
-        }
+        val resolvedName =
+          if (fileName.matches(Regex(FILE_PROPERTY_PATTERN))) {
+            fileName
+          } else {
+            "$fileName$DEFAULT_EXT"
+          }
+
+        basePath.resolve(resolvedName).normalize()
       }
-      .map(::Path)
   }
 }
